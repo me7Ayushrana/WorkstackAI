@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkstackAI | Focused Workspace</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">WorkstackAI.</div>
+            <!-- Auth Trigger Button -->
+            <button id="auth-trigger" class="btn-outline" style="padding: 8px 20px; font-size: 0.9rem;">Sign In</button>
+        </div>
+    </header>
+
+    <main class="centered-layout hero">
+        <div class="container">
+            <h1>Built for people who<br>actually work.</h1>
+            <p style="margin: 0 auto; margin-bottom: 2.5rem; max-width: 600px; color: var(--text-secondary);">
+                A focused, role-based digital workspace. No distractions. No random tool directories.
+                Just the essential workflows you need to get things done.
+            </p>
+            <div style="display:flex; gap: 15px; justify-content: center;">
+                <a href="#" onclick="handleEnterWorkspace(event)" class="btn">Enter Workspace</a>
+                <a href="fun-zone.html" class="btn-outline" style="border-radius: 50px; font-weight:700;">🎮 Fun
+                    Zone</a>
+            </div>
+
+            <div
+                style="margin-top: 60px; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+                Student &nbsp; • &nbsp; Freelancer &nbsp; • &nbsp; Creator
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Modal Overlay -->
+    <div id="auth-modal-overlay" class="auth-overlay">
+        <div class="auth-modal">
+            <h2 style="margin-bottom: 10px;">Welcome Back</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem;">Sign in to access your
+                professional workspace.</p>
+
+            <!-- Step 1: Selection -->
+            <div id="auth-step-1">
+                <button class="auth-btn auth-google" onclick="startGoogleLogin()">
+                    <span style="font-size: 1.2rem;">G</span> Continue with Google
+                </button>
+                <button class="auth-btn auth-mobile" onclick="showPhoneInput()">
+                    <span style="font-size: 1.2rem;">📱</span> Continue with Mobile
+                </button>
+            </div>
+
+            <!-- Step 2: Phone Input -->
+            <div id="auth-step-2" class="hidden">
+                <input type="tel" id="phone-input" class="input-field" placeholder="Enter Mobile Number (+91)">
+                <button class="btn" style="width:100%; margin-bottom:10px;" onclick="sendOTP()">Send OTP</button>
+                <button class="btn-outline" style="width:100%; border:none;" onclick="resetAuth()">Back</button>
+            </div>
+
+            <!-- Step 3: OTP Input -->
+            <div id="auth-step-3" class="hidden">
+                <p style="color: var(--accent); margin-bottom: 15px; font-size: 0.8rem;">OTP sent to your mobile (Use
+                    1234)</p>
+                <input type="text" id="otp-input" class="input-field" placeholder="Enter 4-digit OTP" maxlength="4">
+                <button class="btn" style="width:100%; margin-bottom:10px;" onclick="verifyOTP()">Verify &
+                    Login</button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="auth-loading" class="hidden">
+                <div style="font-size: 2rem; margin-bottom: 15px;">🔄</div>
+                <p>Authenticating...</p>
+            </div>
+
+            <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;"
+                onclick="closeAuthModal()">
+                Close
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 15px;">&copy; 2026 WorkstackAI. Optimized for Focus.</p>
+            <div
+                style="display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; color: var(--text-secondary); flex-wrap: wrap;">
+                <span>Developed by <b>Ayush Rana</b></span>
+                <span style="opacity: 0.3;">|</span>
+                <a href="mailto:ayushamit007@gmail.com">Mail</a>
+                <a href="https://instagram.com/ayushrana.me" target="_blank">Insta: ayushrana.me</a>
+                <a href="https://github.com/me7Ayushrana" target="_blank">Git: me7Ayushrana</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js?v=6"></script>
+    <script src="js/chatbot.js?v=6"></script>
+    <script src="js/auth.js?v=6"></script>
+
+    <script>
+        // --- Modal Logic ---
+        const authModal = document.getElementById('auth-modal-overlay');
+
+        function openAuthModal() {
+            authModal.classList.add('active');
+        }
+
+        function closeAuthModal() {
+            authModal.classList.remove('active');
+            setTimeout(resetAuth, 300);
+        }
+
+        function resetAuth() {
+            document.getElementById('auth-step-1').classList.remove('hidden');
+            document.getElementById('auth-step-2').classList.add('hidden');
+            document.getElementById('auth-step-3').classList.add('hidden');
+            document.getElementById('auth-loading').classList.add('hidden');
+        }
+
+        // --- Google Flow ---
+        function startGoogleLogin() {
+            document.getElementById('auth-step-1').classList.add('hidden');
+            document.getElementById('auth-loading').classList.remove('hidden');
+
+            AUTH.loginWithGoogle().then(user => {
+                closeAuthModal();
+                AUTH.updateHeader();
+                // If user was trying to enter workspace, redirect them now
+                if (window.pendingRedirect) {
+                    window.location.href = window.pendingRedirect;
+                }
+            });
+        }
+
+        // --- Phone Flow ---
+        function showPhoneInput() {
+            document.getElementById('auth-step-1').classList.add('hidden');
+            document.getElementById('auth-step-2').classList.remove('hidden');
+        }
+
+        function sendOTP() {
+            const phone = document.getElementById('phone-input').value;
+            if (phone.length < 10) return alert("Please enter valid number");
+
+            // Mock sending
+            document.getElementById('auth-step-2').classList.add('hidden');
+            document.getElementById('auth-step-3').classList.remove('hidden');
+        }
+
+        function verifyOTP() {
+            const otp = document.getElementById('otp-input').value;
+            const phone = document.getElementById('phone-input').value;
+
+            document.getElementById('auth-step-3').classList.add('hidden');
+            document.getElementById('auth-loading').classList.remove('hidden');
+
+            AUTH.loginWithPhone(phone, otp).then(user => {
+                closeAuthModal();
+                AUTH.updateHeader();
+                if (window.pendingRedirect) {
+                    window.location.href = window.pendingRedirect;
+                }
+            }).catch(err => {
+                alert(err);
+                resetAuth();
+            });
+        }
+
+        // --- Intercept "Enter Workspace" ---
+        function handleEnterWorkspace(e) {
+            e.preventDefault();
+            if (AUTH.state.isLoggedIn) {
+                // If logged in, go to Roles (or Payment if logic required there)
+                // Since user wants to pay later, we direct to Roles mostly, 
+                // BUT user said "First signin then purchase".
+                // So we check if they have 'paid'. If not, go to payment.
+                // For now, let's assume flow is: Index -> Auth -> Payment -> Roles
+
+                // Let's redirect to Payment.html first, which handles the "Free/Paid" logic
+                window.location.href = "payment.html";
+            } else {
+                window.pendingRedirect = "payment.html"; // Save intent
+                openAuthModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

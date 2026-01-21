@@ -1,0 +1,950 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Page Routing / Guard Logic
+    const path = window.location.pathname;
+
+    if (path.includes('workspace.html')) {
+        checkAccess();
+        renderWorkspace();
+    } else if (path.includes('roles.html')) {
+        // FORCE RESET: Ensure no role is pre-selected when landing here
+        sessionStorage.removeItem('selectedRole');
+    } else if (path.includes('payment.html')) {
+        checkRoleSelection();
+    } else if (path.includes('fun-zone.html')) {
+        renderFunZone();
+    }
+
+    // Event Listeners for Role Selection
+    const roleCards = document.querySelectorAll('.role-card');
+    roleCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const role = card.dataset.role;
+            selectRole(role);
+        });
+    });
+
+    // Payment Logic
+    const payBtn = document.getElementById('pay-btn');
+    if (payBtn) {
+        payBtn.addEventListener('click', processPayment);
+    }
+});
+
+/* --- State Management --- */
+/* --- State Management --- */
+function selectRole(role) {
+    sessionStorage.setItem('selectedRole', role);
+    window.location.href = 'workspace.html';
+}
+
+function checkRoleSelection() {
+    // Legacy function removed or emptied to prevent auto-redirects
+}
+
+function processPayment() {
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    // Simulate API call
+    setTimeout(() => {
+        localStorage.setItem('hasPaid', 'true');
+        sessionStorage.removeItem('selectedRole'); // Force re-selection
+        window.location.href = 'roles.html';
+    }, 1500);
+}
+
+function checkAccess() {
+    const hasPaid = localStorage.getItem('hasPaid');
+    const role = sessionStorage.getItem('selectedRole');
+
+    if (!hasPaid) {
+        window.location.href = 'payment.html';
+    }
+    if (!role) {
+        window.location.href = 'roles.html';
+    }
+}
+
+function renderFunZone() {
+    const data = TOOL_DATA['fun_zone'];
+
+    // Render Web Games
+    const gamesContainer = document.getElementById('games-grid');
+    if (gamesContainer) {
+        gamesContainer.innerHTML = data.games.map(game => `
+            <div class="tool-card">
+                 <div class="tool-header">
+                    <span class="tool-tag">${game.category}</span>
+                </div>
+                <h4>${game.name}</h4>
+                <p>${game.desc}</p>
+                <a href="${game.url}" target="_blank" class="btn-outline" style="display:block; text-align:center; padding: 8px; border-radius: 4px; font-size: 0.9rem;">Play Now ↗</a>
+            </div>
+        `).join('');
+    }
+
+    // Render Platforms
+    const platformsContainer = document.getElementById('platforms-grid');
+    if (platformsContainer && data.platforms) {
+        platformsContainer.innerHTML = data.platforms.map(p => `
+            <div class="tool-card" style="border-color: rgba(255,255,255,0.1);">
+                 <div class="tool-header">
+                    <span class="tool-tag" style="background:var(--accent); color:black;">${p.category}</span>
+                </div>
+                <h4>${p.name}</h4>
+                <p>${p.desc}</p>
+                <a href="${p.url}" target="_blank" class="btn btn-outline" style="width:100%; justify-content:center;">Visit ↗</a>
+            </div>
+        `).join('');
+    }
+
+    // Render Portals
+    const portalsContainer = document.getElementById('portals-grid');
+    if (portalsContainer && data.portals) {
+        portalsContainer.innerHTML = data.portals.map(p => `
+            <div class="tool-card" style="border-color: rgba(229, 197, 88, 0.4); background: rgba(229, 197, 88, 0.05);">
+                 <div class="tool-header">
+                    <span class="tool-tag" style="background:var(--accent); color:black;">${p.category}</span>
+                </div>
+                <h4>${p.name}</h4>
+                <p>${p.desc}</p>
+                <a href="${p.url}" target="_blank" class="btn btn-outline" style="width:100%; justify-content:center;">Open Portal ↗</a>
+            </div>
+        `).join('');
+    }
+
+    // Init Search for Fun Zone
+    initSearch(data);
+}
+
+/* --- Workspace Rendering --- */
+function renderWorkspace() {
+    const roleKey = sessionStorage.getItem('selectedRole');
+    const data = TOOL_DATA[roleKey];
+
+    if (!data) return;
+
+    // Sets Headers
+    document.getElementById('workspace-title').textContent = data.title;
+    document.getElementById('workspace-desc').textContent = data.description;
+
+    // Render AI Decision Zone
+    const aiContainer = document.getElementById('ai-zone-grid');
+    aiContainer.innerHTML = data.ai_tools.map(tool => `
+        <div class="tool-card ai-decision-card">
+            <div class="tool-header">
+                <span class="tool-tag">${tool.bestFor}</span>
+                ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+            </div>
+            <h4>${tool.title}</h4>
+            <p>${tool.desc}</p>
+            <a href="${tool.url}" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; width: 100%;">Open ${tool.toolName} ↗</a>
+        </div>
+    `).join('');
+
+    // Render Native Tools Sidebar/Grid
+    const nativeContainer = document.getElementById('native-tools-grid');
+    if (nativeContainer) {
+        nativeContainer.innerHTML = data.native_tools.map(tool => `
+            <div class="tool-card" onclick="loadNativeTool('${tool.id}')" style="cursor: pointer;">
+                <div class="tool-header">
+                    <span style="font-size: 1.5rem;">${tool.icon}</span>
+                    <span class="pricing-tag free">Free</span>
+                </div>
+                <h4>${tool.name}</h4>
+                <div style="margin-top:auto;">
+                    <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:10px;" onclick="event.stopPropagation(); loadNativeTool('${tool.id}')">Open Tool</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Render External Tools
+    const extContainer = document.getElementById('external-tools-grid');
+    extContainer.innerHTML = data.external_tools.map(tool => `
+        <div class="tool-card">
+             <div class="tool-header">
+                <span class="tool-tag">${tool.category}</span>
+                ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+            </div>
+            <h4>${tool.name}</h4>
+            <p>External Resource</p>
+            <a href="${tool.url}" target="_blank" class="btn-outline" style="display:block; text-align:center; padding: 8px; border-radius: 4px; font-size: 0.9rem;">Launch ↗</a>
+        </div>
+    `).join('');
+
+    // Initialize Search Listener with Data
+    initSearch(data);
+
+    // Apply Premium Animations
+    setTimeout(applyVisualEffects, 100);
+}
+
+/* --- Search & Suggestions Logic --- */
+let searchableTerms = [];
+
+function initSearch(data) {
+    const searchInput = document.getElementById('tool-search');
+    const suggestionBox = document.getElementById('search-suggestions');
+    if (!searchInput) return;
+
+    // Collect all terms for autocomplete
+    searchableTerms = [];
+
+    // Store URL/ID for direct action
+    const addTerm = (term, type, actionData) => {
+        if (!term) return;
+        const exists = searchableTerms.find(t => t.text.toLowerCase() === term.toLowerCase());
+        if (!exists) {
+            searchableTerms.push({
+                text: term,
+                type: type,
+                url: actionData?.url,
+                startId: actionData?.id
+            });
+        }
+    };
+
+    // Event Listeners
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value;
+        filterTools(query);
+        showSuggestions(query);
+    });
+
+    // Close suggestions on click outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) {
+            if (suggestionBox) suggestionBox.classList.add('hidden');
+        }
+    });
+
+    // Process Data for Search
+    if (data.ai_tools) {
+        data.ai_tools.forEach(t => {
+            addTerm(t.toolName, 'AI Tool', { url: t.url });
+            addTerm(t.bestFor, 'Category');
+        });
+        data.external_tools.forEach(t => {
+            addTerm(t.name, 'External', { url: t.url });
+            addTerm(t.category, 'Category');
+        });
+        data.native_tools.forEach(t => {
+            addTerm(t.name, 'Native', { id: t.id });
+        });
+    }
+
+    // Process Fun Zone specific data
+    if (data.games) {
+        data.games.forEach(g => {
+            addTerm(g.name, 'Game', { url: g.url });
+            addTerm(g.category, 'Category');
+        });
+    }
+    if (data.platforms) {
+        data.platforms.forEach(p => {
+            addTerm(p.name, 'Platform', { url: p.url });
+        });
+    }
+    if (data.portals) {
+        data.portals.forEach(p => {
+            addTerm(p.name, 'Portal', { url: p.url });
+        });
+    }
+}
+
+function showSuggestions(query) {
+    const box = document.getElementById('search-suggestions');
+    if (!box) return;
+
+    if (!query || query.length < 1) {
+        box.classList.add('hidden');
+        return;
+    }
+
+    const matches = searchableTerms
+        .filter(term => term.text.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 5);
+
+    if (matches.length > 0) {
+        box.innerHTML = matches.map(m => `
+            <div class="suggestion-item" onclick="applySuggestion('${m.text.replace(/'/g, "\\'")}')">
+                <span>${m.text}</span>
+                <span style="font-size:0.7rem; opacity:0.5; border:1px solid currentColor; padding:2px 4px; border-radius:4px;">${m.type}</span>
+            </div>
+        `).join('');
+        box.classList.remove('hidden');
+    } else {
+        box.classList.add('hidden');
+    }
+}
+
+// Global scope for visual onclick
+window.applySuggestion = function (text) {
+    const input = document.getElementById('tool-search');
+    const termObj = searchableTerms.find(t => t.text === text);
+
+    // ACTION: If it matches a tool with a URL/ID, execute immediately
+    if (termObj) {
+        if (termObj.url) {
+            window.open(termObj.url, '_blank');
+            return;
+        }
+        if (termObj.startId) {
+            loadNativeTool(termObj.startId);
+            // Scroll to native tool area
+            document.getElementById('active-tool-display').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('search-suggestions').classList.add('hidden');
+            return;
+        }
+    }
+
+    // Default: Just filter
+    input.value = text;
+    filterTools(text);
+    document.getElementById('search-suggestions').classList.add('hidden');
+}
+
+/* --- Visual Effects (New) --- */
+function applyVisualEffects() {
+    const cards = document.querySelectorAll('.tool-card');
+
+    cards.forEach((card, index) => {
+        // 1. Staggered Animation Delay
+        card.style.animationDelay = `${index * 50}ms`;
+
+        // 2. 3D Tilt Effect on Mouse Move
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -5; // Max 5deg tilt
+            const rotateY = ((x - centerX) / centerX) * 5;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        });
+
+        // Reset on Leave
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+        });
+    });
+}
+
+function filterTools(query) {
+    const allCards = document.querySelectorAll('.tool-card');
+    const lowerQuery = query.toLowerCase();
+    let visibleCount = 0;
+
+    allCards.forEach(card => {
+        const title = card.querySelector('h4')?.textContent.toLowerCase() || "";
+        const desc = card.querySelector('p')?.textContent.toLowerCase() || "";
+        const tag = card.querySelector('.tool-tag')?.textContent.toLowerCase() || "";
+
+        const isVisible = (card.style.display !== 'none');
+        const shouldBeVisible = (title.includes(lowerQuery) || desc.includes(lowerQuery) || tag.includes(lowerQuery));
+
+        if (shouldBeVisible) {
+            visibleCount++;
+            if (!isVisible) {
+                card.style.display = 'flex';
+                card.style.animation = 'fadeIn 0.3s ease-out';
+            }
+        } else {
+            if (isVisible) {
+                card.style.display = 'none';
+            }
+        }
+    });
+
+    // Handle "No Results"
+    const noResults = document.getElementById('no-results');
+    const sections = document.querySelectorAll('.section-header');
+
+    if (visibleCount === 0) {
+        if (noResults) noResults.classList.remove('hidden');
+        sections.forEach(s => s.classList.add('hidden'));
+    } else {
+        if (noResults) noResults.classList.add('hidden');
+        sections.forEach(s => s.classList.remove('hidden'));
+    }
+}
+
+
+/* --- Native Tools Implementation --- */
+window.loadNativeTool = function (toolId) {
+    const container = document.getElementById('active-tool-display');
+    container.innerHTML = '';
+
+    // Scroll to tool display
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    let toolHTML = '';
+
+    switch (toolId) {
+        // Student Tools
+        case 'pomodoro': toolHTML = renderPomodoro(); break;
+        case 'word-counter': toolHTML = renderWordCounter(); break;
+        case 'todo': toolHTML = renderTodo(); break;
+        case 'gpa-calc': toolHTML = renderGPACalc(); break;
+
+        // Freelancer Tools
+        case 'invoice-gen': toolHTML = renderInvoiceGen(); break;
+        case 'time-tracker': toolHTML = renderTimeTracker(); break;
+        case 'expense-est': toolHTML = renderTaxShield(); break;
+
+        // Creator Tools
+        case 'caption-fmt': toolHTML = renderCaptionFmt(); break;
+        case 'hashtag-gen': toolHTML = renderHashtagGen(); break;
+        case 'idea-board': toolHTML = renderIdeaBoard(); break;
+        case 'thumb-test': toolHTML = renderThumbTester(); break;
+
+        // New Adds (Round 1)
+        case 'flashcards': toolHTML = renderFlashcards(); break;
+        case 'rate-calc': toolHTML = renderRateCalc(); break;
+
+        // New Adds (Round 2)
+        case 'calculator': toolHTML = renderCalculator(); break;
+        case 'converter': toolHTML = renderConverter(); break;
+        case 'notes': toolHTML = renderNotes(); break;
+
+        default: toolHTML = `<p>Tool loading logic missing for ID: ${toolId}</p>`;
+    }
+
+    container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+            <h3>Active Tool</h3>
+            <button onclick="document.getElementById('active-tool-display').innerHTML='<p class=\\'text-muted\\'>Select a tool from below to start working.</p>' " style="background:none; border:none; color:var(--text-muted); cursor:pointer;">Close X</button>
+        </div>
+        ${toolHTML}
+    `;
+
+    // Initialize Logic
+    if (toolId === 'word-counter') initWordCounter();
+    if (toolId === 'pomodoro') initPomodoro();
+    // No specific Init needed for others as they use inline onclicks usually, 
+    // but for cleaner code we can add init functions if complex listeners needed.
+}
+
+// -- Student Tools --
+let timerInterval;
+function renderPomodoro() {
+    return `
+        <div style="text-align:center; padding: 20px;">
+            <div id="timer-display" style="font-size: 4rem; font-weight: 800; font-variant-numeric: tabular-nums;">25:00</div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn" id="start-timer">Start</button>
+                <button class="btn btn-outline" id="reset-timer">Reset</button>
+            </div>
+        </div>
+    `;
+}
+function initPomodoro() {
+    let timeLeft = 25 * 60;
+    const display = document.getElementById('timer-display');
+    const starBtn = document.getElementById('start-timer');
+
+    starBtn.addEventListener('click', () => {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            display.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("Time's up!");
+            }
+        }, 1000);
+    });
+    document.getElementById('reset-timer').addEventListener('click', () => {
+        if (timerInterval) clearInterval(timerInterval);
+        timeLeft = 25 * 60;
+        display.textContent = "25:00";
+    });
+}
+
+function renderWordCounter() {
+    return `
+        <div class="input-group">
+            <textarea id="word-input" class="input-field" rows="10" placeholder="Type or paste text here..."></textarea>
+        </div>
+        <div style="display: flex; gap: 30px; color: var(--text-secondary);">
+            <div>Words: <span id="count-words" style="color: var(--accent); font-weight:bold;">0</span></div>
+            <div>Chars: <span id="count-chars" style="color: var(--accent); font-weight:bold;">0</span></div>
+        </div>
+    `;
+}
+function initWordCounter() {
+    const area = document.getElementById('word-input');
+    area.addEventListener('input', () => {
+        const text = area.value.trim();
+        document.getElementById('count-chars').textContent = text.length;
+        document.getElementById('count-words').textContent = text ? text.split(/\s+/).length : 0;
+    });
+}
+
+function renderTodo() {
+    return `
+        <div>
+            <div style="display:flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="todo-input" class="input-field" placeholder="New Task...">
+                <button class="btn" onclick="addTodo()">Add</button>
+            </div>
+            <ul id="todo-list" style="list-style: none;"></ul>
+        </div>
+    `;
+}
+window.addTodo = function () {
+    const input = document.getElementById('todo-input');
+    if (!input.value) return;
+    const list = document.getElementById('todo-list');
+    const li = document.createElement('li');
+    li.style.padding = "10px";
+    li.style.borderBottom = "1px solid var(--border)";
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.innerHTML = `<span>${input.value}</span> <button onclick="this.parentElement.remove()" style="color:var(--danger); background:none; border:none; cursor:pointer;">Done</button>`;
+    list.appendChild(li);
+    input.value = '';
+}
+
+function renderGPACalc() {
+    return `
+     <p style="color: var(--text-muted);">Simple 4.0 Scale Calculator</p>
+     <div id="course-rows">
+        <div class="input-group" style="display:flex; gap:10px;">
+            <input type="number" placeholder="Credits" class="input-field creds">
+            <input type="number" placeholder="Grade (0-4)" class="input-field grade">
+        </div>
+     </div>
+     <button class="btn btn-outline" onclick="addCourseRow()" style="margin-top:10px;">+ Add Course</button>
+     
+     <div style="margin-top: 20px; font-size: 1.5rem;">
+        GPA: <span id="gpa-result" style="color: var(--accent);">0.00</span>
+     </div>
+     <button class="btn" onclick="calculateGPA()" style="margin-top: 20px;">Calculate</button>
+    `;
+}
+window.addCourseRow = function () {
+    const div = document.createElement('div');
+    div.className = "input-group";
+    div.style.display = "flex";
+    div.style.gap = "10px";
+    div.style.marginTop = "10px";
+    div.innerHTML = `
+        <input type="number" placeholder="Credits" class="input-field creds">
+        <input type="number" placeholder="Grade (0-4)" class="input-field grade">
+    `;
+    document.getElementById('course-rows').appendChild(div);
+}
+window.calculateGPA = function () {
+    const creds = document.querySelectorAll('.creds');
+    const grades = document.querySelectorAll('.grade');
+    let totalPts = 0;
+    let totalCreds = 0;
+    creds.forEach((c, i) => {
+        const cr = parseFloat(c.value) || 0;
+        const gr = parseFloat(grades[i].value) || 0;
+        totalPts += cr * gr;
+        totalCreds += cr;
+    });
+    const gpa = totalCreds ? (totalPts / totalCreds).toFixed(2) : 0.00;
+    document.getElementById('gpa-result').textContent = gpa;
+}
+
+// -- Freelancer Tools --
+
+function renderInvoiceGen() {
+    return `
+        <div class="input-group">
+            <input type="text" id="inv-client" class="input-field" placeholder="Client Name">
+            <input type="number" id="inv-amount" class="input-field" placeholder="Amount ($)">
+            <input type="text" id="inv-item" class="input-field" placeholder="Service (e.g. Web Design)">
+        </div>
+        <button class="btn" onclick="generateInvoice()">Download PDF (Mock)</button>
+        <div id="invoice-preview" style="margin-top: 20px; padding: 20px; border: 1px dashed var(--border); display:none;">
+            <h3 style="margin-bottom:10px;">INVOICE</h3>
+            <p><strong>To:</strong> <span id="prev-client"></span></p>
+            <p><strong>For:</strong> <span id="prev-item"></span></p>
+            <h2 style="margin-top:20px;">Total: $<span id="prev-amount"></span></h2>
+        </div>
+    `;
+}
+window.generateInvoice = function () {
+    const client = document.getElementById('inv-client').value;
+    const item = document.getElementById('inv-item').value;
+    const amount = document.getElementById('inv-amount').value;
+
+    if (!client || !amount) return alert("Fill details");
+
+    document.getElementById('prev-client').textContent = client;
+    document.getElementById('prev-item').textContent = item;
+    document.getElementById('prev-amount').textContent = amount;
+    document.getElementById('invoice-preview').style.display = 'block';
+}
+
+function renderTimeTracker() {
+    return `
+        <div style="text-align:center;">
+            <div id="stopwatch" style="font-size: 3rem; font-weight: 800; font-family: monospace;">00:00:00</div>
+            <div style="margin-top: 20px; display:flex; gap:10px; justify-content:center;">
+                <button class="btn" onclick="toggleTimer()" id="toggle-btn">Start</button>
+                <button class="btn btn-outline" onclick="resetStopwatch()">Stop & Log</button>
+            </div>
+            <ul id="time-logs" style="text-align:left; margin-top:20px; list-style:none; opacity:0.7;"></ul>
+        </div>
+    `;
+}
+let watchInterval;
+let watchSeconds = 0;
+let isRunning = false;
+
+window.toggleTimer = function () {
+    const btn = document.getElementById('toggle-btn');
+    if (!isRunning) {
+        isRunning = true;
+        btn.textContent = "Pause";
+        watchInterval = setInterval(() => {
+            watchSeconds++;
+            const h = Math.floor(watchSeconds / 3600);
+            const m = Math.floor((watchSeconds % 3600) / 60);
+            const s = watchSeconds % 60;
+            document.getElementById('stopwatch').textContent =
+                `${h < 10 ? '0' : ''}${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }, 1000);
+    } else {
+        isRunning = false;
+        btn.textContent = "Resume";
+        clearInterval(watchInterval);
+    }
+}
+window.resetStopwatch = function () {
+    if (watchSeconds === 0) return;
+    const log = document.createElement('li');
+    log.innerHTML = `Session: ${document.getElementById('stopwatch').textContent}`;
+    document.getElementById('time-logs').prepend(log);
+
+    clearInterval(watchInterval);
+    isRunning = false;
+    watchSeconds = 0;
+    document.getElementById('stopwatch').textContent = "00:00:00";
+    document.getElementById('toggle-btn').textContent = "Start";
+}
+
+function renderTaxShield() {
+    return `
+        <p>Simple Breakdown (30% Rule)</p>
+        <input type="number" id="tax-income" class="input-field" placeholder="Annual Income ($)">
+        <button class="btn" onclick="calcTax()">Estimate</button>
+        <div style="margin-top: 20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="tool-card" style="padding:15px; border-color:var(--danger);">
+                <span class="text-muted">Set Aside</span>
+                <h3 id="tax-owe" style="color:var(--danger);">$0</h3>
+            </div>
+            <div class="tool-card" style="padding:15px; border-color:var(--accent);">
+                <span class="text-muted">Keep</span>
+                <h3 id="tax-keep" style="color:var(--accent);">$0</h3>
+            </div>
+        </div>
+    `;
+}
+window.calcTax = function () {
+    const inc = parseFloat(document.getElementById('tax-income').value) || 0;
+    const tax = inc * 0.30;
+    document.getElementById('tax-owe').textContent = '$' + tax.toFixed(2);
+    document.getElementById('tax-keep').textContent = '$' + (inc - tax).toFixed(2);
+}
+
+// -- Creator Tools --
+
+function renderCaptionFmt() {
+    return `
+        <textarea id="cap-input" class="input-field" rows="6" placeholder="Write caption with line breaks..."></textarea>
+        <button class="btn" onclick="formatCaption()">Convert & Copy</button>
+        <p id="cap-msg" style="margin-top:10px; color:var(--accent); display:none;">Copied to clipboard!</p>
+    `;
+}
+window.formatCaption = function () {
+    const txt = document.getElementById('cap-input').value;
+    // Basic logic: ensure verify logic or just act as a clean copier
+    navigator.clipboard.writeText(txt).then(() => {
+        const msg = document.getElementById('cap-msg');
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 2000);
+    });
+}
+
+function renderHashtagGen() {
+    return `
+        <input type="text" class="input-field" placeholder="Topic (e.g. Fitness)">
+        <button class="btn" onclick="genTags()">Generate Tags</button>
+        <div id="tag-output" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:8px; display:none;"></div>
+    `;
+}
+window.genTags = function () {
+    const tags = ["#fyp", "#viral", "#trending", "#creator", "#content", "#growth"];
+    document.getElementById('tag-output').textContent = tags.join(" ");
+    document.getElementById('tag-output').style.display = 'block';
+}
+
+function renderIdeaBoard() {
+    return `
+        <input type="text" id="idea-input" class="input-field" placeholder="Video Idea...">
+        <button class="btn" onclick="addIdea()">Save Idea</button>
+        <ul id="idea-list" style="margin-top:20px; list-style:none;"></ul>
+    `;
+}
+window.addIdea = function () {
+    const val = document.getElementById('idea-input').value;
+    if (!val) return;
+    const li = document.createElement('li');
+    li.style.padding = "10px";
+    li.style.background = "rgba(255,255,255,0.05)";
+    li.style.marginBottom = "5px";
+    li.textContent = "💡 " + val;
+    document.getElementById('idea-list').appendChild(li);
+    document.getElementById('idea-input').value = '';
+}
+
+// -- NEW: Flashcards --
+function renderFlashcards() {
+    return `
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+             <input type="text" id="fc-front" class="input-field" placeholder="Front (Question)">
+             <input type="text" id="fc-back" class="input-field" placeholder="Back (Answer)">
+             <button class="btn" onclick="addCard()">Add</button>
+        </div>
+        <div id="card-display" style="perspective:1000px; height:200px; cursor:pointer; display:none;" onclick="flipCard()">
+             <div id="card-inner" style="width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 0.6s; border:1px solid var(--border); border-radius:10px; background:var(--bg-card);">
+                 <div class="card-face" style="position:absolute; width:100%; height:100%; backface-visibility:hidden; display:flex; justify-content:center; align-items:center; font-size:1.5rem; text-align:center; padding:20px;">
+                    <span id="card-front-text">Front</span>
+                 </div>
+                 <div class="card-face" style="position:absolute; width:100%; height:100%; backface-visibility:hidden; display:flex; justify-content:center; align-items:center; font-size:1.5rem; text-align:center; padding:20px; transform:rotateY(180deg); background:var(--accent); color:black;">
+                    <span id="card-back-text">Back</span>
+                 </div>
+             </div>
+        </div>
+        <p id="fc-count" style="text-align:center; margin-top:10px; color:var(--text-muted);">0 Cards</p>
+    `;
+}
+let flashcards = [];
+let isFlipped = false;
+window.addCard = function () {
+    const f = document.getElementById('fc-front').value;
+    const b = document.getElementById('fc-back').value;
+    if (!f || !b) return;
+    flashcards.push({ f, b });
+    document.getElementById('fc-front').value = '';
+    document.getElementById('fc-back').value = '';
+    document.getElementById('fc-count').textContent = flashcards.length + " Cards (Click to Flip)";
+    if (flashcards.length === 1) showCard(0);
+}
+window.showCard = function (idx) {
+    document.getElementById('card-display').style.display = 'block';
+    document.getElementById('card-front-text').textContent = flashcards[idx].f;
+    document.getElementById('card-back-text').textContent = flashcards[idx].b;
+}
+window.flipCard = function () {
+    const inner = document.getElementById('card-inner');
+    if (isFlipped) {
+        inner.style.transform = 'rotateY(0deg)';
+    } else {
+        inner.style.transform = 'rotateY(180deg)';
+    }
+    isFlipped = !isFlipped;
+}
+
+// -- NEW: Rate Calc --
+function renderRateCalc() {
+    return `
+        <h3>Freelance Rate Calculator</h3>
+        <div class="input-group" style="margin-top:10px;">
+            <label>Goal Annual Income ($)</label>
+            <input type="number" id="rc-goal" class="input-field" value="100000">
+        </div>
+        <div class="input-group">
+            <label>Billable Hours / Week</label>
+            <input type="number" id="rc-hours" class="input-field" value="25">
+        </div>
+        <div class="input-group">
+            <label>Weeks Off / Year</label>
+            <input type="number" id="rc-vacation" class="input-field" value="4">
+        </div>
+        <button class="btn" onclick="calcRate()">Calculate Hourly Rate</button>
+        <div style="margin-top:20px; text-align:center;">
+             <h3>You should charge:</h3>
+             <h1 id="rc-result" style="color:var(--accent); font-size:3rem;">$0/hr</h1>
+        </div>
+    `;
+}
+window.calcRate = function () {
+    const goal = parseFloat(document.getElementById('rc-goal').value);
+    const hours = parseFloat(document.getElementById('rc-hours').value);
+    const vacation = parseFloat(document.getElementById('rc-vacation').value);
+
+    const workWeeks = 52 - vacation;
+    const totalHours = workWeeks * hours;
+    // Add 30% for taxes/overhead buffer
+    const billableGoal = goal * 1.30;
+
+    const rate = (billableGoal / totalHours).toFixed(0);
+    document.getElementById('rc-result').textContent = `$${rate}/hr`;
+}
+
+// -- NEW: Thumbnail Tester --
+function renderThumbTester() {
+    return `
+        <p>Preview your thumbnail in different contexts.</p>
+        <input type="file" id="thumb-upload" class="input-field" accept="image/*" onchange="loadThumb(event)">
+        
+        <div id="thumb-prev-area" style="display:none; margin-top:20px;">
+            <h4>Home Page (Dark)</h4>
+            <div style="background:#0f0f0f; padding:10px; width:300px; border-radius:10px;">
+                <img id="t-img-1" style="width:100%; border-radius:8px; aspect-ratio:16/9; object-fit:cover;">
+                <div style="margin-top:5px; height:10px; width:80%; background:#333; border-radius:2px;"></div>
+                <div style="margin-top:5px; height:10px; width:40%; background:#333; border-radius:2px;"></div>
+            </div>
+
+            <h4 style="margin-top:20px;">Sidebar (Small)</h4>
+            <div style="background:#fff; padding:10px; width:180px; color:black; border-radius:5px;">
+                 <img id="t-img-2" style="width:100%; border-radius:4px; aspect-ratio:16/9; object-fit:cover;">
+                 <div style="margin-top:5px; height:8px; width:90%; background:#ccc;"></div>
+            </div>
+        </div>
+    `;
+}
+window.loadThumb = function (event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        document.getElementById('t-img-1').src = reader.result;
+        document.getElementById('t-img-2').src = reader.result;
+        document.getElementById('thumb-prev-area').style.display = 'block';
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+// -- NEW: Calculator --
+function renderCalculator() {
+    return `
+        <div style="max-width:300px; margin:0 auto; background:var(--bg-card); padding:20px; border-radius:15px; border:1px solid var(--border);">
+            <input type="text" id="calc-disp" readonly style="width:100%; margin-bottom:15px; background:#111; border:none; color:white; font-size:1.5rem; text-align:right; padding:10px; border-radius:5px;">
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
+                <button class="btn-outline" onclick="calcInput('C')">C</button>
+                <button class="btn-outline" onclick="calcInput('(')">(</button>
+                <button class="btn-outline" onclick="calcInput(')')">)</button>
+                <button class="btn-outline" onclick="calcInput('/')">÷</button>
+                
+                <button class="btn-outline" onclick="calcInput('7')">7</button>
+                <button class="btn-outline" onclick="calcInput('8')">8</button>
+                <button class="btn-outline" onclick="calcInput('9')">9</button>
+                <button class="btn-outline" onclick="calcInput('*')">×</button>
+                
+                <button class="btn-outline" onclick="calcInput('4')">4</button>
+                <button class="btn-outline" onclick="calcInput('5')">5</button>
+                <button class="btn-outline" onclick="calcInput('6')">6</button>
+                <button class="btn-outline" onclick="calcInput('-')">-</button>
+                
+                <button class="btn-outline" onclick="calcInput('1')">1</button>
+                <button class="btn-outline" onclick="calcInput('2')">2</button>
+                <button class="btn-outline" onclick="calcInput('3')">3</button>
+                <button class="btn-outline" onclick="calcInput('+')">+</button>
+                
+                <button class="btn-outline" onclick="calcInput('0')">0</button>
+                <button class="btn-outline" onclick="calcInput('.')">.</button>
+                <button class="btn" style="grid-column:span 2;" onclick="calcEval()">=</button>
+            </div>
+        </div>
+    `;
+}
+window.calcInput = function (v) {
+    const d = document.getElementById('calc-disp');
+    if (v === 'C') d.value = '';
+    else d.value += v;
+}
+window.calcEval = function () {
+    try {
+        const d = document.getElementById('calc-disp');
+        d.value = eval(d.value);
+    } catch (e) {
+        alert("Invalid Expression");
+    }
+}
+
+// -- NEW: Unit Converter --
+function renderConverter() {
+    return `
+        <div style="display:flex; gap:10px;">
+            <select id="conv-type" class="input-field" onchange="updateUnits()">
+                <option value="len">Length</option>
+                <option value="weight">Weight</option>
+            </select>
+            <input type="number" id="conv-val" class="input-field" placeholder="Value">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+             <select id="conv-from" class="input-field"></select>
+             <span>to</span>
+             <select id="conv-to" class="input-field"></select>
+        </div>
+        <button class="btn" onclick="convert()" style="margin-top:10px;">Convert</button>
+        <h2 id="conv-res" style="margin-top:20px; color:var(--accent);"></h2>
+    `;
+}
+const units = {
+    len: ['Meters', 'Feet', 'Inches', 'Kilometers', 'Miles'],
+    weight: ['Kilograms', 'Pounds', 'Ounces', 'Grams']
+};
+const factors = {
+    len: { Meters: 1, Feet: 3.28084, Inches: 39.3701, Kilometers: 0.001, Miles: 0.000621371 },
+    weight: { Kilograms: 1, Pounds: 2.20462, Ounces: 35.274, Grams: 1000 }
+};
+window.updateUnits = function () {
+    const type = document.getElementById('conv-type').value;
+    const from = document.getElementById('conv-from');
+    const to = document.getElementById('conv-to');
+
+    const opts = units[type].map(u => `<option value="${u}">${u}</option>`).join('');
+    from.innerHTML = opts;
+    to.innerHTML = opts;
+}
+window.convert = function () {
+    const type = document.getElementById('conv-type').value;
+    const val = parseFloat(document.getElementById('conv-val').value);
+    const f = document.getElementById('conv-from').value;
+    const t = document.getElementById('conv-to').value;
+
+    if (isNaN(val)) return;
+
+    // Convert to base then to target
+    const base = val / factors[type][f];
+    const res = base * factors[type][t];
+
+    document.getElementById('conv-res').textContent = `${val} ${f} = ${res.toFixed(4)} ${t}`;
+}
+// Init units on load
+setTimeout(window.updateUnits, 500);
+
+// -- NEW: Sticky Notes --
+function renderNotes() {
+    return `
+        <textarea id="sticky-note" class="input-field" rows="12" placeholder="Start typing... Auto-saved locally." style="background:#fff2cc; color:#333; font-family:cursive; padding:20px; font-size:1.2rem;"></textarea>
+        <p style="text-align:right; font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Auto-saved to LocalStorage</p>
+    `;
+}
+// Use a small timeout to load saved data after render
+setTimeout(() => {
+    const saved = localStorage.getItem('workstack_notes');
+    const el = document.getElementById('sticky-note');
+    if (saved && el) el.value = saved;
+
+    if (el) {
+        el.addEventListener('input', () => {
+            localStorage.setItem('workstack_notes', el.value);
+        });
+    }
+}, 500);

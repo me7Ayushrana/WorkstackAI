@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace | WorkstackAI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="container" style="display:flex; justify-content: space-between;">
+            <div class="logo">WorkstackAI.</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                <span id="role-badge">Workspace</span>
+                <a href="index.html" style="margin-left: 20px; color: var(--danger);">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <div style="margin-bottom: 40px; text-align: center;">
+                <h1 id="workspace-title" style="margin-bottom: 15px;">Loading...</h1>
+                <p id="workspace-desc"
+                    style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 35px auto;">Please wait while
+                    we configure your environment.</p>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="tool-search" class="search-input"
+                        placeholder="Type to search WorkstackAI... (e.g. 'PDF', 'Design')">
+                    <div id="search-suggestions" class="suggestions-box hidden"></div>
+                </div>
+            </div>
+
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden" style="text-align:center; padding: 40px; color: var(--text-secondary);">
+                <h3>No tools found matching your search.</h3>
+                <p>Try a generic term like "AI", "Text", or "Video".</p>
+            </div>
+
+            <!-- Native Tool Display Area (Hidden by default until tool clicked) -->
+            <div id="active-tool-display" class="native-tool-container">
+                <p class="text-muted" style="color: var(--text-muted); text-align: center; padding-top: 150px;">
+                    Select a productivity tool from below to launch it here.
+                </p>
+            </div>
+
+            <!-- AI Decision Zone -->
+            <div class="section-header">
+                <div class="section-title">AI Decision Zone</div>
+                <span style="font-size: 0.8rem; color: var(--accent);">RECOMMENDED WORKFLOWS</span>
+            </div>
+            <div id="ai-zone-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Native Tools -->
+            <div class="section-header">
+                <div class="section-title">Native Tools</div>
+            </div>
+            <div id="native-tools-grid" class="tool-grid"
+                style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- External Tools -->
+            <div class="section-header">
+                <div class="section-title">Curated Toolkit</div>
+            </div>
+            <div id="external-tools-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <div
+                style="margin-top: 80px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.8rem; color: var(--text-muted);">
+                <strong>Disclaimer:</strong> Workstack does not own third-party tools linked above. All trademarks
+                belong to their respective owners. External tools open in a new tab.
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/data.js?v=6"></script>
+    <script src="js/app.js?v=6"></script>
+</body>
+
+</html>
