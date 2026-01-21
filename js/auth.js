@@ -81,8 +81,24 @@ const AUTH = {
     // --- UI Helpers ---
 
     checkProtection: function () {
+        // 1. Must be logged in
         if (!this.state.isLoggedIn) {
             window.location.href = "index.html?auth_required=true";
+            return;
+        }
+
+        // 2. Must have paid (Skip check if we are already on payment page)
+        const hasPaid = localStorage.getItem('hasPaid') === 'true';
+        const isPaymentPage = window.location.pathname.includes('payment.html');
+
+        if (!hasPaid && !isPaymentPage) {
+            console.log("Access Denied: Payment Required");
+            window.location.href = "payment.html";
+        }
+
+        // 3. If Paid, don't show payment page again
+        if (hasPaid && isPaymentPage) {
+            window.location.href = "roles.html";
         }
     },
 
