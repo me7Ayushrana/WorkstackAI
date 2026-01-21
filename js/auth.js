@@ -58,6 +58,26 @@ const AUTH = {
         this.state.user = user;
     },
 
+    // --- Admin Backdoor ---
+    checkAdminBypass: function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        // Magic Secret: 'workstack_admin_vip'
+        if (urlParams.get('access_token') === 'workstack_admin_vip') {
+            console.log("Admin Access Granted 🔓");
+            localStorage.setItem('hasPaid', 'true');
+            alert("Admin Access Unlocked! Welcome, Creator.");
+
+            // Clean URL
+            const newUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+
+            // If on payment page, redirect
+            if (window.location.pathname.includes('payment.html')) {
+                window.location.href = 'roles.html';
+            }
+        }
+    },
+
     // --- UI Helpers ---
 
     checkProtection: function () {
@@ -85,12 +105,13 @@ const AUTH = {
     }
 };
 
+// Auto-run logic
+document.addEventListener('DOMContentLoaded', () => {
+    AUTH.updateHeader();
+    AUTH.checkAdminBypass();
+});
+
 // Auto-run logic on protected pages
 if (window.location.pathname.includes('payment.html') || window.location.pathname.includes('roles.html') || window.location.pathname.includes('workspace.html')) {
     AUTH.checkProtection();
 }
-
-// Update Header on Load
-document.addEventListener('DOMContentLoaded', () => {
-    AUTH.updateHeader();
-});
