@@ -59,6 +59,8 @@
             <!-- Step 2: Phone Input -->
             <div id="auth-step-2" class="hidden">
                 <input type="tel" id="phone-input" class="input-field" placeholder="Enter Mobile Number (+91)">
+                <!-- ReCaptcha Container for Firebase -->
+                <div id="recaptcha-container" style="margin-bottom:10px;"></div>
                 <button class="btn" style="width:100%; margin-bottom:10px;" onclick="sendOTP()">Send OTP</button>
                 <button class="btn-outline" style="width:100%; border:none;" onclick="resetAuth()">Back</button>
             </div>
@@ -99,9 +101,13 @@
         </div>
     </footer>
 
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
     <script src="js/data.js?v=6"></script>
     <script src="js/chatbot.js?v=6"></script>
-    <script src="js/auth.js?v=6"></script>
+    <script src="js/auth.js?v=7"></script> <!-- Bump version -->
 
     <script>
         // --- Modal Logic ---
@@ -109,6 +115,10 @@
 
         function openAuthModal() {
             authModal.classList.add('active');
+            // Render ReCaptcha if needed
+            if (!window.recaptchaVerifier && AUTH.initRecaptcha) {
+                AUTH.initRecaptcha();
+            }
         }
 
         function closeAuthModal() {
@@ -131,10 +141,12 @@
             AUTH.loginWithGoogle().then(user => {
                 closeAuthModal();
                 AUTH.updateHeader();
-                // If user was trying to enter workspace, redirect them now
                 if (window.pendingRedirect) {
                     window.location.href = window.pendingRedirect;
                 }
+            }).catch(e => {
+                resetAuth();
+                alert(e.message);
             });
         }
 
@@ -142,32 +154,44 @@
         function showPhoneInput() {
             document.getElementById('auth-step-1').classList.add('hidden');
             document.getElementById('auth-step-2').classList.remove('hidden');
+            // Ensure ReCaptcha is ready
+            setTimeout(() => {
+                if (AUTH.initRecaptcha) AUTH.initRecaptcha();
+            }, 500);
         }
 
         function sendOTP() {
             const phone = document.getElementById('phone-input').value;
-            if (phone.length < 10) return alert("Please enter valid number");
+            if (phone.length < 10) return alert("Please enter valid number (e.g., +919999999999)");
 
-            // Mock sending
-            document.getElementById('auth-step-2').classList.add('hidden');
-            document.getElementById('auth-step-3').classList.remove('hidden');
+            const btn = document.querySelector('#auth-step-2 .btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "Sending...";
+
+            AUTH.sendOTP(phone).then(() => {
+                document.getElementById('auth-step-2').classList.add('hidden');
+                document.getElementById('auth-step-3').classList.remove('hidden');
+                btn.innerHTML = originalText;
+            }).catch(error => {
+                alert("Error sending OTP: " + error.message);
+                btn.innerHTML = originalText;
+            });
         }
 
         function verifyOTP() {
             const otp = document.getElementById('otp-input').value;
-            const phone = document.getElementById('phone-input').value;
 
             document.getElementById('auth-step-3').classList.add('hidden');
             document.getElementById('auth-loading').classList.remove('hidden');
 
-            AUTH.loginWithPhone(phone, otp).then(user => {
+            AUTH.verifyOTP(otp).then(user => {
                 closeAuthModal();
                 AUTH.updateHeader();
                 if (window.pendingRedirect) {
                     window.location.href = window.pendingRedirect;
                 }
             }).catch(err => {
-                alert(err);
+                alert("Invalid OTP: " + err.message);
                 resetAuth();
             });
         }
@@ -176,16 +200,16 @@
         function handleEnterWorkspace(e) {
             e.preventDefault();
             if (AUTH.state.isLoggedIn) {
-                // If logged in, go to Roles (or Payment if logic required there)
-                // Since user wants to pay later, we direct to Roles mostly, 
-                // BUT user said "First signin then purchase".
-                // So we check if they have 'paid'. If not, go to payment.
-                // For now, let's assume flow is: Index -> Auth -> Payment -> Roles
-
-                // Let's redirect to Payment.html first, which handles the "Free/Paid" logic
-                window.location.href = "payment.html";
+                // Check Payment logic handled in Auth.js checkProtection or by redirect
+                // If logged in, go to Roles (Payment check will happen there if unpaid)
+                // But better to check hasPaid explicitly here for UX
+                if (localStorage.getItem('hasPaid') === 'true') {
+                    window.location.href = "roles.html";
+                } else {
+                    window.location.href = "payment.html";
+                }
             } else {
-                window.pendingRedirect = "payment.html"; // Save intent
+                window.pendingRedirect = "payment.html";
                 openAuthModal();
             }
         }
