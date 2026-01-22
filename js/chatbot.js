@@ -27,7 +27,12 @@ const CHAT_DATA = {
         "features": "We have 3 dedicated modes: Student (Research), Freelancer (business), and Creator (Video/Design). Plus a native Pomodoro timer and GPA calculator!",
         "freelancer": "For freelancers, we have invoice generators, contract drafters, and client outreach tools all in one place."
     },
-    default: "That's a great question! honestly, the best way to see the magic is to try it yourself. Access is only ₹9 right now—a total steal for the value you get! 🚀"
+    default_responses: [
+        "That's interesting! context is key—could you elaborate?",
+        "I'm not sure I understand. Try asking about 'features', 'pricing', or 'tools'.",
+        "Could you rephrase that? I'm better at answering specific questions about the workspace.",
+        "I'm still learning! Ask me how WorkstackAI can save you time."
+    ]
 };
 
 document.addEventListener('DOMContentLoaded', () => {
