@@ -277,7 +277,7 @@ const TOOL_DATA = {
             { name: "Subway Surfers", url: "https://poki.com/en/g/subway-surfers", category: "Runner", desc: "The legendary endless runner.", pricing: "Free" },
             { name: "Temple Run 2", url: "https://poki.com/en/g/temple-run-2", category: "Runner", desc: "Escape the temple.", pricing: "Free" },
             { name: "Agar.io", url: "https://agar.io/", category: "Multiplayer", desc: "Eat cells, grow bigger.", pricing: "Free" },
-            { name: "Slither.io", url: "http://slither.io/", category: "Multiplayer", desc: "Classic snake battle royale.", pricing: "Free" },
+            { name: "Slither.io", url: "https://slither.io/", category: "Multiplayer", desc: "Classic snake battle royale.", pricing: "Free" },
             { name: "Smash Karts", url: "https://smashkarts.io/", category: "Kart Battle", desc: "Mario Kart meets Fortnite.", pricing: "Free" },
             { name: "Krunker.io", url: "https://krunker.io/", category: "FPS", desc: "Fast-paced pixel shooter.", pricing: "Free" },
             { name: "Slope", url: "https://poki.com/en/g/slope", category: "Arcade", desc: "High speed reflex challenge.", pricing: "Free" },

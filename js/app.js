@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Page Routing / Guard Logic
     const path = window.location.pathname;
 
-    if (path.includes('workspace.html')) {
+    if (path.includes('workspace')) {
         checkAccess();
         renderWorkspace();
-    } else if (path.includes('roles.html')) {
+    } else if (path.includes('roles')) {
         // FORCE RESET: Ensure no role is pre-selected when landing here
         sessionStorage.removeItem('selectedRole');
-    } else if (path.includes('payment.html')) {
+    } else if (path.includes('payment')) {
         checkRoleSelection();
-    } else if (path.includes('fun-zone.html')) {
+    } else if (path.includes('fun-zone')) {
         renderFunZone();
     }
 
