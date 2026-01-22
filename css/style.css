@@ -654,6 +654,112 @@ body::before {
 }
 
 /* Removed Old Auth Classes */
+/* --- Roadmap & Features --- */
+.roadmap-title {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    color: var(--text-muted);
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media(max-width: 500px) {
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 0.2s;
+}
+
+.feature-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.feature-card .icon {
+    font-size: 1.2rem;
+}
+
+.feature-card h4 {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    color: white;
+}
+
+.feature-card p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Upcoming List */
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feature-item {
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 3px solid var(--text-muted);
+    padding: 12px 15px;
+    border-radius: 0 8px 8px 0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.feature-item .badge {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.feature-item .badge.warn {
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.feature-item .badge.future {
+    color: var(--text-muted);
+}
+
+.feature-item h4 {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    color: white;
+}
+
+.feature-item p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+
 .input-field {
     width: 100%;
     padding: 14px 16px;

@@ -89,11 +89,10 @@
                     style="border-radius: 100px; padding: 6px 16px; font-size: 0.85rem; border-color: rgba(255,255,255,0.1);">
                     Ayush Rana <span style="opacity: 0.6; margin-left: 4px;">↗</span>
                 </button>
-                <span style="opacity: 0.3; color: white;" id="req-divider" class="hidden">|</span>
-                <button id="req-btn" onclick="openRequestModal()"
-                    style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600;"
-                    class="hidden">
-                    💡 Request a Feature
+                <span style="opacity: 0.3; color: white;">|</span>
+                <button onclick="openFeaturesModal()"
+                    style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                    🚀 Features & Roadmap
                 </button>
             </div>
         </div>
@@ -166,41 +165,112 @@
         </div>
     </div>
 
-    <!-- Tool Request Modal -->
-    <div id="request-modal-overlay" class="auth-overlay">
-        <div class="auth-modal" style="max-width: 450px; text-align: left;">
-            <h2 style="margin-bottom: 10px;">Suggest a Tool 💡</h2>
-            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.9rem;">
-                Help us build the ultimate workspace. What tool do you need?
-            </p>
-
-            <div id="req-form">
-                <select id="req-role" class="input-field" style="cursor: pointer;">
-                    <option value="" disabled selected>Who are you? (Select Role)</option>
-                    <option value="Student">Student 🎓</option>
-                    <option value="Creator">Creator 🎨</option>
-                    <option value="Freelancer">Freelancer 💼</option>
-                </select>
-                <input type="text" id="req-name" class="input-field" placeholder="Tool Name (e.g., SEO Analyzer)">
-                <textarea id="req-desc" class="input-field" rows="3" placeholder="How should it work?..."
-                    style="resize: vertical;"></textarea>
-
-                <button class="btn" onclick="submitToolRequest()" style="width: 100%; margin-top: 10px;">
-                    Submit Request 🚀
-                </button>
+    <!-- Features & Roadmap Modal -->
+    <div id="features-modal-overlay" class="auth-overlay">
+        <div class="auth-modal" style="max-width: 600px; text-align: left; max-height: 85vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem;">🚀 Features & Roadmap</h2>
+                <button onclick="closeFeaturesModal()"
+                    style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 1.2rem;">✕</button>
             </div>
 
-            <!-- Admin View List -->
-            <div id="req-list-container" class="hidden">
-                <div id="req-list-content" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
-                    <!-- Items go here -->
+            <!-- Existing Features -->
+            <div class="roadmap-section">
+                <h3 class="roadmap-title">✅ Live Now (Premium)</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">🔐</div>
+                        <div>
+                            <h4>Secure Auth</h4>
+                            <p>Premium Google-only login with encrypted sessions.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💳</div>
+                        <div>
+                            <h4>Smart Payments</h4>
+                            <p>Integrated Razorpay gateway with role-based unlocking.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🤖</div>
+                        <div>
+                            <h4>AI Assistant</h4>
+                            <p>Context-aware chatbot trained for productivity queries.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🎮</div>
+                        <div>
+                            <h4>Fun Zone</h4>
+                            <p>Exclusive gaming area with 15+ mini-games.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">👨‍💻</div>
+                        <div>
+                            <h4>Creator Profile</h4>
+                            <p>Interactive portfolio with "HomeGuard X" featured project.</p>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-outline" onclick="showRequestForm()" style="width: 100%;">Back to Form</button>
             </div>
 
-            <div style="margin-top: 20px; text-align: center; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;"
-                onclick="closeRequestModal()">
-                Close
+            <!-- Upcoming Features -->
+            <div class="roadmap-section" style="margin-top: 30px;">
+                <h3 class="roadmap-title" style="color: var(--accent);">🚧 Upcoming Roadmap</h3>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="badge">In Progress</span>
+                        <h4>Tool Request System V2</h4>
+                        <p>A drag-and-drop builder for users to create their own tools.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge warn">Planned</span>
+                        <h4>Cloud Sync ☁️</h4>
+                        <p>Sync your workspace state across Desktop, Tablet, and Mobile.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge warn">Planned</span>
+                        <h4>Mobile App 📱</h4>
+                        <p>Native iOS & Android apps with offline support.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Team Spaces 👥</h4>
+                        <p>Real-time collaboration for efficient freelance teams.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Analytics Dashboard 📈</h4>
+                        <p>Track your productivity usage and tool metrics.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Voice Commands 🎙️</h4>
+                        <p>Narrate your tasks: "Hey Workstack, draft an email."</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Developer API 🔌</h4>
+                        <p>Build your own plugins and extensions for Workstack.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Focus Mode 🚫</h4>
+                        <p>Block distractions and notifications while you work.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="margin-top: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                    WorkstackAI is constantly evolving.<br>
+                    <span style="color: white; opacity: 0.8;">Stay tuned for weekly updates.</span>
+                </p>
+                <button class="btn" onclick="closeFeaturesModal()" style="margin-top: 15px; width: 100%;">Got
+                    it!</button>
             </div>
         </div>
     </div>
@@ -208,12 +278,10 @@
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <script src="js/data.js?v=6"></script>
-    <script src="js/chatbot.js?v=7"></script>
-    <script src="js/auth.js?v=7"></script>
-    <script src="js/firestore.js?v=1"></script> <!-- NEW -->
+    <script src="js/data.js?v=9"></script>
+    <script src="js/chatbot.js?v=8"></script>
+    <script src="js/auth.js?v=9"></script> <!-- Firestore Removed -->
 
     <script>
         // --- Modal Logic ---
@@ -291,15 +359,13 @@
             document.getElementById('creator-modal-overlay').classList.remove('active');
         }
 
-        // --- Premium Feature Check ---
-        document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('hasPaid') === 'true') {
-                const reqBtn = document.getElementById('req-btn');
-                const reqDiv = document.getElementById('req-divider');
-                if (reqBtn) reqBtn.classList.remove('hidden');
-                if (reqDiv) reqDiv.classList.remove('hidden');
-            }
-        });
+        // --- Features Modal ---
+        function openFeaturesModal() {
+            document.getElementById('features-modal-overlay').classList.add('active');
+        }
+        function closeFeaturesModal() {
+            document.getElementById('features-modal-overlay').classList.remove('active');
+        }
     </script>
 </body>
 
