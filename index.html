@@ -83,11 +83,16 @@
     <footer>
         <div class="container">
             <p style="margin-bottom: 15px;">&copy; 2026 WorkstackAI. Optimized for Focus.</p>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span style="color: var(--text-secondary); font-size: 0.9rem;">Developed by</span>
                 <button onclick="openCreatorModal()" class="btn-outline"
                     style="border-radius: 100px; padding: 6px 16px; font-size: 0.85rem; border-color: rgba(255,255,255,0.1);">
                     Ayush Rana <span style="opacity: 0.6; margin-left: 4px;">↗</span>
+                </button>
+                <span style="opacity: 0.3; color: white;">|</span>
+                <button onclick="openRequestModal()"
+                    style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                    💡 Request a Feature
                 </button>
             </div>
         </div>
@@ -146,8 +151,49 @@
                 </div>
             </a>
 
-            <div style="margin-top: 2rem; text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--text-muted);">More upcoming projects coming soon...</p>
+            <!-- Admin View Trigger (Hidden unless Admin) -->
+            <div id="admin-tools"
+                style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;"
+                class="hidden">
+                <h4
+                    style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; margin-bottom: 12px;">
+                    💎 Admin Zone</h4>
+                <button onclick="viewProductRequests()" class="btn-outline" style="width: 100%; font-size: 0.85rem;">
+                    View Tool Requests 📨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tool Request Modal -->
+    <div id="request-modal-overlay" class="auth-overlay">
+        <div class="auth-modal" style="max-width: 450px; text-align: left;">
+            <h2 style="margin-bottom: 10px;">Suggest a Tool 💡</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.9rem;">
+                Help us build the ultimate workspace. What tool do you need?
+            </p>
+
+            <div id="req-form">
+                <input type="text" id="req-name" class="input-field" placeholder="Tool Name (e.g., SEO Analyzer)">
+                <textarea id="req-desc" class="input-field" rows="3" placeholder="How should it work?..."
+                    style="resize: vertical;"></textarea>
+
+                <button class="btn" onclick="submitToolRequest()" style="width: 100%; margin-top: 10px;">
+                    Submit Request 🚀
+                </button>
+            </div>
+
+            <!-- Admin View List -->
+            <div id="req-list-container" class="hidden">
+                <div id="req-list-content" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                    <!-- Items go here -->
+                </div>
+                <button class="btn-outline" onclick="showRequestForm()" style="width: 100%;">Back to Form</button>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;"
+                onclick="closeRequestModal()">
+                Close
             </div>
         </div>
     </div>
@@ -155,10 +201,12 @@
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script src="js/data.js?v=6"></script>
     <script src="js/chatbot.js?v=7"></script>
-    <script src="js/auth.js?v=7"></script> <!-- Bump version -->
+    <script src="js/auth.js?v=7"></script>
+    <script src="js/firestore.js?v=1"></script> <!-- NEW -->
 
     <script>
         // --- Modal Logic ---
