@@ -89,9 +89,10 @@
                     style="border-radius: 100px; padding: 6px 16px; font-size: 0.85rem; border-color: rgba(255,255,255,0.1);">
                     Ayush Rana <span style="opacity: 0.6; margin-left: 4px;">↗</span>
                 </button>
-                <span style="opacity: 0.3; color: white;">|</span>
-                <button onclick="openRequestModal()"
-                    style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                <span style="opacity: 0.3; color: white;" id="req-divider" class="hidden">|</span>
+                <button id="req-btn" onclick="openRequestModal()"
+                    style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600;"
+                    class="hidden">
                     💡 Request a Feature
                 </button>
             </div>
@@ -174,6 +175,12 @@
             </p>
 
             <div id="req-form">
+                <select id="req-role" class="input-field" style="cursor: pointer;">
+                    <option value="" disabled selected>Who are you? (Select Role)</option>
+                    <option value="Student">Student 🎓</option>
+                    <option value="Creator">Creator 🎨</option>
+                    <option value="Freelancer">Freelancer 💼</option>
+                </select>
                 <input type="text" id="req-name" class="input-field" placeholder="Tool Name (e.g., SEO Analyzer)">
                 <textarea id="req-desc" class="input-field" rows="3" placeholder="How should it work?..."
                     style="resize: vertical;"></textarea>
@@ -283,6 +290,16 @@
         function closeCreatorModal() {
             document.getElementById('creator-modal-overlay').classList.remove('active');
         }
+
+        // --- Premium Feature Check ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('hasPaid') === 'true') {
+                const reqBtn = document.getElementById('req-btn');
+                const reqDiv = document.getElementById('req-divider');
+                if (reqBtn) reqBtn.classList.remove('hidden');
+                if (reqDiv) reqDiv.classList.remove('hidden');
+            }
+        });
     </script>
 </body>
 

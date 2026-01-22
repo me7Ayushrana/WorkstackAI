@@ -2,38 +2,44 @@
 
 const DB = {
     db: null,
-    
-    init: function() {
-        if (!firebase.apps.length) {
-            console.error("Firebase not initialized!");
-            return;
+
+    init: function () {
+        if (typeof firebase === 'undefined' || !firebase.apps.length) {
+            console.error("Firebase not initialized! Waiting...");
+            return false;
         }
         this.db = firebase.firestore();
-        // Check for offline persistence (optional, good for PWA)
-        // this.db.enablePersistence().catch(err => console.log(err));
+        return true;
     },
 
-    submitRequest: function(toolName, description) {
+    submitRequest: function (role, toolName, description) {
         return new Promise((resolve, reject) => {
-            if (!this.db) this.init();
-            
+            if (!this.db) {
+                const ready = this.init();
+                if (!ready) {
+                    reject(new Error("Database not connected. Please reload."));
+                    return;
+                }
+            }
+
             this.db.collection("tool_requests").add({
+                role: role,
                 name: toolName,
                 description: description,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 status: "pending"
             })
-            .then((docRef) => {
-                resolve(docRef.id);
-            })
-            .catch((error) => {
-                console.error("Error adding document: ", error);
-                reject(error);
-            });
+                .then((docRef) => {
+                    resolve(docRef.id);
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    reject(error);
+                });
         });
     },
 
-    getRequests: function() {
+    getRequests: function () {
         return new Promise((resolve, reject) => {
             if (!this.db) this.init();
 
@@ -65,15 +71,17 @@ function closeRequestModal() {
 }
 
 function submitToolRequest() {
+    const roleInput = document.getElementById('req-role');
     const nameInput = document.getElementById('req-name');
     const descInput = document.getElementById('req-desc');
     const btn = document.querySelector('#req-form .btn');
-    
+
+    const role = roleInput.value;
     const name = nameInput.value.trim();
     const desc = descInput.value.trim();
 
-    if (!name || !desc) {
-        alert("Please fill in both fields!");
+    if (!role || !name || !desc) {
+        alert("Please select your role and fill in all fields!");
         return;
     }
 
@@ -81,8 +89,9 @@ function submitToolRequest() {
     btn.innerHTML = "Sending... 🚀";
     btn.disabled = true;
 
-    DB.submitRequest(name, desc).then(() => {
+    DB.submitRequest(role, name, desc).then(() => {
         alert("Thanks! Your request has been sent to the developer. 📨");
+        roleInput.value = "";
         nameInput.value = "";
         descInput.value = "";
         closeRequestModal();
@@ -99,11 +108,11 @@ function submitToolRequest() {
 function viewProductRequests() {
     // Basic Security Check (Client-side only, real security via Firestore Rules)
     const isAdmin = localStorage.getItem('hasPaid') === 'true' && window.location.search.includes('access_token=workstack_admin_vip');
-    
+
     // For now, let's just allow checking if we are in 'Admin Mode' via token or just reuse the VIP token logic
     // Or simpler: Just call it. Firestore rules should prevent reads if we set them up, 
     // but since user asked for free open access initally, we likely have open rules.
-    
+
     const listContainer = document.getElementById('req-list-container');
     const formContainer = document.getElementById('req-form');
     const listContent = document.getElementById('req-list-content');
@@ -145,11 +154,11 @@ function showRequestForm() {
 // Auto-init
 document.addEventListener('DOMContentLoaded', () => {
     DB.init();
-    
+
     // Admin Check to show the 'View Requests' button in Creator Modal
     // We reuse the Admin Backdoor logic: ?access_token=workstack_admin_vip
     if (window.location.search.includes('access_token=workstack_admin_vip')) {
         const adminTools = document.getElementById('admin-tools');
-        if(adminTools) adminTools.classList.remove('hidden');
+        if (adminTools) adminTools.classList.remove('hidden');
     }
 });
