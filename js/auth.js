@@ -74,6 +74,13 @@ const AUTH = {
                     resolve("OTP Sent");
                 }).catch((error) => {
                     console.error("SMS Error:", error);
+                    if (error.code === 'auth/billing-not-enabled') {
+                        alert("⚠️ Firebase Billing Required\n\nTo send real SMS, you must upgrade your Firebase project to the Blaze Plan (Pay as you go).\n\nUse a Test Number + OTP to bypass this for development.");
+                    } else if (error.code === 'auth/too-many-requests') {
+                        alert("⚠️ Too many attempts. Please try again later.");
+                    } else {
+                        alert("Error sending OTP: " + error.message);
+                    }
                     reject(error);
                 });
         });
