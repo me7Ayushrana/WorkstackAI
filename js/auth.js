@@ -24,6 +24,7 @@ const AUTH = {
 
     // --- Core Actions ---
 
+    // --- Core Actions ---
     loginWithGoogle: function () {
         return new Promise((resolve, reject) => {
             const provider = new firebase.auth.GoogleAuthProvider();
@@ -45,67 +46,14 @@ const AUTH = {
         });
     },
 
-    initRecaptcha: function () {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                'size': 'normal',
-                'callback': (response) => {
-                    // reCAPTCHA solved, allow signInWithPhoneNumber.
-                },
-                'expired-callback': () => {
-                    // Response expired. Ask user to solve reCAPTCHA again.
-                }
-            });
-            window.recaptchaVerifier.render();
-        }
-    },
-
-    sendOTP: function (phoneNumber) {
-        return new Promise((resolve, reject) => {
-            if (!phoneNumber.startsWith('+')) {
-                // Attempt to add country code if missing (default IND)
-                phoneNumber = "+91" + phoneNumber;
-            }
-            const appVerifier = window.recaptchaVerifier;
-            firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-                .then((confirmationResult) => {
-                    // SMS sent. Prompt user to type the code from the message
-                    this.state.confirmationResult = confirmationResult;
-                    resolve("OTP Sent");
-                }).catch((error) => {
-                    console.error("SMS Error:", error);
-                    if (error.code === 'auth/billing-not-enabled') {
-                        alert("⚠️ Firebase Billing Required\n\nTo send real SMS, you must upgrade your Firebase project to the Blaze Plan (Pay as you go).\n\nUse a Test Number + OTP to bypass this for development.");
-                    } else if (error.code === 'auth/too-many-requests') {
-                        alert("⚠️ Too many attempts. Please try again later.");
-                    } else {
-                        alert("Error sending OTP: " + error.message);
-                    }
-                    reject(error);
-                });
-        });
-    },
-
-    verifyOTP: function (otp) {
-        return new Promise((resolve, reject) => {
-            if (!this.state.confirmationResult) {
-                reject(new Error("No OTP request found."));
-                return;
-            }
-            this.state.confirmationResult.confirm(otp)
-                .then((result) => {
-                    const user = result.user;
-                    const userData = {
-                        name: "Mobile User", // Phone auth doesn't give name by default
-                        phone: user.phoneNumber,
-                        avatar: "https://ui-avatars.com/api/?name=Mobile+User&background=6366f1&color=fff",
-                        method: "phone"
-                    };
-                    this._saveSession(userData);
-                    resolve(userData);
-                }).catch((error) => {
-                    reject(error);
-                });
+    logout: function () {
+        firebase.auth().signOut().then(() => {
+            localStorage.removeItem('ws_isLoggedIn');
+            localStorage.removeItem('ws_user');
+            // Do NOT remove 'hasPaid' so they don't lose purchase
+            this.state.isLoggedIn = false;
+            this.state.user = null;
+            window.location.reload();
         });
     },
 

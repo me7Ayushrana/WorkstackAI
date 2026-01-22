@@ -42,47 +42,40 @@
     <!-- Auth Modal Overlay -->
     <div id="auth-modal-overlay" class="auth-overlay">
         <div class="auth-modal">
-            <h2 style="margin-bottom: 10px;">Welcome Back</h2>
-            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem;">Sign in to access your
-                professional workspace.</p>
-
-            <!-- Step 1: Selection -->
-            <div id="auth-step-1">
-                <button class="auth-btn auth-google" onclick="startGoogleLogin()">
-                    <span style="font-size: 1.2rem;">G</span> Continue with Google
-                </button>
-                <button class="auth-btn auth-mobile" onclick="showPhoneInput()">
-                    <span style="font-size: 1.2rem;">📱</span> Continue with Mobile
-                </button>
+            <!-- Tabs (Context Switcher) -->
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchTab('signin')">Sign In</div>
+                <div class="auth-tab" onclick="switchTab('join')">Create Account</div>
             </div>
 
-            <!-- Step 2: Phone Input -->
-            <div id="auth-step-2" class="hidden">
-                <input type="tel" id="phone-input" class="input-field" placeholder="Enter Mobile Number (+91)">
-                <!-- ReCaptcha Container for Firebase -->
-                <div id="recaptcha-container" style="margin-bottom:10px;"></div>
-                <button class="btn" style="width:100%; margin-bottom:10px;" onclick="sendOTP()">Send OTP</button>
-                <button class="btn-outline" style="width:100%; border:none;" onclick="resetAuth()">Back</button>
-            </div>
+            <!-- Dynamic Header -->
+            <h2 id="auth-title" style="margin-bottom: 10px;">Welcome Back</h2>
+            <p id="auth-subtitle" style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem;">
+                Access your focused workspace.
+            </p>
 
-            <!-- Step 3: OTP Input -->
-            <div id="auth-step-3" class="hidden">
-                <p style="color: var(--accent); margin-bottom: 15px; font-size: 0.8rem;">OTP sent to your mobile (Use
-                    1234)</p>
-                <input type="text" id="otp-input" class="input-field" placeholder="Enter 4-digit OTP" maxlength="4">
-                <button class="btn" style="width:100%; margin-bottom:10px;" onclick="verifyOTP()">Verify &
-                    Login</button>
+            <!-- Premium Google Button -->
+            <button class="google-btn-premium" onclick="startGoogleLogin()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+                <span id="google-text">Continue with Google</span>
+            </button>
+
+            <!-- Trust / Security Note -->
+            <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+                <span style="opacity: 0.7;">By continuing, you agree to our Terms.</span>
+                <br>
+                <span style="color: var(--accent); opacity: 0.8;">🔒 Secure Encryption</span>
             </div>
 
             <!-- Loading State -->
-            <div id="auth-loading" class="hidden">
-                <div style="font-size: 2rem; margin-bottom: 15px;">🔄</div>
-                <p>Authenticating...</p>
+            <div id="auth-loading" class="hidden" style="margin-top: 20px;">
+                <div style="font-size: 1.5rem; animation: spin 1s infinite linear;">REPLACE_WITH_SPINNER</div>
+                <p style="margin-top:10px; font-size: 0.8rem;">Verifying Credentials...</p>
             </div>
 
-            <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;"
+            <div style="margin-top: 25px; font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; text-decoration: underline;"
                 onclick="closeAuthModal()">
-                Close
+                Close Window
             </div>
         </div>
     </div>
@@ -113,29 +106,39 @@
         // --- Modal Logic ---
         const authModal = document.getElementById('auth-modal-overlay');
 
-        function openAuthModal() {
+        function openAuthModal(mode = 'signin') {
             authModal.classList.add('active');
-            // Render ReCaptcha if needed
-            if (!window.recaptchaVerifier && AUTH.initRecaptcha) {
-                AUTH.initRecaptcha();
-            }
+            switchTab(mode);
         }
 
         function closeAuthModal() {
             authModal.classList.remove('active');
-            setTimeout(resetAuth, 300);
+            document.getElementById('auth-loading').classList.add('hidden');
         }
 
-        function resetAuth() {
-            document.getElementById('auth-step-1').classList.remove('hidden');
-            document.getElementById('auth-step-2').classList.add('hidden');
-            document.getElementById('auth-step-3').classList.add('hidden');
-            document.getElementById('auth-loading').classList.add('hidden');
+        function switchTab(mode) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const btnText = document.getElementById('google-text');
+
+            tabs.forEach(t => t.classList.remove('active'));
+
+            if (mode === 'join') {
+                tabs[1].classList.add('active');
+                title.innerText = "Create Account";
+                subtitle.innerText = "Join the workspace for professionals.";
+                btnText.innerText = "Sign up with Google";
+            } else {
+                tabs[0].classList.add('active');
+                title.innerText = "Welcome Back";
+                subtitle.innerText = "Access your focused workspace.";
+                btnText.innerText = "Continue with Google";
+            }
         }
 
         // --- Google Flow ---
         function startGoogleLogin() {
-            document.getElementById('auth-step-1').classList.add('hidden');
             document.getElementById('auth-loading').classList.remove('hidden');
 
             AUTH.loginWithGoogle().then(user => {
@@ -145,54 +148,8 @@
                     window.location.href = window.pendingRedirect;
                 }
             }).catch(e => {
-                resetAuth();
+                document.getElementById('auth-loading').classList.add('hidden');
                 alert(e.message);
-            });
-        }
-
-        // --- Phone Flow ---
-        function showPhoneInput() {
-            document.getElementById('auth-step-1').classList.add('hidden');
-            document.getElementById('auth-step-2').classList.remove('hidden');
-            // Ensure ReCaptcha is ready
-            setTimeout(() => {
-                if (AUTH.initRecaptcha) AUTH.initRecaptcha();
-            }, 500);
-        }
-
-        function sendOTP() {
-            const phone = document.getElementById('phone-input').value;
-            if (phone.length < 10) return alert("Please enter valid number (e.g., +919999999999)");
-
-            const btn = document.querySelector('#auth-step-2 .btn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "Sending...";
-
-            AUTH.sendOTP(phone).then(() => {
-                document.getElementById('auth-step-2').classList.add('hidden');
-                document.getElementById('auth-step-3').classList.remove('hidden');
-                btn.innerHTML = originalText;
-            }).catch(error => {
-                alert("Error sending OTP: " + error.message);
-                btn.innerHTML = originalText;
-            });
-        }
-
-        function verifyOTP() {
-            const otp = document.getElementById('otp-input').value;
-
-            document.getElementById('auth-step-3').classList.add('hidden');
-            document.getElementById('auth-loading').classList.remove('hidden');
-
-            AUTH.verifyOTP(otp).then(user => {
-                closeAuthModal();
-                AUTH.updateHeader();
-                if (window.pendingRedirect) {
-                    window.location.href = window.pendingRedirect;
-                }
-            }).catch(err => {
-                alert("Invalid OTP: " + err.message);
-                resetAuth();
             });
         }
 
