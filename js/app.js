@@ -632,7 +632,7 @@ window.applySuggestion = function (text) {
         if (termObj.startId) {
             loadNativeTool(termObj.startId);
             // Scroll to native tool area
-            document.getElementById('active-tool-display').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('active-tool-container').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('search-suggestions').classList.add('hidden');
             return;
         }
@@ -720,33 +720,81 @@ let openTools = []; // Array of { id, name }
 let activeToolId = null;
 
 window.loadNativeTool = function (toolId) {
-    // 1. Check if already open
+    if (!toolId) return;
+
+    // 0. Ensure Data is Loaded
+    if (typeof TOOL_DATA === 'undefined') {
+        alert("Error: Tool Data not loaded. Please refresh.");
+        return;
+    }
+
+    // 1. Ensure DOM Elements Exist (Self-Healing due to potential Cache issues)
+    let container = document.getElementById('active-tool-container');
+
+    // Fallback for cache mismatch (if user still has old ID but new JS)
+    if (!container) {
+        container = document.getElementById('active-tool-display');
+        if (container) {
+            // Upgrade old container to new structure dynamically
+            container.id = 'active-tool-container';
+            container.className = 'native-tool-container hidden';
+        }
+    }
+
+    if (!container) {
+        // Create from scratch if totally missing
+        container = document.createElement('div');
+        container.id = 'active-tool-container';
+        container.className = 'hidden';
+        container.style.marginBottom = '40px';
+
+        // Inject after search container or at top
+        const search = document.querySelector('.search-container');
+        if (search && search.parentNode) search.parentNode.insertBefore(container, search.nextSibling);
+        else {
+            const main = document.querySelector('.container');
+            if (main) main.prepend(container);
+        }
+    }
+
+    // Ensure Tabs/Content structure exists
+    let tabsContainer = document.getElementById('active-tool-tabs');
+    let contentContainer = document.getElementById('active-tool-content');
+
+    if (!tabsContainer || !contentContainer) {
+        container.innerHTML = `
+             <div id="active-tool-tabs" class="tool-tabs"></div>
+             <div id="active-tool-content" class="tool-content-area native-tool-container"></div>
+        `;
+        tabsContainer = document.getElementById('active-tool-tabs');
+        contentContainer = document.getElementById('active-tool-content');
+    }
+
+    // 2. Check if already open
     const exists = openTools.find(t => t.id === toolId);
 
     // Show container
-    document.getElementById('active-tool-container').classList.remove('hidden');
-    // Scroll to it
-    document.getElementById('active-tool-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    container.classList.remove('hidden');
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     if (exists) {
-        // Just switch to it
         switchToolTab(toolId);
         return;
     }
 
-    // 2. Fetch Tool Name & Data
-    // We can infer name from logic or pass it. For now, simple map or lookup
-    let toolName = toolId; // Fallback
-    // Search in Data
-    const allTools = [...TOOL_DATA.student.native_tools, ...TOOL_DATA.freelancer.native_tools, ...TOOL_DATA.creator.native_tools];
+    // 3. Get Tool Name
+    let toolName = "Tool";
+    const allTools = [
+        ...TOOL_DATA.student.native_tools,
+        ...TOOL_DATA.freelancer.native_tools,
+        ...TOOL_DATA.creator.native_tools
+    ];
     const original = allTools.find(t => t.id === toolId);
     if (original) toolName = original.name;
 
-    // 3. Add to State
     openTools.push({ id: toolId, name: toolName });
 
     // 4. Create Tab
-    const tabsContainer = document.getElementById('active-tool-tabs');
     const tabBtn = document.createElement('div');
     tabBtn.className = `tool-tab-btn`;
     tabBtn.id = `tab-btn-${toolId}`;
@@ -758,15 +806,18 @@ window.loadNativeTool = function (toolId) {
     tabsContainer.appendChild(tabBtn);
 
     // 5. Create Content DOM
-    const contentContainer = document.getElementById('active-tool-content');
     const contentDiv = document.createElement('div');
     contentDiv.id = `tool-content-${toolId}`;
     contentDiv.className = 'tool-pane hidden'; // Hidden by default
     contentDiv.innerHTML = getToolHTML(toolId); // Use helper to get HTML
     contentContainer.appendChild(contentDiv);
 
-    // 6. Initialize Tool Logic
-    initToolLogic(toolId);
+    // 6. Initialize Tool Logic with Safety
+    try {
+        initToolLogic(toolId);
+    } catch (e) {
+        console.error(`Failed to init logic for ${toolId}`, e);
+    }
 
     // 7. Activate
     switchToolTab(toolId);
@@ -832,6 +883,8 @@ function getToolHTML(toolId) {
 function initToolLogic(toolId) {
     if (toolId === 'word-counter') initWordCounter();
     if (toolId === 'pomodoro') initPomodoro();
+    if (toolId === 'converter') setTimeout(window.updateUnits, 50);
+    if (toolId === 'notes') initStickyNotes();
     // Others auto-init via inline events
 }
 
@@ -1330,8 +1383,8 @@ window.convert = function () {
 
     document.getElementById('conv-res').textContent = `${val} ${f} = ${res.toFixed(4)} ${t}`;
 }
-// Init units on load
-setTimeout(window.updateUnits, 500);
+// Units initialized via initToolLogic
+// setTimeout(window.updateUnits, 500);
 
 // -- NEW: Sticky Notes --
 function renderNotes() {
@@ -1340,8 +1393,7 @@ function renderNotes() {
         <p style="text-align:right; font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Auto-saved to LocalStorage</p>
     `;
 }
-// Use a small timeout to load saved data after render
-setTimeout(() => {
+function initStickyNotes() {
     const saved = localStorage.getItem('workstack_notes');
     const el = document.getElementById('sticky-note');
     if (saved && el) el.value = saved;
@@ -1351,4 +1403,4 @@ setTimeout(() => {
             localStorage.setItem('workstack_notes', el.value);
         });
     }
-}, 500);
+}

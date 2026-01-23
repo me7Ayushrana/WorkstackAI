@@ -1316,3 +1316,17 @@ body::before {
     background: rgba(255, 255, 255, 0.2);
     opacity: 1;
 }
+
+/* Added for Personalized Workspace */
+.add-widget-card {
+    align-items: center;
+    justify-content: center;
+    border-style: dashed;
+    cursor: pointer;
+    min-height: 200px;
+}
+
+.add-widget-card:hover {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.05);
+}
