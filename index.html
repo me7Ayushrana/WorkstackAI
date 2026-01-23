@@ -375,6 +375,20 @@
             document.getElementById('features-modal-overlay').classList.remove('active');
         }
     </script>
+    <!-- Mobile Warning Overlay -->
+    <div id="mobile-warning">
+        <div class="mobile-warning-card">
+            <span class="mobile-warning-icon">🖥️ &gt; 📱</span>
+            <h3 style="margin-bottom: 10px; font-size: 1.4rem;">Desktop Recommended</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;">
+                WorkstackAI is designed for deep work on larger screens.
+                For the best experience, please switch to a Laptop or PC.
+            </p>
+            <button class="btn-outline" onclick="document.getElementById('mobile-warning').style.display='none'"
+                style="width: 100%; justify-content: center; border-color: rgba(255,255,255,0.2);">
+                Continue Anyway
+            </button>
+        </div>
+    </div>
 </body>
-
 </html>
