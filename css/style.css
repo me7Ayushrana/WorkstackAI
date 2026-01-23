@@ -1132,3 +1132,52 @@ body::before {
         transform: scale(1);
     }
 }
+/* --- Realistic Theme Backgrounds --- */
+.theme-bg-forest {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+}
+.theme-bg-snow {
+    background: linear-gradient(rgba(0, 20, 60, 0.4), rgba(0, 10, 30, 0.6)), url('https://images.unsplash.com/photo-1478265867563-7df4dc0bd90e?q=80&w=2568&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+}
+.theme-bg-sunset {
+    background: linear-gradient(rgba(45, 10, 20, 0.5), rgba(20, 5, 10, 0.7)), url('https://images.unsplash.com/photo-1472120435266-5311218ed6e9?q=80&w=2607&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+}
+.theme-bg-cyberpunk {
+    /* Keeping the sleek dark gradient for cyberpunk */
+    background: radial-gradient(circle at 50% 10%, #1a1a2e 0%, #050a14 100%);
+}
+
+/* Fix Delete Button Visibility */
+.widget-delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--danger);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.2);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.widget-card:hover .widget-delete-btn {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.widget-delete-btn:hover {
+    background: #ff0000;
+    transform: scale(1.2) rotate(90deg) !important;
+}
