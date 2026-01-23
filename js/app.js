@@ -133,7 +133,19 @@ function renderWorkspace() {
         else if (hour < 18) greeting = "Good afternoon";
         else greeting = "Good evening";
 
-        document.getElementById('workspace-title').innerHTML = `${greeting}, <span style="color:var(--accent);">Creator</span>.`;
+        // Get Name
+        let displayName = "Creator";
+        try {
+            const userStr = localStorage.getItem('ws_user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                if (user.name) displayName = user.name.split(' ')[0];
+            }
+        } catch (e) {
+            console.error("Name fetch error", e);
+        }
+
+        document.getElementById('workspace-title').innerHTML = `${greeting}, <span style="color:var(--accent);">${displayName}</span>.`;
         document.getElementById('workspace-desc').textContent = data.description;
 
         // Render AI Decision Zone
