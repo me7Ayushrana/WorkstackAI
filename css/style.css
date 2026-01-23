@@ -1189,19 +1189,22 @@ body::before {
 /* Widget Controls (Move & Delete) */
 .widget-controls {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 12px;
+    right: 12px;
     display: flex;
     gap: 8px;
-    opacity: 0.6;
-    /* Always visible but dimmed */
+    opacity: 0;
+    /* Hidden by default */
+    transform: translateY(-5px);
     transition: all 0.2s ease;
     z-index: 100;
+    pointer-events: none;
 }
 
 .widget-card:hover .widget-controls {
     opacity: 1;
-    transform: scale(1.05);
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .widget-control-btn {
