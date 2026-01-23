@@ -207,25 +207,48 @@ function renderWorkspace() {
 
 /* --- Theme Switcher Logic --- */
 const THEMES = {
-    midnight: { bg: '#020202', accent: '#E5C558' },
-    cyberpunk: { bg: '#050a14', accent: '#00f3ff' },
-    forest: { bg: '#051405', accent: '#4ade80' },
-    sunset: { bg: '#1a0505', accent: '#f43f5e' }
+    midnight: { class: '', bg: '#020202', accent: '#E5C558' },
+    cyberpunk: { class: 'theme-bg-cyberpunk', bg: '#050a14', accent: '#00f3ff' },
+    forest: { class: 'theme-bg-forest', bg: '#051405', accent: '#4ade80' },
+    sunset: { class: 'theme-bg-sunset', bg: '#1a0505', accent: '#f43f5e' },
+    snow: { class: 'theme-bg-snow', bg: '#0B1026', accent: '#60a5fa' }
 };
 
 window.setTheme = function (themeName) {
     const theme = THEMES[themeName];
     if (!theme) return;
+
+    // Reset Classes
+    document.body.className = '';
+
+    // Apply Class
+    if (theme.class) {
+        document.body.classList.add(theme.class);
+    } else {
+        // Default Midnight fallback
+        document.body.style.background = theme.bg;
+    }
+
+    // Apply Colors
     document.documentElement.style.setProperty('--bg-primary', theme.bg);
-    document.documentElement.style.setProperty('--bg-secondary', theme.bg); // Keep flat for now
+    // For realistic image themes, we make the cards slightly more transparent
+    const glassBg = theme.class ? 'rgba(0, 0, 0, 0.6)' : 'rgba(20, 20, 20, 0.7)';
+    document.documentElement.style.setProperty('--bg-glass', glassBg);
+
     document.documentElement.style.setProperty('--accent', theme.accent);
     document.documentElement.style.setProperty('--accent-glow', `${theme.accent}40`);
+
     localStorage.setItem('userTheme', themeName);
 }
 
 // Load Theme on Init
 const savedTheme = localStorage.getItem('userTheme');
-if (savedTheme) setTheme(savedTheme);
+// Default to Midnight if nothing saved
+if (savedTheme) {
+    setTheme(savedTheme);
+} else {
+    setTheme('midnight');
+}
 
 function renderCustomWorkspaceMode() {
     // 1. Unhide Focus Desk immediately as it's the hero
