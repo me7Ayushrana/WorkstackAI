@@ -254,30 +254,47 @@ function renderCustomWorkspaceMode() {
     // 1. Unhide Focus Desk immediately as it's the hero
     document.getElementById('focus-desk-section').classList.remove('hidden');
 
-    // 2. Hide standard sections initially (we will replace them with the "App Store")
+    // 2. Hide standard sections initially
     document.querySelector('.dashboard .section-header').innerHTML = `<div class="section-title">📦 Tool Library</div><span style="font-size:0.8rem; color:var(--text-secondary);">ADD TO YOUR DESK</span>`;
-    document.getElementById('ai-zone-grid').innerHTML = ''; // Clear default
+
+    // Hide the static headers for Native/External to avoid empty gaps
+    if (document.getElementById('header-native')) document.getElementById('header-native').style.display = 'none';
+    if (document.getElementById('header-external')) document.getElementById('header-external').style.display = 'none';
+
+    document.getElementById('ai-zone-grid').innerHTML = '';
     document.getElementById('native-tools-grid').innerHTML = '';
     document.getElementById('external-tools-grid').innerHTML = '';
 
-    // 3. Populate "App Store" Grid (Native Tools First)
-    const appStoreContainer = document.getElementById('ai-zone-grid'); // Reusing this grid container for the store
+    // 3. Populate "App Store" Grid (Native + External)
+    const appStoreContainer = document.getElementById('ai-zone-grid');
     appStoreContainer.className = "tool-grid";
 
-    // Aggregate ALL native tools
+    // Aggregate ALL tools
     const allNative = [
         ...TOOL_DATA.student.native_tools,
         ...TOOL_DATA.freelancer.native_tools,
         ...TOOL_DATA.creator.native_tools
     ];
-    // De-duplicate by ID
     const uniqueNative = Array.from(new Map(allNative.map(item => [item.id, item])).values());
 
-    const nativeHTML = uniqueNative.map(tool => `
+    const allExternal = [
+        ...TOOL_DATA.student.external_tools,
+        ...TOOL_DATA.freelancer.external_tools,
+        ...TOOL_DATA.creator.external_tools,
+        ...TOOL_DATA.fun_zone.games, // Why not?
+    ];
+    // De-duplicate URLs
+    const uniqueExternal = Array.from(new Map(allExternal.map(item => [item.url, item])).values());
+
+    // Generate HTML
+    let storeHTML = '';
+
+    // Native Section
+    storeHTML += uniqueNative.map(tool => `
         <div class="tool-card">
             <div class="tool-header">
                 <span style="font-size: 1.5rem;">${tool.icon}</span>
-                <button class="btn-outline" style="font-size:0.7rem; padding:4px 8px;" onclick="addNativeWidget('${tool.id}', '${tool.name}')">+ Pin</button>
+                <button class="btn-outline" style="font-size:0.7rem; padding:4px 8px; margin-left:auto;" onclick="addNativeWidget('${tool.id}', '${tool.name}')">+ Pin</button>
             </div>
             <h4>${tool.name}</h4>
             <div style="margin-top:auto;">
@@ -286,13 +303,39 @@ function renderCustomWorkspaceMode() {
         </div>
     `).join('');
 
-    appStoreContainer.innerHTML = nativeHTML;
+    // External Section
+    storeHTML += uniqueExternal.map(tool => `
+        <div class="tool-card">
+            <div class="tool-header">
+                <span style="font-size: 1.5rem;">🔗</span>
+                <span class="tool-tag">${tool.category || 'Link'}</span>
+                <button class="btn-outline" style="font-size:0.7rem; padding:4px 8px; margin-left:auto;" onclick="addLinkWidget('${tool.url}', '${tool.name}')">+ Pin</button>
+            </div>
+            <h4>${tool.name}</h4>
+            <div style="margin-top:auto;">
+                <button class="btn btn-outline" style="width:100%;" onclick="window.open('${tool.url}')">Visit ↗</button>
+            </div>
+        </div>
+    `).join('');
+
+    appStoreContainer.innerHTML = storeHTML;
 
     // 4. Update Description
     document.getElementById('workspace-desc').innerHTML = `
         Welcome to your personal dashboard.<br>
         <span style="color:var(--accent);">Pin tools</span> from below or <span style="color:var(--accent);">Add Widgets</span> to build your flow.
     `;
+}
+
+// Helper to add external link widget quickly
+window.addLinkWidget = function (url, name) {
+    if (myWidgets.find(w => w.url === url)) {
+        return alert("Link already pinned!");
+    }
+    myWidgets.push({ type: 'link', name, url });
+    saveWidgets();
+    renderFocusDesk();
+    document.getElementById('focus-desk-section').scrollIntoView({ behavior: 'smooth' });
 }
 
 // Global Helper to add pinned widget
