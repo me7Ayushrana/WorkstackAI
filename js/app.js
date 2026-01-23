@@ -374,7 +374,11 @@ function renderFocusDesk() {
 
         return `
             <div class="tool-card widget-card" onclick="${action}">
-                <button class="widget-delete-btn" onclick="event.stopPropagation(); deleteWidget(${index})">✕</button>
+                <div class="widget-controls">
+                    <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, -1)" title="Move Left">←</button>
+                    <button class="widget-control-btn delete" onclick="event.stopPropagation(); deleteWidget(${index})" title="Remove">✕</button>
+                    <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, 1)" title="Move Right">→</button>
+                </div>
                 ${content}
             </div>
         `;
@@ -402,6 +406,20 @@ window.deleteWidget = function (index) {
         saveWidgets();
         renderFocusDesk();
     }
+}
+
+window.moveWidget = function (index, direction) {
+    const newIndex = index + direction;
+    // Bounds check
+    if (newIndex < 0 || newIndex >= myWidgets.length) return;
+
+    // Swap
+    const temp = myWidgets[index];
+    myWidgets[index] = myWidgets[newIndex];
+    myWidgets[newIndex] = temp;
+
+    saveWidgets();
+    renderFocusDesk();
 }
 
 // Modal Logic
