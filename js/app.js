@@ -715,58 +715,124 @@ function filterTools(query) {
 
 
 /* --- Native Tools Implementation --- */
+/* --- Native Tools Implementation (Tabbed) --- */
+let openTools = []; // Array of { id, name }
+let activeToolId = null;
+
 window.loadNativeTool = function (toolId) {
-    const container = document.getElementById('active-tool-display');
-    container.innerHTML = '';
+    // 1. Check if already open
+    const exists = openTools.find(t => t.id === toolId);
 
-    // Scroll to tool display
-    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Show container
+    document.getElementById('active-tool-container').classList.remove('hidden');
+    // Scroll to it
+    document.getElementById('active-tool-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    let toolHTML = '';
-
-    switch (toolId) {
-        // Student Tools
-        case 'pomodoro': toolHTML = renderPomodoro(); break;
-        case 'word-counter': toolHTML = renderWordCounter(); break;
-        case 'todo': toolHTML = renderTodo(); break;
-        case 'gpa-calc': toolHTML = renderGPACalc(); break;
-
-        // Freelancer Tools
-        case 'invoice-gen': toolHTML = renderInvoiceGen(); break;
-        case 'time-tracker': toolHTML = renderTimeTracker(); break;
-        case 'expense-est': toolHTML = renderTaxShield(); break;
-
-        // Creator Tools
-        case 'caption-fmt': toolHTML = renderCaptionFmt(); break;
-        case 'hashtag-gen': toolHTML = renderHashtagGen(); break;
-        case 'idea-board': toolHTML = renderIdeaBoard(); break;
-        case 'thumb-test': toolHTML = renderThumbTester(); break;
-
-        // New Adds (Round 1)
-        case 'flashcards': toolHTML = renderFlashcards(); break;
-        case 'rate-calc': toolHTML = renderRateCalc(); break;
-
-        // New Adds (Round 2)
-        case 'calculator': toolHTML = renderCalculator(); break;
-        case 'converter': toolHTML = renderConverter(); break;
-        case 'notes': toolHTML = renderNotes(); break;
-
-        default: toolHTML = `<p>Tool loading logic missing for ID: ${toolId}</p>`;
+    if (exists) {
+        // Just switch to it
+        switchToolTab(toolId);
+        return;
     }
 
-    container.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
-            <h3>Active Tool</h3>
-            <button onclick="document.getElementById('active-tool-display').innerHTML='<p class=\\'text-muted\\'>Select a tool from below to start working.</p>' " style="background:none; border:none; color:var(--text-muted); cursor:pointer;">Close X</button>
-        </div>
-        ${toolHTML}
-    `;
+    // 2. Fetch Tool Name & Data
+    // We can infer name from logic or pass it. For now, simple map or lookup
+    let toolName = toolId; // Fallback
+    // Search in Data
+    const allTools = [...TOOL_DATA.student.native_tools, ...TOOL_DATA.freelancer.native_tools, ...TOOL_DATA.creator.native_tools];
+    const original = allTools.find(t => t.id === toolId);
+    if (original) toolName = original.name;
 
-    // Initialize Logic
+    // 3. Add to State
+    openTools.push({ id: toolId, name: toolName });
+
+    // 4. Create Tab
+    const tabsContainer = document.getElementById('active-tool-tabs');
+    const tabBtn = document.createElement('div');
+    tabBtn.className = `tool-tab-btn`;
+    tabBtn.id = `tab-btn-${toolId}`;
+    tabBtn.innerHTML = `
+        <span>${toolName}</span>
+        <span class="tab-close" onclick="event.stopPropagation(); closeToolTab('${toolId}')">✕</span>
+    `;
+    tabBtn.onclick = () => switchToolTab(toolId);
+    tabsContainer.appendChild(tabBtn);
+
+    // 5. Create Content DOM
+    const contentContainer = document.getElementById('active-tool-content');
+    const contentDiv = document.createElement('div');
+    contentDiv.id = `tool-content-${toolId}`;
+    contentDiv.className = 'tool-pane hidden'; // Hidden by default
+    contentDiv.innerHTML = getToolHTML(toolId); // Use helper to get HTML
+    contentContainer.appendChild(contentDiv);
+
+    // 6. Initialize Tool Logic
+    initToolLogic(toolId);
+
+    // 7. Activate
+    switchToolTab(toolId);
+}
+
+window.switchToolTab = function (toolId) {
+    activeToolId = toolId;
+
+    // Update Tabs
+    document.querySelectorAll('.tool-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`tab-btn-${toolId}`).classList.add('active');
+
+    // Update Content
+    document.querySelectorAll('.tool-pane').forEach(p => p.classList.add('hidden'));
+    document.getElementById(`tool-content-${toolId}`).classList.remove('hidden');
+}
+
+window.closeToolTab = function (toolId) {
+    // Remove from DOM
+    const tab = document.getElementById(`tab-btn-${toolId}`);
+    const content = document.getElementById(`tool-content-${toolId}`);
+    if (tab) tab.remove();
+    if (content) content.remove();
+
+    // Remove from State
+    openTools = openTools.filter(t => t.id !== toolId);
+
+    // If we closed the active one, switch to the last one available
+    if (openTools.length > 0) {
+        if (activeToolId === toolId) {
+            switchToolTab(openTools[openTools.length - 1].id);
+        }
+    } else {
+        // No tools left, hide container
+        document.getElementById('active-tool-container').classList.add('hidden');
+        activeToolId = null;
+    }
+}
+
+// Helper to get HTML (Extracted from old switch)
+function getToolHTML(toolId) {
+    switch (toolId) {
+        case 'pomodoro': return renderPomodoro();
+        case 'word-counter': return renderWordCounter();
+        case 'todo': return renderTodo();
+        case 'gpa-calc': return renderGPACalc();
+        case 'invoice-gen': return renderInvoiceGen();
+        case 'time-tracker': return renderTimeTracker();
+        case 'expense-est': return renderTaxShield();
+        case 'caption-fmt': return renderCaptionFmt();
+        case 'hashtag-gen': return renderHashtagGen();
+        case 'idea-board': return renderIdeaBoard();
+        case 'thumb-test': return renderThumbTester();
+        case 'flashcards': return renderFlashcards();
+        case 'rate-calc': return renderRateCalc();
+        case 'calculator': return renderCalculator();
+        case 'converter': return renderConverter();
+        case 'notes': return renderNotes();
+        default: return `<p>Tool loading logic missing for ID: ${toolId}</p>`;
+    }
+}
+
+function initToolLogic(toolId) {
     if (toolId === 'word-counter') initWordCounter();
     if (toolId === 'pomodoro') initPomodoro();
-    // No specific Init needed for others as they use inline onclicks usually, 
-    // but for cleaner code we can add init functions if complex listeners needed.
+    // Others auto-init via inline events
 }
 
 // -- Student Tools --
