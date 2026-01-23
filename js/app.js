@@ -890,39 +890,90 @@ function initToolLogic(toolId) {
 
 // -- Student Tools --
 let timerInterval;
+
 function renderPomodoro() {
     return `
-        <div style="text-align:center; padding: 20px;">
-            <div id="timer-display" style="font-size: 4rem; font-weight: 800; font-variant-numeric: tabular-nums;">25:00</div>
+        <div style="text-align:center; padding: 20px; max-width: 400px; margin: 0 auto;">
+            <div id="timer-display" style="font-size: 5rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-primary); text-shadow: 0 0 20px rgba(255,255,255,0.1);">25:00</div>
+            
             <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
-                <button class="btn" id="start-timer">Start</button>
-                <button class="btn btn-outline" id="reset-timer">Reset</button>
+                 <button class="btn" id="start-timer" style="padding: 12px 30px; font-size: 1.1rem;">Start Focus</button>
+                 <button class="btn btn-outline" id="reset-timer">Reset</button>
+            </div>
+
+            <!-- Customization -->
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: center; align-items: center;">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Duration (min):</span>
+                <input type="number" id="custom-min" value="25" min="1" max="120" style="width: 60px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 5px; border-radius: 5px; text-align: center;">
+                <button class="btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="updateTimerDuration()">Set</button>
             </div>
         </div>
     `;
 }
+
 function initPomodoro() {
     let timeLeft = 25 * 60;
+    let isRunning = false;
     const display = document.getElementById('timer-display');
-    const starBtn = document.getElementById('start-timer');
+    const startBtn = document.getElementById('start-timer');
 
-    starBtn.addEventListener('click', () => {
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            timeLeft--;
+    // Global helper for "Set" button
+    window.updateTimerDuration = function () {
+        if (isRunning) return alert("Please pause the timer first.");
+        const val = parseInt(document.getElementById('custom-min').value);
+        if (val && val > 0) {
+            timeLeft = val * 60;
             const mins = Math.floor(timeLeft / 60);
             const secs = timeLeft % 60;
             display.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                alert("Time's up!");
-            }
-        }, 1000);
+        }
+    };
+
+    const updateDisplay = () => {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        display.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+
+    startBtn.addEventListener('click', () => {
+        if (isRunning) {
+            // Pause
+            clearInterval(timerInterval);
+            isRunning = false;
+            startBtn.textContent = "Resume Focus";
+            startBtn.classList.remove('btn');
+            startBtn.classList.add('btn-outline');
+        } else {
+            // Start
+            isRunning = true;
+            startBtn.textContent = "Pause";
+            startBtn.classList.remove('btn-outline');
+            startBtn.classList.add('btn');
+
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    startBtn.textContent = "Start Focus";
+                    startBtn.classList.remove('btn');
+                    startBtn.classList.add('btn-outline');
+                    alert("Focus Session Complete!");
+                }
+            }, 1000);
+        }
     });
+
     document.getElementById('reset-timer').addEventListener('click', () => {
-        if (timerInterval) clearInterval(timerInterval);
-        timeLeft = 25 * 60;
-        display.textContent = "25:00";
+        clearInterval(timerInterval);
+        isRunning = false;
+        startBtn.textContent = "Start Focus";
+        startBtn.classList.remove('btn-outline');
+        startBtn.classList.add('btn');
+        // Reset to input value
+        window.updateTimerDuration();
     });
 }
 
