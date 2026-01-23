@@ -24,8 +24,11 @@ const CHAT_DATA = {
         "howdy": "Howdy! 🤠 Ready to work smarter?",
         "hiya": "Hiya! 👋 Let me know if you need any help!",
         "help": "I'm here to help! Ask me about our features, the ₹9 access pass, or how we can help you work smarter.",
-        "features": "We have 3 dedicated modes: Student (Research), Freelancer (business), and Creator (Video/Design). Plus a native Pomodoro timer and GPA calculator!",
-        "freelancer": "For freelancers, we have invoice generators, contract drafters, and client outreach tools all in one place."
+        "features": "We have 4 dedicated modes: Student, Freelancer, Creator, and the new **Personal Workspace** where you can build your own desk!",
+        "freelancer": "For freelancers, we have invoice generators, contract drafters, and client outreach tools all in one place.",
+        "custom": "The **Personal Workspace** lets you pin your favorite tools and links to a custom dashboard. Click 'Build Your Own' to start!",
+        "build": "You can build your own workspace! Go to Roles > Build Your Own to add widgets and links.",
+        "widget": "You can add widgets like the Deep Focus Timer, Sticky Notes, or any custom link to your Personal Desk."
     },
     default_responses: [
         "That's interesting! context is key—could you elaborate?",
