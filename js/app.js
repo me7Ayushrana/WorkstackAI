@@ -125,60 +125,314 @@ function renderWorkspace() {
 
     if (!data) return;
 
-    // Sets Headers
-    document.getElementById('workspace-title').textContent = data.title;
-    document.getElementById('workspace-desc').textContent = data.description;
+    try {
+        // Sets Headers with Greeting
+        const hour = new Date().getHours();
+        let greeting = "Welcome back";
+        if (hour < 12) greeting = "Good morning";
+        else if (hour < 18) greeting = "Good afternoon";
+        else greeting = "Good evening";
 
-    // Render AI Decision Zone
-    const aiContainer = document.getElementById('ai-zone-grid');
-    aiContainer.innerHTML = data.ai_tools.map(tool => `
-        <div class="tool-card ai-decision-card">
-            <div class="tool-header">
-                <span class="tool-tag">${tool.bestFor}</span>
-                ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
-            </div>
-            <h4>${tool.title}</h4>
-            <p>${tool.desc}</p>
-            <a href="${tool.url}" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; width: 100%;">Open ${tool.toolName} ↗</a>
-        </div>
-    `).join('');
+        document.getElementById('workspace-title').innerHTML = `${greeting}, <span style="color:var(--accent);">Creator</span>.`;
+        document.getElementById('workspace-desc').textContent = data.description;
 
-    // Render Native Tools Sidebar/Grid
-    const nativeContainer = document.getElementById('native-tools-grid');
-    if (nativeContainer) {
-        nativeContainer.innerHTML = data.native_tools.map(tool => `
-            <div class="tool-card" onclick="loadNativeTool('${tool.id}')" style="cursor: pointer;">
-                <div class="tool-header">
-                    <span style="font-size: 1.5rem;">${tool.icon}</span>
-                    <span class="pricing-tag free">Free</span>
+        // Render AI Decision Zone
+        const aiContainer = document.getElementById('ai-zone-grid');
+        if (aiContainer && data.ai_tools) {
+            aiContainer.innerHTML = data.ai_tools.map(tool => `
+                <div class="tool-card ai-decision-card">
+                    <div class="tool-header">
+                        <span class="tool-tag">${tool.bestFor}</span>
+                        ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+                    </div>
+                    <h4>${tool.title}</h4>
+                    <p>${tool.desc}</p>
+                    <a href="${tool.url}" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; width: 100%;">Open ${tool.toolName} ↗</a>
                 </div>
-                <h4>${tool.name}</h4>
-                <div style="margin-top:auto;">
-                    <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:10px;" onclick="event.stopPropagation(); loadNativeTool('${tool.id}')">Open Tool</button>
+            `).join('');
+        }
+
+        // Render Native Tools Sidebar/Grid
+        const nativeContainer = document.getElementById('native-tools-grid');
+        if (nativeContainer && data.native_tools) {
+            nativeContainer.innerHTML = data.native_tools.map(tool => `
+                <div class="tool-card" onclick="loadNativeTool('${tool.id}')" style="cursor: pointer;">
+                    <div class="tool-header">
+                        <span style="font-size: 1.5rem;">${tool.icon}</span>
+                        <span class="pricing-tag free">Free</span>
+                    </div>
+                    <h4>${tool.name}</h4>
+                    <div style="margin-top:auto;">
+                        <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:10px;" onclick="event.stopPropagation(); loadNativeTool('${tool.id}')">Open Tool</button>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+        }
+
+        // Render External Tools
+        const extContainer = document.getElementById('external-tools-grid');
+        if (extContainer && data.external_tools) {
+            extContainer.innerHTML = data.external_tools.map(tool => `
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-tag">${tool.category}</span>
+                        ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+                    </div>
+                    <h4>${tool.name}</h4>
+                    <p>External Resource</p>
+                    <a href="${tool.url}" target="_blank" class="btn-outline" style="display:block; text-align:center; padding: 8px; border-radius: 4px; font-size: 0.9rem;">Launch ↗</a>
+                </div>
+            `).join('');
+        }
+
+        // Initialize Search Listener with Data
+        initSearch(data);
+
+        // Initialize Focus Desk (Custom)
+        initFocusDesk(data);
+
+        if (roleKey === 'custom') {
+            renderCustomWorkspaceMode();
+        }
+
+        // Apply Premium Animations
+        setTimeout(applyVisualEffects, 100);
+
+    } catch (e) {
+        console.error("Workspace Render Error:", e);
+        document.getElementById('workspace-title').textContent = "System Error";
+        document.getElementById('workspace-desc').textContent = "Could not load workspace configuration. Please refresh.";
     }
+}
 
-    // Render External Tools
-    const extContainer = document.getElementById('external-tools-grid');
-    extContainer.innerHTML = data.external_tools.map(tool => `
+/* --- Theme Switcher Logic --- */
+const THEMES = {
+    midnight: { bg: '#020202', accent: '#E5C558' },
+    cyberpunk: { bg: '#050a14', accent: '#00f3ff' },
+    forest: { bg: '#051405', accent: '#4ade80' },
+    sunset: { bg: '#1a0505', accent: '#f43f5e' }
+};
+
+window.setTheme = function (themeName) {
+    const theme = THEMES[themeName];
+    if (!theme) return;
+    document.documentElement.style.setProperty('--bg-primary', theme.bg);
+    document.documentElement.style.setProperty('--bg-secondary', theme.bg); // Keep flat for now
+    document.documentElement.style.setProperty('--accent', theme.accent);
+    document.documentElement.style.setProperty('--accent-glow', `${theme.accent}40`);
+    localStorage.setItem('userTheme', themeName);
+}
+
+// Load Theme on Init
+const savedTheme = localStorage.getItem('userTheme');
+if (savedTheme) setTheme(savedTheme);
+
+function renderCustomWorkspaceMode() {
+    // 1. Unhide Focus Desk immediately as it's the hero
+    document.getElementById('focus-desk-section').classList.remove('hidden');
+
+    // 2. Hide standard sections initially (we will replace them with the "App Store")
+    document.querySelector('.dashboard .section-header').innerHTML = `<div class="section-title">📦 Tool Library</div><span style="font-size:0.8rem; color:var(--text-secondary);">ADD TO YOUR DESK</span>`;
+    document.getElementById('ai-zone-grid').innerHTML = ''; // Clear default
+    document.getElementById('native-tools-grid').innerHTML = '';
+    document.getElementById('external-tools-grid').innerHTML = '';
+
+    // 3. Populate "App Store" Grid (Native Tools First)
+    const appStoreContainer = document.getElementById('ai-zone-grid'); // Reusing this grid container for the store
+    appStoreContainer.className = "tool-grid";
+
+    // Aggregate ALL native tools
+    const allNative = [
+        ...TOOL_DATA.student.native_tools,
+        ...TOOL_DATA.freelancer.native_tools,
+        ...TOOL_DATA.creator.native_tools
+    ];
+    // De-duplicate by ID
+    const uniqueNative = Array.from(new Map(allNative.map(item => [item.id, item])).values());
+
+    const nativeHTML = uniqueNative.map(tool => `
         <div class="tool-card">
-             <div class="tool-header">
-                <span class="tool-tag">${tool.category}</span>
-                ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+            <div class="tool-header">
+                <span style="font-size: 1.5rem;">${tool.icon}</span>
+                <button class="btn-outline" style="font-size:0.7rem; padding:4px 8px;" onclick="addNativeWidget('${tool.id}', '${tool.name}')">+ Pin</button>
             </div>
             <h4>${tool.name}</h4>
-            <p>External Resource</p>
-            <a href="${tool.url}" target="_blank" class="btn-outline" style="display:block; text-align:center; padding: 8px; border-radius: 4px; font-size: 0.9rem;">Launch ↗</a>
+            <div style="margin-top:auto;">
+                <button class="btn btn-outline" style="width:100%;" onclick="loadNativeTool('${tool.id}')">Open</button>
+            </div>
         </div>
     `).join('');
 
-    // Initialize Search Listener with Data
-    initSearch(data);
+    appStoreContainer.innerHTML = nativeHTML;
 
-    // Apply Premium Animations
-    setTimeout(applyVisualEffects, 100);
+    // 4. Update Description
+    document.getElementById('workspace-desc').innerHTML = `
+        Welcome to your personal dashboard.<br>
+        <span style="color:var(--accent);">Pin tools</span> from below or <span style="color:var(--accent);">Add Widgets</span> to build your flow.
+    `;
+}
+
+// Global Helper to add pinned widget
+window.addNativeWidget = function (id, name) {
+    // Check duplication
+    if (myWidgets.find(w => w.id === id)) {
+        alert("Tool already pinned!");
+        return;
+    }
+    myWidgets.push({ type: 'tool', id, name });
+    saveWidgets();
+    renderFocusDesk();
+
+    // Scroll to top
+    document.getElementById('focus-desk-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* --- My Focus Desk Logic --- */
+let myWidgets = [];
+
+function initFocusDesk(roleData) {
+    const section = document.getElementById('focus-desk-section');
+    if (!section) return;
+
+    // Load from LocalStorage
+    const stored = localStorage.getItem('myFocusWidgets');
+    if (stored) {
+        myWidgets = JSON.parse(stored);
+    } else {
+        // Default widgets for first time
+        myWidgets = [
+            { type: 'tool', id: 'pomodoro', name: 'Deep Focus Timer' },
+            { type: 'link', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk', name: 'Lofi Girl Radio' }
+        ];
+        saveWidgets();
+    }
+
+    renderFocusDesk();
+    section.classList.remove('hidden');
+}
+
+function renderFocusDesk() {
+    const grid = document.getElementById('focus-desk-grid');
+    if (!grid) return;
+
+    // Clear grid but keep the "Add" button (which is the last child usually or we re-append it)
+    // Actually simpler to just rebuild string
+
+    // 1. Generate Widget HTML
+    const widgetsHTML = myWidgets.map((w, index) => {
+        let content = '';
+        let action = '';
+
+        if (w.type === 'tool') {
+            content = `
+                <div class="tool-header">
+                    <span style="font-size: 1.5rem;">🛠️</span>
+                    <span class="pricing-tag free">Native</span>
+                </div>
+                <h4>${w.name}</h4>
+                <div style="margin-top:auto;">
+                    <button class="btn btn-outline" style="width:100%;">Open Tool</button>
+                </div>
+            `;
+            action = `loadNativeTool('${w.id}')`;
+        } else {
+            content = `
+                <div class="tool-header">
+                    <span style="font-size: 1.5rem;">🔗</span>
+                    <span class="pricing-tag">Link</span>
+                </div>
+                <h4>${w.name}</h4>
+                <div style="margin-top:auto;">
+                    <button class="btn btn-outline" style="width:100%;">Visit Link ↗</button>
+                </div>
+            `;
+            action = `window.open('${w.url}', '_blank')`;
+        }
+
+        return `
+            <div class="tool-card widget-card" onclick="${action}">
+                <button class="widget-delete-btn" onclick="event.stopPropagation(); deleteWidget(${index})">✕</button>
+                ${content}
+            </div>
+        `;
+    }).join('');
+
+    // 2. Add Button HTML
+    const addBtnHTML = `
+        <div class="tool-card add-widget-card" onclick="openWidgetModal()">
+            <div style="font-size: 2rem; color: var(--text-secondary);">+</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Add Widget</p>
+        </div>
+    `;
+
+    grid.innerHTML = widgetsHTML + addBtnHTML;
+}
+
+function saveWidgets() {
+    localStorage.setItem('myFocusWidgets', JSON.stringify(myWidgets));
+}
+
+// Global Widget Functions
+window.deleteWidget = function (index) {
+    if (confirm('Remove this widget?')) {
+        myWidgets.splice(index, 1);
+        saveWidgets();
+        renderFocusDesk();
+    }
+}
+
+// Modal Logic
+window.openWidgetModal = function () {
+    document.getElementById('widget-modal-overlay').classList.add('active');
+}
+window.closeWidgetModal = function () {
+    document.getElementById('widget-modal-overlay').classList.remove('active');
+}
+
+let activeWidgetTab = 'link';
+window.switchWidgetTab = function (tab) {
+    activeWidgetTab = tab;
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+
+    if (tab === 'link') {
+        document.getElementById('widget-form-link').classList.remove('hidden');
+        document.getElementById('widget-form-tool').classList.add('hidden');
+    } else {
+        document.getElementById('widget-form-link').classList.add('hidden');
+        document.getElementById('widget-form-tool').classList.remove('hidden');
+    }
+}
+
+window.confirmAddWidget = function () {
+    // Check Limits (Mock Premium check)
+    if (myWidgets.length >= 3 && localStorage.getItem('hasPaid') !== 'true') {
+        alert("Free Plan Limit: 3 Widgets.\nUpgrade to Premium (₹9 Lifetime) for unlimited access!");
+        return;
+    }
+
+    if (activeWidgetTab === 'link') {
+        const name = document.getElementById('w-name').value;
+        const url = document.getElementById('w-url').value;
+        if (!name || !url) return alert("Please enter name and URL");
+
+        myWidgets.push({ type: 'link', name, url });
+    } else {
+        const select = document.getElementById('w-tool-select');
+        const id = select.value;
+        const name = select.options[select.selectedIndex].text.replace('🧠 ', '').replace('📋 ', '').replace('📊 ', '').replace('🧮 ', ''); // Clean emoji
+
+        if (!id) return alert("Select a tool");
+        myWidgets.push({ type: 'tool', id, name });
+    }
+
+    saveWidgets();
+    renderFocusDesk();
+    closeWidgetModal();
+
+    // Clear inputs
+    document.getElementById('w-name').value = '';
+    document.getElementById('w-url').value = '';
 }
 
 /* --- Search & Suggestions Logic --- */

@@ -14,9 +14,25 @@
     <header>
         <div class="container" style="display:flex; justify-content: space-between;">
             <div class="logo">WorkstackAI.</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+            <div style="font-size: 0.85rem; color: var(--text-secondary); display:flex; align-items:center; gap:20px;">
+                <!-- Theme Dots -->
+                <div style="display:flex; gap:8px;">
+                    <div onclick="setTheme('midnight')"
+                        style="width:12px; height:12px; border-radius:50%; background:#E5C558; cursor:pointer; border:1px solid #333;"
+                        title="Midnight Gold"></div>
+                    <div onclick="setTheme('cyberpunk')"
+                        style="width:12px; height:12px; border-radius:50%; background:#00f3ff; cursor:pointer; border:1px solid #333;"
+                        title="Cyberpunk"></div>
+                    <div onclick="setTheme('forest')"
+                        style="width:12px; height:12px; border-radius:50%; background:#4ade80; cursor:pointer; border:1px solid #333;"
+                        title="Forest"></div>
+                    <div onclick="setTheme('sunset')"
+                        style="width:12px; height:12px; border-radius:50%; background:#f43f5e; cursor:pointer; border:1px solid #333;"
+                        title="Sunset"></div>
+                </div>
+
                 <span id="role-badge">Workspace</span>
-                <a href="index.html" style="margin-left: 20px; color: var(--danger);">Logout</a>
+                <a href="index.html" style="color: var(--danger);">Logout</a>
             </div>
         </div>
     </header>
@@ -35,6 +51,22 @@
                     <input type="text" id="tool-search" class="search-input"
                         placeholder="Type to search WorkstackAI... (e.g. 'PDF', 'Design')">
                     <div id="search-suggestions" class="suggestions-box hidden"></div>
+                </div>
+            </div>
+
+            <!-- MY FOCUS DESK (Custom Workspace) -->
+            <div id="focus-desk-section" class="hidden" style="margin-bottom: 50px;">
+                <div class="section-header">
+                    <div class="section-title">✨ My Focus Desk</div>
+                    <span style="font-size: 0.8rem; color: var(--accent);">PERSONAL WIDGETS</span>
+                </div>
+                <div id="focus-desk-grid" class="tool-grid">
+                    <!-- Widgets injected here -->
+                    <!-- Add Button -->
+                    <div class="tool-card add-widget-card" onclick="openWidgetModal()">
+                        <div style="font-size: 2rem; color: var(--text-secondary);">+</div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Add Widget</p>
+                    </div>
                 </div>
             </div>
 
@@ -88,6 +120,44 @@
 
     <script src="js/data.js?v=6"></script>
     <script src="js/app.js?v=6"></script>
+
+    <!-- Add Widget Modal -->
+    <div id="widget-modal-overlay" class="auth-overlay">
+        <div class="auth-modal" style="max-width: 400px;">
+            <h3 style="margin-bottom: 15px;">Add to Focus Desk</h3>
+
+            <!-- Type Switcher -->
+            <div class="auth-tabs" style="margin-bottom: 20px;">
+                <button class="auth-tab active" id="tab-link" onclick="switchWidgetTab('link')">🔗 Custom Link</button>
+                <button class="auth-tab" id="tab-tool" onclick="switchWidgetTab('tool')">🛠️ Native Tool</button>
+            </div>
+
+            <!-- Link Form -->
+            <div id="widget-form-link">
+                <input type="text" id="w-name" class="input-field" placeholder="Name (e.g. 'Lofi Music')">
+                <input type="url" id="w-url" class="input-field" placeholder="URL (https://...)">
+            </div>
+
+            <!-- Tool Select -->
+            <div id="widget-form-tool" class="hidden">
+                <select id="w-tool-select" class="input-field">
+                    <option value="" disabled selected>Select a Tool</option>
+                    <option value="pomodoro">🧠 Deep Focus Timer</option>
+                    <option value="todo">📋 Kanban Board</option>
+                    <option value="word-counter">📊 Word Counter</option>
+                    <option value="calculator">🧮 Scientific Calc</option>
+                    <option value="notes">📝 Sticky Notes</option>
+                    <option value="converter">🔄 Unit Converter</option>
+                    <!-- Add more as needed -->
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex: 1;" onclick="confirmAddWidget()">Add Widget</button>
+                <button class="btn-outline" style="flex: 1;" onclick="closeWidgetModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

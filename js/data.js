@@ -301,5 +301,13 @@ const TOOL_DATA = {
             { name: "Kongregate", url: "https://www.kongregate.com/", category: "Portal", pricing: "Free" },
             { name: "Armor Games", url: "https://armorgames.com/", category: "Portal", pricing: "Free" }
         ]
+    },
+    "custom": {
+        title: "My Personal Workspace",
+        description: "Your custom command center. Pin your favorite tools and widgets here.",
+        // These arrays are empty because the user populates them via the "App Store" logic in app.js
+        ai_tools: [],
+        external_tools: [],
+        native_tools: []
     }
 };
