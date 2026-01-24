@@ -1689,6 +1689,70 @@ body::before {
     animation: fadeIn 0.5s ease;
 }
 
+/* --- Hero Section Animations (Refined) --- */
+.gold-text-glow {
+    background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+    background-size: 200% auto;
+    color: #fff;
+    /* Fallback */
+    text-shadow: none;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShine 3s linear infinite;
+    display: inline-block;
+}
+
+.purple-text-glow {
+    background: linear-gradient(to right, #8A2BE2, #E0B0FF, #9400D3, #DDA0DD, #800080);
+    background-size: 200% auto;
+    color: #fff;
+    /* Fallback */
+    text-shadow: none;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShine 3s linear infinite;
+    display: inline-block;
+}
+
+@keyframes goldShine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.glow-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.glow-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.fun-zone-btn {
+    border-radius: 50px;
+    font-weight: 700;
+    border: 1px solid transparent;
+    background: linear-gradient(#0a0a0a, #0a0a0a) padding-box,
+        linear-gradient(45deg, #FF00FF, #00FFFF) border-box;
+    color: white;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.1);
+    transition: all 0.3s ease;
+}
+
+.fun-zone-btn:hover {
+    background: linear-gradient(#0a0a0a, #0a0a0a) padding-box,
+        linear-gradient(45deg, #00FFFF, #FF00FF) border-box;
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.3);
+    transform: translateY(-2px);
+}
+
+
+
 .mobile-warning-card {
     background: rgba(20, 20, 20, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
