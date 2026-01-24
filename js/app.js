@@ -151,15 +151,15 @@ function renderWorkspace() {
         // Render AI Decision Zone
         const aiContainer = document.getElementById('ai-zone-grid');
         if (aiContainer && data.ai_tools) {
-            aiContainer.innerHTML = data.ai_tools.map(tool => `
-                <div class="tool-card ai-decision-card">
+            aiContainer.innerHTML = data.ai_tools.map((tool, index) => `
+                <div class="tool-card ai-decision-card" style="animation-delay: ${(index * 0.05) + 0.2}s;">
                     <div class="tool-header">
                         <span class="tool-tag">${tool.bestFor}</span>
                         ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
                     </div>
                     <h4>${tool.title}</h4>
                     <p>${tool.desc}</p>
-                    <a href="${tool.url}" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; width: 100%;">Open ${tool.toolName} ↗</a>
+                    <a href="${tool.url}" target="_blank" class="btn-outline" style="font-size: 0.8rem; width: 100%;">Open ${tool.toolName} ↗</a>
                 </div>
             `).join('');
         }
@@ -167,15 +167,15 @@ function renderWorkspace() {
         // Render Native Tools Sidebar/Grid
         const nativeContainer = document.getElementById('native-tools-grid');
         if (nativeContainer && data.native_tools) {
-            nativeContainer.innerHTML = data.native_tools.map(tool => `
-                <div class="tool-card" onclick="loadNativeTool('${tool.id}')" style="cursor: pointer;">
+            nativeContainer.innerHTML = data.native_tools.map((tool, index) => `
+                <div class="tool-card" onclick="loadNativeTool('${tool.id}')" style="cursor: pointer; animation-delay: ${index * 0.05}s;">
                     <div class="tool-header">
                         <span style="font-size: 1.5rem;">${tool.icon}</span>
                         <span class="pricing-tag free">Free</span>
                     </div>
                     <h4>${tool.name}</h4>
                     <div style="margin-top:auto;">
-                        <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:10px;" onclick="event.stopPropagation(); loadNativeTool('${tool.id}')">Open Tool</button>
+                        <button class="btn-outline" style="width:100%; justify-content:center; margin-top:10px;" onclick="event.stopPropagation(); loadNativeTool('${tool.id}')">Open Tool</button>
                     </div>
                 </div>
             `).join('');
@@ -184,8 +184,8 @@ function renderWorkspace() {
         // Render External Tools
         const extContainer = document.getElementById('external-tools-grid');
         if (extContainer && data.external_tools) {
-            extContainer.innerHTML = data.external_tools.map(tool => `
-                <div class="tool-card">
+            extContainer.innerHTML = data.external_tools.map((tool, index) => `
+                <div class="tool-card" style="animation-delay: ${(index * 0.05) + 0.4}s;">
                     <div class="tool-header">
                         <span class="tool-tag">${tool.category}</span>
                         ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
@@ -209,6 +209,7 @@ function renderWorkspace() {
 
         // Apply Premium Animations
         setTimeout(applyVisualEffects, 100);
+        setTimeout(initSpotlightEffect, 200);
 
     } catch (e) {
         console.error("Workspace Render Error:", e);
@@ -225,6 +226,20 @@ const THEMES = {
     sunset: { class: 'theme-bg-sunset', bg: '#1a0505', accent: '#f43f5e' },
     snow: { class: 'theme-bg-snow', bg: '#0B1026', accent: '#60a5fa' }
 };
+
+/* --- Mouse Spotlight Effect (The "Magic") --- */
+function initSpotlightEffect() {
+    const cards = document.querySelectorAll('.tool-card');
+    cards.forEach(card => {
+        card.onmousemove = e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        };
+    });
+}
 
 window.setTheme = function (themeName) {
     const theme = THEMES[themeName];
@@ -455,12 +470,17 @@ function saveWidgets() {
 }
 
 // Global Widget Functions
+// Global Widget Functions
 window.deleteWidget = function (index) {
-    if (confirm('Remove this widget?')) {
-        myWidgets.splice(index, 1);
-        saveWidgets();
-        renderFocusDesk();
-    }
+    openConfirmModal({
+        title: "Remove Widget?",
+        message: "Are you sure you want to remove this from your Focus Desk?",
+        onConfirm: () => {
+            myWidgets.splice(index, 1);
+            saveWidgets();
+            renderFocusDesk();
+        }
+    });
 }
 
 window.moveWidget = function (index, direction) {
@@ -483,6 +503,36 @@ window.openWidgetModal = function () {
 }
 window.closeWidgetModal = function () {
     document.getElementById('widget-modal-overlay').classList.remove('active');
+}
+
+/* --- Generic Confirmation Modal Logic --- */
+let currentConfirmAction = null;
+
+window.openConfirmModal = function ({ title, message, onConfirm }) {
+    const overlay = document.getElementById('confirm-modal-overlay');
+    if (!overlay) {
+        // Fallback if HTML is missing
+        if (confirm(message)) onConfirm();
+        return;
+    }
+    document.getElementById('confirm-title').innerText = title;
+    document.getElementById('confirm-msg').innerText = message;
+    
+    currentConfirmAction = onConfirm;
+    
+    // Bind Action (Once)
+    const btn = document.getElementById('confirm-btn-action');
+    btn.onclick = () => {
+        if (currentConfirmAction) currentConfirmAction();
+        closeConfirmModal();
+    };
+    
+    overlay.classList.add('active');
+}
+
+window.closeConfirmModal = function () {
+    document.getElementById('confirm-modal-overlay').classList.remove('active');
+    currentConfirmAction = null;
 }
 
 let activeWidgetTab = 'link';

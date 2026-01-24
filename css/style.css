@@ -1,28 +1,33 @@
 :root {
     /* Color Palette - Premium Dark / Champagne Gold */
-    --bg-primary: #020202;
-    --bg-secondary: #0a0a0a;
-    --bg-glass: rgba(20, 20, 20, 0.7);
+    --bg-primary: #050505;
+    /* Deepest Black */
+    --bg-secondary: #0A0A0A;
+    --bg-glass: rgba(10, 10, 10, 0.6);
+    --bg-card: rgba(255, 255, 255, 0.02);
 
     --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-    --text-muted: #52525b;
+    --text-secondary: #A1A1AA;
+    --text-muted: #52525B;
 
     --accent: #E5C558;
     /* Champagne Gold */
-    --accent-glow: rgba(229, 197, 88, 0.35);
-    --accent-hover: #fcd34d;
+    --accent-glow: rgba(229, 197, 88, 0.15);
+    /* Subtler Glow */
+    --accent-hover: #FCD34D;
 
-    --border: rgba(255, 255, 255, 0.08);
-    --border-hover: rgba(255, 255, 255, 0.15);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
 
-    --success: #10b981;
-    --danger: #ef4444;
+    --success: #10B981;
+    --danger: #EF4444;
 
     /* Spacing & Layout */
-    --container-width: 1200px;
-    --header-height: 80px;
-    --radius: 16px;
+    --container-width: 1100px;
+    /* Tighter focus */
+    --header-height: 70px;
+    --radius: 12px;
+    /* Professional curvature */
 
     /* Typography */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -54,18 +59,33 @@
 
 body {
     background-color: var(--bg-primary);
-    /* Dynamic Mesh Gradient */
+    /* Alive Background: Multi-layered breathing gradients */
     background-image:
-        radial-gradient(circle at 10% 20%, rgba(229, 197, 88, 0.03), transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(100, 100, 255, 0.02), transparent 40%);
+        radial-gradient(circle at 50% 0%, rgba(229, 197, 88, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(30, 30, 40, 0.5), transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(10, 10, 15, 0.5), transparent 50%);
+    background-size: 150% 150%;
+    animation: bgBreath 20s ease-in-out infinite alternate;
+
     color: var(--text-primary);
     font-family: var(--font-main);
-    line-height: 1.6;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    letter-spacing: -0.01em;
+}
+
+@keyframes bgBreath {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    100% {
+        background-position: 100% 100%;
+    }
 }
 
 main {
@@ -144,64 +164,56 @@ footer a:hover {
 /* --- COMPONENTS --- */
 
 /* Buttons */
+/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 14px 34px;
+    padding: 12px 28px;
     background: var(--accent);
-    color: #000 !important;
-    font-weight: 700;
-    border-radius: 50px;
-    border: none;
-    font-size: 1rem;
-    letter-spacing: -0.02em;
-    box-shadow: 0 0 20px rgba(229, 197, 88, 0.2);
+    color: #1a1a00 !important;
+    font-weight: 600;
+    border-radius: 8px;
+    /* Slightly squarer for pro feel */
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
     position: relative;
     overflow: hidden;
-    z-index: 1;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(229, 197, 88, 0.15);
 }
 
-.btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50px;
-    height: 300%;
-    background: rgba(255, 255, 255, 0.4);
-    transform: rotate(45deg) translateY(-50%) translateX(-150%);
-    transition: transform 0.5s;
-    filter: blur(5px);
+.btn:active {
+    transform: scale(0.96);
 }
 
 .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(229, 197, 88, 0.4);
     background: var(--accent-hover);
-}
-
-.btn:hover::after {
-    transform: rotate(45deg) translateY(-50%) translateX(350%);
-    transition: 0.6s ease-in-out;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(229, 197, 88, 0.25);
 }
 
 .btn-outline {
-    background: rgba(255, 255, 255, 0.02);
+    background: transparent;
     border: 1px solid var(--border);
     color: var(--text-secondary);
     border-radius: 8px;
-    padding: 10px 18px;
-    font-weight: 600;
+    padding: 10px 20px;
+    font-weight: 500;
     font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
 .btn-outline:hover {
-    background: var(--accent);
-    color: #000 !important;
-    border-color: var(--accent);
-    box-shadow: 0 5px 20px var(--accent-glow);
-    transform: translateY(-2px);
+    border-color: var(--text-primary);
+    color: var(--text-primary) !important;
+    background: rgba(255, 255, 255, 0.03);
+    transform: translateY(-1px);
+}
+
+.btn-outline:active {
+    transform: scale(0.98);
 }
 
 /* Header */
@@ -375,62 +387,151 @@ header .logo {
 
 /* --- Premium Animations & FX --- */
 
+/* --- Premium Animations & FX --- */
+
 /* 1. Staggered Entry Animation */
-@keyframes fadeInUpStagger {
+@keyframes slideUpFade {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(24px) scale(0.96);
+        filter: blur(8px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
+        filter: blur(0);
     }
 }
 
+/* 2. Spotlight Card Effect */
 .tool-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 24px;
+    background: rgba(255, 255, 255, 0.015);
+    /* Ultra subtle base */
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    padding: 26px;
     display: flex;
     flex-direction: column;
     height: 100%;
     position: relative;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    backdrop-filter: blur(10px);
-
-    /* 3D Transform Prep */
-    transform-style: preserve-3d;
-    perspective: 1000px;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
+    backdrop-filter: blur(20px);
+    /* Heavy frost */
+    -webkit-backdrop-filter: blur(20px);
 
     /* Animation Trigger */
-    animation: fadeInUpStagger 0.6s ease-out forwards;
     opacity: 0;
-    /* Handled by JS delay */
+    animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Hover State: Neon Glow & Lift */
+/* The Spotlight Glow Container */
+/* The Spotlight Glow Container (Border) */
+.tool-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--radius);
+    padding: 1.5px;
+    /* Thicker border glow */
+    width: 100%;
+    background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+            rgba(255, 215, 0, 0.7),
+            /* Vibrant Gold */
+            transparent 40%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Inner Glow (Surface) */
+.tool-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--radius);
+    background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+            rgba(255, 215, 0, 0.1),
+            /* Subtle Gold Wash */
+            transparent 40%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.tool-card:hover::before,
+.tool-card:hover::after {
+    opacity: 1;
+}
+
+/* Hover State: Subtle Lift */
 .tool-card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: var(--accent);
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5),
-        0 0 15px var(--accent-glow);
-    z-index: 10;
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Pricing Tag Glow */
-.pricing-tag {
-    font-size: 0.65rem;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 800;
-    text-transform: uppercase;
+/* Typography Overhaul in Cards */
+.tool-card h4 {
+    font-size: 1.25rem;
+    /* Larger */
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    /* Tighter */
+    z-index: 2;
+    position: relative;
+}
+
+.tool-header,
+.btn-outline,
+p {
+    z-index: 2;
+    position: relative;
+}
+
+.tool-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.tool-tag {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-weight: 600;
     letter-spacing: 0.05em;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+}
+
+/* Pricing Tag Minimal */
+.pricing-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Background Pulse */
@@ -473,11 +574,7 @@ body::before {
     }
 }
 
-.tool-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
+
 
 .tool-tag {
     font-size: 0.75rem;
@@ -490,24 +587,122 @@ body::before {
     text-transform: uppercase;
 }
 
-.tool-card h4 {
-    font-size: 1.25rem;
-    margin-bottom: 10px;
-    font-weight: 700;
-    color: #f4f4f5;
+/* --- Hyper-Premium Animations --- */
+
+/* 1. Shimmering Text Gradient */
+@keyframes textShimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
 }
 
-/* --- Auth Modal & User UI --- */
-/* --- Creator Profile --- */
-.project-card-mini {
-    display: flex;
-    align-items: center;
+#workspace-title span {
+    background: linear-gradient(to right,
+            var(--accent) 20%,
+            #fff 40%,
+            #fff 60%,
+            var(--accent) 80%);
+    background-size: 200% auto;
+    color: transparent;
+    /* Fallback managed by webkit-text-fill */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShimmer 3s linear infinite;
+    display: inline-block;
+}
+
+/* 2. Floating Icons (Gentle Bob) */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.tool-header span:first-child {
+    display: inline-block;
+    animation: float 4s ease-in-out infinite;
+}
+
+/* 3. Search Bar Expansion */
+.search-input {
+    width: 100%;
+    padding: 20px 30px;
+    font-size: 1.15rem;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 16px;
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-primary);
+    backdrop-filter: blur(20px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    /* Improve centering transform origin */
+    transform-origin: center;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(20, 20, 20, 0.95);
+    box-shadow: 0 0 0 1px var(--accent-glow), 0 20px 60px rgba(0, 0, 0, 0.6);
+    transform: scale(1.02);
+    /* Subtle expansion */
+    width: 102%;
+    /* Slight width increase */
+    margin-left: -1%;
+    /* Center it back */
+}
+
+/* 4. Liquid Button Shine */
+.btn {
+    /* ... existing styles ... */
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    transition: none;
+}
+
+.btn:hover::after {
+    animation: shinePass 0.75s;
+}
+
+@keyframes shinePass {
+    100% {
+        left: 125%;
+    }
+}
+
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.08);
+padding: 16px;
+border-radius: 12px;
+transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+text-decoration: none;
 }
 
 .project-card-mini:hover {
@@ -1189,39 +1384,47 @@ body::before {
 /* Widget Controls (Move & Delete) */
 .widget-controls {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     display: flex;
     gap: 8px;
     opacity: 0;
     /* Hidden by default */
     transform: translateY(-5px);
     transition: all 0.2s ease;
-    z-index: 100;
+    z-index: 999;
+    /* Boosted Z-Index to beat everything */
     pointer-events: none;
+    /* Container doesn't block, contents do */
 }
 
 .widget-card:hover .widget-controls {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
+    /* Enable clicks on hover */
 }
 
 .widget-control-btn {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.9);
+    /* Darker background for visibility */
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: 0.2s;
     backdrop-filter: blur(8px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    /* Ensure button itself is top-level */
+    position: relative;
+    /* For z-index to work contextually if needed */
 }
 
 .widget-control-btn:hover {
@@ -1333,13 +1536,15 @@ body::before {
 
 /* --- Mobile Desktop Warning --- */
 #mobile-warning {
-    display: none; /* Hidden by default */
+    display: none;
+    /* Hidden by default */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85); /* Dark overlay */
+    background: rgba(0, 0, 0, 0.85);
+    /* Dark overlay */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     z-index: 9999;
@@ -1356,7 +1561,7 @@ body::before {
     border-radius: 20px;
     max-width: 350px;
     text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 .mobile-warning-icon {
@@ -1370,4 +1575,49 @@ body::before {
     #mobile-warning {
         display: flex;
     }
+}
+
+/* --- Custom Modal Overlay --- */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    /* Top of everything */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-card {
+    background: #151515;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 90%;
+}
+
+.modal-overlay.active .modal-card {
+    transform: scale(1);
+}
+
+/* Add Widget Modal Specifics */
+#widget-modal-overlay .modal-card {
+    width: 500px;
+    max-width: 95vw;
 }
