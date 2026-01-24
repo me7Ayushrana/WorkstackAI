@@ -395,7 +395,8 @@ function initFocusDesk(roleData) {
         // Default widgets for first time
         myWidgets = [
             { type: 'tool', id: 'pomodoro', name: 'Deep Focus Timer' },
-            { type: 'link', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk', name: 'Lofi Girl Radio' }
+            { type: 'link', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk', name: '24h Focus Radio' },
+            { type: 'link', url: 'https://gemini.google.com', name: 'Gemini AI' }
         ];
         saveWidgets();
     }
@@ -517,16 +518,16 @@ window.openConfirmModal = function ({ title, message, onConfirm }) {
     }
     document.getElementById('confirm-title').innerText = title;
     document.getElementById('confirm-msg').innerText = message;
-    
+
     currentConfirmAction = onConfirm;
-    
+
     // Bind Action (Once)
     const btn = document.getElementById('confirm-btn-action');
     btn.onclick = () => {
         if (currentConfirmAction) currentConfirmAction();
         closeConfirmModal();
     };
-    
+
     overlay.classList.add('active');
 }
 

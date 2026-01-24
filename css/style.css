@@ -406,9 +406,10 @@ header .logo {
 
 /* 2. Spotlight Card Effect */
 .tool-card {
-    background: rgba(255, 255, 255, 0.015);
-    /* Ultra subtle base */
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
+    /* Slightly clearer base */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    /* Visible glass border */
     border-radius: var(--radius);
     padding: 26px;
     display: flex;
@@ -416,14 +417,24 @@ header .logo {
     height: 100%;
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
     backdrop-filter: blur(20px);
-    /* Heavy frost */
     -webkit-backdrop-filter: blur(20px);
 
     /* Animation Trigger */
     opacity: 0;
     animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ... pseudo elements skipped ... */
+
+/* Hover State: Subtle Lift */
+.tool-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    /* Brighter on hover */
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* The Spotlight Glow Container */
