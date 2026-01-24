@@ -396,13 +396,68 @@ function initFocusDesk(roleData) {
         myWidgets = [
             { type: 'tool', id: 'pomodoro', name: 'Deep Focus Timer' },
             { type: 'link', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk', name: '24h Focus Radio' },
-            { type: 'link', url: 'https://gemini.google.com', name: 'Gemini AI' }
+            { type: 'link', url: 'https://gemini.google.com', name: 'Gemini AI' },
+            { type: 'link', url: 'https://ayushhh-folio.netlify.app', name: 'Designed By Ayush', isPremium: true }
         ];
         saveWidgets();
     }
-
     renderFocusDesk();
     section.classList.remove('hidden');
+}
+
+// Helper to render move controls for widgets
+function renderMoveControls(index) {
+    return `
+        <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, -1)" title="Move Left">←</button>
+        <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, 1)" title="Move Right">→</button>
+    `;
+}
+
+// Helper to render a tool widget
+function renderToolWidget(widget, index) {
+    return `
+        <div class="tool-card widget-card" onclick="loadNativeTool('${widget.id}')">
+            <div class="widget-controls">
+                ${renderMoveControls(index)}
+                <button class="widget-control-btn delete" onclick="event.stopPropagation(); deleteWidget(${index})" title="Remove">✕</button>
+            </div>
+            <div class="tool-header">
+                <span style="font-size: 1.5rem;">🛠️</span>
+                <span class="pricing-tag free">Native</span>
+            </div>
+            <h4>${widget.name}</h4>
+            <div style="margin-top:auto;">
+                <button class="btn btn-outline" style="width:100%;">Open Tool</button>
+            </div>
+        </div>
+    `;
+}
+
+// Helper to render a link widget
+function renderLinkWidget(widget, index) {
+    // Check for special premium flag or specific name
+    const specialClass = widget.isPremium || widget.name.includes('Ayush') ? 'premium-link-card' : '';
+    const specialLabel = widget.isPremium || widget.name.includes('Ayush') ? 'CREATOR' : 'LINK';
+
+    return `
+        <div class="tool-card widget-card ${specialClass}" onclick="window.open('${widget.url}', '_blank')">
+            <div class="widget-controls">
+                ${renderMoveControls(index)}
+                <button class="widget-control-btn delete" onclick="event.stopPropagation(); deleteWidget(${index})" title="Remove">✕</button>
+            </div>
+            <div class="tool-header">
+                <div class="tool-icon" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px;">
+                    ${widget.name.includes('Ayush') ? '<img src="https://github.com/me7Ayuhrana.png" style="width:100%; height:100%; border-radius:50%;">' : '🔗'}
+                </div>
+                <span class="pricing-tag" style="${widget.name.includes('Ayush') ? 'background:linear-gradient(45deg, #FFD700, #FFA500); color:black;' : ''}">${specialLabel}</span>
+            </div>
+            <div class="tool-body">
+                <h4>${widget.name}</h4>
+                <p style="font-size: 0.9rem; opacity: 0.7;">${widget.name.includes('Ayush') ? 'Know more about me & my work.' : 'External Resource'}</p>
+            </div>
+            <button class="btn btn-outline" style="width:100%; margin-top:auto;">Visit Link ↗</button>
+        </div>
+    `;
 }
 
 function renderFocusDesk() {
