@@ -948,6 +948,7 @@ function initToolLogic(toolId) {
     if (toolId === 'pomodoro') initPomodoro();
     if (toolId === 'converter') setTimeout(window.updateUnits, 50);
     if (toolId === 'notes') initStickyNotes();
+    if (toolId === 'invoice-gen') initInvoice();
     // Others auto-init via inline events
 }
 
@@ -1133,31 +1134,167 @@ window.calculateGPA = function () {
 
 function renderInvoiceGen() {
     return `
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+             <h3 style="margin:0;">Settings</h3>
+             <select id="inv-currency" class="input-field" style="width:auto; padding:5px 10px; margin:0;" onchange="renderInvoiceItems()">
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+                <option value="₹">INR (₹)</option>
+                <option value="¥">JPY (¥)</option>
+             </select>
+        </div>
+
         <div class="input-group">
-            <input type="text" id="inv-client" class="input-field" placeholder="Client Name">
-            <input type="number" id="inv-amount" class="input-field" placeholder="Amount ($)">
-            <input type="text" id="inv-item" class="input-field" placeholder="Service (e.g. Web Design)">
+            <input type="text" id="inv-client" class="input-field" placeholder="Client Name / Business">
+            <input type="text" id="inv-date" class="input-field" placeholder="Date (YYYY-MM-DD)" onfocus="(this.type='date')" onblur="(this.type='text')">
         </div>
-        <button class="btn" onclick="generateInvoice()">Download PDF (Mock)</button>
-        <div id="invoice-preview" style="margin-top: 20px; padding: 20px; border: 1px dashed var(--border); display:none;">
-            <h3 style="margin-bottom:10px;">INVOICE</h3>
-            <p><strong>To:</strong> <span id="prev-client"></span></p>
-            <p><strong>For:</strong> <span id="prev-item"></span></p>
-            <h2 style="margin-top:20px;">Total: $<span id="prev-amount"></span></h2>
+
+        <div style="margin-top:20px;">
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Line Items</p>
+            <div id="inv-items-container">
+                <!-- Items injected here -->
+            </div>
+            <button class="btn-outline" onclick="addInvoiceItem()" style="width:100%; margin-top:10px; border-style:dashed;">+ Add Item</button>
         </div>
+
+        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; font-size:1.2rem; font-weight:bold;">
+            <span>Total:</span>
+            <span id="inv-final-total" style="color:var(--accent);">$0.00</span>
+        </div>
+
+        <button class="btn" onclick="printInvoice()" style="width:100%; margin-top:20px;">📄 Generate & Download PDF</button>
+
+        <!-- Hidden Print Template -->
+        <div id="print-area" style="display:none;"></div>
     `;
 }
-window.generateInvoice = function () {
-    const client = document.getElementById('inv-client').value;
-    const item = document.getElementById('inv-item').value;
-    const amount = document.getElementById('inv-amount').value;
 
-    if (!client || !amount) return alert("Fill details");
+// Global state for items
+let invoiceItems = [];
 
-    document.getElementById('prev-client').textContent = client;
-    document.getElementById('prev-item').textContent = item;
-    document.getElementById('prev-amount').textContent = amount;
-    document.getElementById('invoice-preview').style.display = 'block';
+window.initInvoice = function () {
+    invoiceItems = [{ desc: '', qty: 1, price: 0 }];
+    renderInvoiceItems();
+}
+
+window.addInvoiceItem = function () {
+    invoiceItems.push({ desc: '', qty: 1, price: 0 });
+    renderInvoiceItems();
+}
+
+window.removeInvoiceItem = function (index) {
+    if (invoiceItems.length > 1) {
+        invoiceItems.splice(index, 1);
+        renderInvoiceItems();
+    }
+}
+
+window.renderInvoiceItems = function () {
+    const container = document.getElementById('inv-items-container');
+    if (!container) return;
+
+    const currency = document.getElementById('inv-currency')?.value || '$';
+
+    container.innerHTML = invoiceItems.map((item, i) => `
+        <div class="inv-item-row" style="display:flex; gap:10px; margin-bottom:10px;">
+            <input type="text" class="input-field" style="flex:2; margin:0;" placeholder="Description" value="${item.desc}" oninput="updateInvItem(${i}, 'desc', this.value)">
+            <input type="number" class="input-field" style="flex:1; margin:0;" placeholder="Qty" value="${item.qty}" min="1" oninput="updateInvItem(${i}, 'qty', this.value)">
+            <input type="number" class="input-field" style="flex:1; margin:0;" placeholder="Price" value="${item.price}" oninput="updateInvItem(${i}, 'price', this.value)">
+            <button onclick="removeInvoiceItem(${i})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:1.2rem;">&times;</button>
+        </div>
+    `).join('');
+
+    calcInvoiceTotal();
+}
+
+window.updateInvItem = function (index, field, value) {
+    invoiceItems[index][field] = field === 'desc' ? value : parseFloat(value) || 0;
+    calcInvoiceTotal();
+}
+
+window.calcInvoiceTotal = function () {
+    const currency = document.getElementById('inv-currency')?.value || '$';
+    const total = invoiceItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
+    const totalEl = document.getElementById('inv-final-total');
+    if (totalEl) totalEl.innerText = `${currency}${total.toFixed(2)}`;
+    return total;
+}
+
+window.printInvoice = function () {
+    const client = document.getElementById('inv-client').value || 'Client';
+    const date = document.getElementById('inv-date').value || new Date().toISOString().split('T')[0];
+    const currency = document.getElementById('inv-currency').value;
+    const total = window.calcInvoiceTotal().toFixed(2);
+
+    const itemsHTML = invoiceItems.map(item => `
+        <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:10px;">${item.desc || 'Service'}</td>
+            <td style="padding:10px; text-align:center;">${item.qty}</td>
+            <td style="padding:10px; text-align:right;">${currency}${item.price.toFixed(2)}</td>
+            <td style="padding:10px; text-align:right;">${currency}${(item.qty * item.price).toFixed(2)}</td>
+        </tr>
+    `).join('');
+
+    const printContent = `
+        <html>
+        <head>
+            <title>Invoice_${client}_${date}</title>
+            <style>
+                body { font-family: 'Helvetica', sans-serif; color: #333; padding: 40px; max-width: 800px; margin: 0 auto; }
+                .header { display: flex; justify-content: space-between; margin-bottom: 50px; }
+                .header h1 { margin: 0; color: #111; }
+                .details { margin-bottom: 30px; }
+                table { width: 100%; border-collapse: collapse; }
+                th { text-align: left; background: #f9f9f9; padding: 10px; font-weight: bold; }
+                .total { margin-top: 30px; text-align: right; font-size: 1.5rem; font-weight: bold; }
+                .footer { margin-top: 50px; font-size: 0.8rem; color: #777; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div>
+                    <h1>INVOICE</h1>
+                    <p style="color:#555;">Generated via WorkstackAI</p>
+                </div>
+                <div style="text-align:right;">
+                    <p><strong>Date:</strong> ${date}</p>
+                </div>
+            </div>
+
+            <div class="details">
+                <p><strong>Bill To:</strong><br>${client}</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th style="text-align:center;">Qty</th>
+                        <th style="text-align:right;">Price</th>
+                        <th style="text-align:right;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsHTML}
+                </tbody>
+            </table>
+
+            <div class="total">
+                Total: ${currency}${total}
+            </div>
+
+            <div class="footer">
+                Thank you for your business.
+            </div>
+            <script>window.print(); window.onafterprint = function(){ window.close(); }</script>
+        </body>
+        </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
 }
 
 function renderTimeTracker() {
