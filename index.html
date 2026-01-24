@@ -101,80 +101,75 @@
         </div>
     </footer>
 
-    <!-- Creator Modal Overlay (Premium Redesign) -->
+    <!-- Creator Modal Overlay (Cleaner & Premium) -->
     <div id="creator-modal-overlay" class="auth-overlay">
-        <div class="auth-modal" style="text-align: left; max-width: 500px; border: 1px solid rgba(255, 215, 0, 0.2); box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);">
+        <div class="auth-modal"
+            style="text-align: left; max-width: 480px; border: 1px solid rgba(255, 255, 255, 0.08); background: #0a0a0a; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
             <!-- Close Button -->
-            <div style="position: absolute; top: 20px; right: 20px;">
-                <button onclick="closeCreatorModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 1.2rem;">✕</button>
-            </div>
+            <button onclick="closeCreatorModal()"
+                style="position: absolute; top: 20px; right: 20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 1.2rem; z-index: 10;">✕</button>
 
             <!-- Profile Header -->
-            <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 25px;">
-                <img src="https://github.com/me7Ayuhrana.png" alt="Ayush" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.3);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
                 <div>
-                    <h3 style="font-size: 1.5rem; margin-bottom: 5px; color: #fff;">Ayush Rana</h3>
-                    <p style="color: #FFD700; font-size: 0.9rem; font-weight: 500;">Student & Developer</p>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 5px; color: #fff; letter-spacing: -0.5px;">Ayush Rana
+                    </h3>
+                    <p style="color: var(--accent); font-size: 0.9rem; font-weight: 500;">Student & Developer</p>
                 </div>
+                <a href="https://ayushhh-folio.netlify.app" target="_blank" class="btn-outline"
+                    style="padding: 8px 16px; font-size: 0.8rem; border-color: var(--accent); color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                    Know More ↗
+                </a>
             </div>
 
-            <!-- Bio / About -->
+            <!-- Bio -->
             <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem; margin-bottom: 25px;">
-                Building next-gen digital experiences. Passionate about AI, Productivity tools, and clean UI/UX designs.
+                Passionate about building cleaner, faster, and more intelligent digital tools.
             </p>
 
             <!-- Social Chips -->
-            <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
-                <a href="https://instagram.com/ayushrana.me" target="_blank" class="user-chip" style="text-decoration: none; padding: 10px 18px; border-color: rgba(255,255,255,0.1);">
+            <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+                <a href="https://instagram.com/ayushrana.me" target="_blank" class="user-chip"
+                    style="text-decoration: none; padding: 10px 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
                     <span>📸 Instagram</span>
                 </a>
-                <a href="https://github.com/me7Ayuhrana" target="_blank" class="user-chip" style="text-decoration: none; padding: 10px 18px; border-color: rgba(255,255,255,0.1);">
+                <a href="https://github.com/me7Ayushrana" target="_blank" class="user-chip"
+                    style="text-decoration: none; padding: 10px 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
                     <span>🐙 GitHub</span>
                 </a>
-                <a href="mailto:ayushamit007@gmail.com" class="user-chip" style="text-decoration: none; padding: 10px 18px; border-color: rgba(255,255,255,0.1);">
+                <a href="mailto:ayushamit007@gmail.com" class="user-chip"
+                    style="text-decoration: none; padding: 10px 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
                     <span>📧 Mail</span>
                 </a>
             </div>
 
-            <!-- "Know More" Portfolio Link (Primary Call to Action) -->
-            <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 12px;">
-                Know More About Author
-            </h4>
-            
-            <a href="https://ayushhh-folio.netlify.app" target="_blank" class="project-card-mini" style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(0,0,0,0)); border: 1px solid rgba(255,215,0,0.3);">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <h4 style="color: #fff; font-size: 1.1rem; margin:0;">Standard Portfolio</h4>
-                        <span style="font-size: 0.7rem; background: #FFD700; color: #000; padding: 2px 6px; border-radius: 4px; font-weight: 700;">OFFICIAL</span>
-                    </div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
-                        View my complete journey, skills, and other projects.
-                    </p>
-                </div>
-                <div style="margin-left: 15px; color: #FFD700; font-size: 1.2rem;">
-                    ➔
-                </div>
-            </a>
-
-            <!-- Featured Project (Secondary) -->
-            <div style="margin-top: 20px; opacity: 0.8;">
-                <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 12px;">
-                    Also Built
+            <!-- Featured Project Section -->
+            <div
+                style="background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px;">
+                <h4
+                    style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 15px;">
+                    Featured Project
                 </h4>
-                <a href="https://homeguard-x-2.onrender.com" target="_blank" class="project-card-mini" style="padding: 12px;">
-                    <div style="flex: 1;">
-                        <h4 style="margin-bottom: 2px; color: #fff; font-size: 0.95rem;">HomeGuard X 🛡️</h4>
+                <a href="https://homeguard-x-2.onrender.com" target="_blank"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 4px;">HomeGuard X 🛡️</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Advanced Network Security Scanner
+                        </p>
                     </div>
-                    <div style="margin-left: 10px; color: var(--accent);">
-                        ↗
+                    <div
+                        style="width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; transform: rotate(-45deg);">
+                        ➜
                     </div>
                 </a>
             </div>
 
-            <!-- Admin View Trigger (Hidden unless Admin) -->
-            <div id="admin-tools" style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;" class="hidden">
-                 <button onclick="viewProductRequests()" class="btn-outline" style="width: 100%; font-size: 0.85rem;">
-                    Admin: View Tool Requests 📨
+            <!-- Admin View Trigger (Hidden) -->
+            <div id="admin-tools" style="margin-top: 2rem;" class="hidden">
+                <button onclick="viewProductRequests()" class="btn-outline"
+                    style="width: 100%; font-size: 0.85rem; opacity: 0.5;">
+                    Admin Tools
                 </button>
             </div>
         </div>
@@ -408,4 +403,5 @@
         </div>
     </div>
 </body>
+
 </html>
