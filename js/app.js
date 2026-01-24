@@ -401,6 +401,18 @@ function initFocusDesk(roleData) {
         ];
         saveWidgets();
     }
+    // Force-inject Premium Widget if missing (Migration Fix)
+    const hasCreatorWidget = myWidgets.some(w => w.name.includes('Designed By Ayush'));
+    if (!hasCreatorWidget) {
+        myWidgets.push({
+            type: 'link',
+            url: 'https://ayushhh-folio.netlify.app',
+            name: 'Designed By Ayush',
+            isPremium: true
+        });
+        saveWidgets();
+    }
+
     renderFocusDesk();
     section.classList.remove('hidden');
 }
