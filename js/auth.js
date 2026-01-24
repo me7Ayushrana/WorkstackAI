@@ -128,16 +128,60 @@ const AUTH = {
         if (!headerBtn) return;
 
         if (this.state.isLoggedIn && this.state.user) {
+            // Dropdown HTML Structure
             headerBtn.innerHTML = `
-                <div class="user-chip" onclick="AUTH.logout()" title="Click to Logout">
-                    <img src="${this.state.user.avatar}" alt="User">
-                    <span>${this.state.user.name ? this.state.user.name.split(' ')[0] : 'User'}</span>
+                <div class="user-menu-container" style="position: relative;">
+                    <button class="user-menu-btn" onclick="AUTH.toggleMenu()" title="Account Options">
+                        <img src="${this.state.user.avatar}" alt="User">
+                        <span>${this.state.user.name ? this.state.user.name.split(' ')[0] : 'User'}</span>
+                        <span style="font-size: 0.8rem; opacity: 0.5;">▼</span>
+                    </button>
+                    
+                    <!-- Dropdown Content -->
+                    <div id="user-dropdown" class="user-dropdown-menu hidden">
+                        <div class="dropdown-header">
+                            <img src="${this.state.user.avatar}" class="dropdown-avatar">
+                            <div>
+                                <div class="dropdown-name">${this.state.user.name}</div>
+                                <div class="dropdown-email">${this.state.user.email}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="roles.html" class="dropdown-item">
+                            <span>🎭</span> Switch Role
+                        </a>
+                        <a href="#" class="dropdown-item disabled">
+                            <span>⚙️</span> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item dangerous" onclick="AUTH.logout()">
+                            <span>🚪</span> Log Out
+                        </div>
+                    </div>
                 </div>
             `;
-            headerBtn.onclick = null; // Let the inner onclick handle logout
+            headerBtn.onclick = null; // Remove parent click
+            headerBtn.style.padding = "0"; // Reset defaults
+            headerBtn.style.border = "none";
         } else {
             headerBtn.innerHTML = `Sign In`;
-            headerBtn.onclick = () => openAuthModal(); // Global function in index.html
+            headerBtn.onclick = () => openAuthModal();
+        }
+    },
+
+    toggleMenu: function() {
+        const menu = document.getElementById('user-dropdown');
+        if (menu) {
+            menu.classList.toggle('hidden');
+            // Close when clicking outside
+            if (!menu.classList.contains('hidden')) {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!e.target.closest('.user-menu-container')) {
+                        menu.classList.add('hidden');
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }
         }
     }
 };
