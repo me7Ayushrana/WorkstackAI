@@ -708,12 +708,13 @@ body::before {
     }
 }
 
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid rgba(255, 255, 255, 0.08);
-padding: 16px;
-border-radius: 12px;
-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-text-decoration: none;
+.project-card-mini {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 16px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-decoration: none;
 }
 
 .project-card-mini:hover {
@@ -1673,6 +1674,11 @@ text-decoration: none;
 }
 
 @keyframes rotateGlow {
-    0% { transform: rotate(0deg) scale(1); }
-    100% { transform: rotate(360deg) scale(1); }
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
 }
