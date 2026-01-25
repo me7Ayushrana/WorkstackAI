@@ -85,7 +85,7 @@ function checkAccess() {
 }
 
 function renderFunZone() {
-    const data = TOOL_DATA['fun_zone'];
+    const data = APP_DATABASE_V2['fun_zone'];
 
     // Render Web Games
     const gamesContainer = document.getElementById('games-grid');
@@ -139,7 +139,7 @@ function renderFunZone() {
 /* --- Workspace Rendering --- */
 function renderWorkspace() {
     const roleKey = sessionStorage.getItem('selectedRole');
-    const data = TOOL_DATA[roleKey];
+    const data = APP_DATABASE_V2[roleKey];
 
     if (!data) return;
 
@@ -316,17 +316,17 @@ function renderCustomWorkspaceMode() {
 
     // Aggregate ALL tools
     const allNative = [
-        ...TOOL_DATA.student.native_tools,
-        ...TOOL_DATA.freelancer.native_tools,
-        ...TOOL_DATA.creator.native_tools
+        ...APP_DATABASE_V2.student.native_tools,
+        ...APP_DATABASE_V2.freelancer.native_tools,
+        ...APP_DATABASE_V2.creator.native_tools
     ];
     const uniqueNative = Array.from(new Map(allNative.map(item => [item.id, item])).values());
 
     const allExternal = [
-        ...TOOL_DATA.student.external_tools,
-        ...TOOL_DATA.freelancer.external_tools,
-        ...TOOL_DATA.creator.external_tools,
-        ...TOOL_DATA.fun_zone.games, // Why not?
+        ...APP_DATABASE_V2.student.external_tools,
+        ...APP_DATABASE_V2.freelancer.external_tools,
+        ...APP_DATABASE_V2.creator.external_tools,
+        ...APP_DATABASE_V2.fun_zone.games, // Why not?
     ];
     // De-duplicate URLs
     const uniqueExternal = Array.from(new Map(allExternal.map(item => [item.url, item])).values());
@@ -871,7 +871,7 @@ window.loadNativeTool = function (toolId) {
     if (!toolId) return;
 
     // 0. Ensure Data is Loaded
-    if (typeof TOOL_DATA === 'undefined') {
+    if (typeof APP_DATABASE_V2 === 'undefined') {
         alert("Error: Tool Data not loaded. Please refresh.");
         return;
     }
@@ -933,9 +933,9 @@ window.loadNativeTool = function (toolId) {
     // 3. Get Tool Name
     let toolName = "Tool";
     const allTools = [
-        ...TOOL_DATA.student.native_tools,
-        ...TOOL_DATA.freelancer.native_tools,
-        ...TOOL_DATA.creator.native_tools
+        ...APP_DATABASE_V2.student.native_tools,
+        ...APP_DATABASE_V2.freelancer.native_tools,
+        ...APP_DATABASE_V2.creator.native_tools
     ];
     const original = allTools.find(t => t.id === toolId);
     if (original) toolName = original.name;
