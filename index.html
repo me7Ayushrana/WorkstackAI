@@ -11,10 +11,17 @@
 
 <body>
 
+    <!-- 
+        WORKSTACK AI - LANDING PAGE 
+        Version: 4.5 (Stable)
+        Developer: Ayush Rana
+        Last Updated: Jan 2026
+        Notes: Fixed the mobile responsive bug in Hero section.
+    -->
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="logo">WorkstackAI.</div>
-            <!-- Auth Trigger Button -->
+            <!-- Auth Trigger Button (Managed by auth.js) -->
             <button id="auth-trigger" class="btn-outline" style="padding: 8px 20px; font-size: 0.9rem;">Sign In</button>
         </div>
     </header>
@@ -81,20 +88,19 @@
         </div>
     </div>
 
+    <!-- FOOTER SECTION -->
     <footer>
         <div class="container">
             <p style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.6;">&copy; 2026 WorkstackAI. Optimized for
                 Focus.</p>
 
             <div class="footer-controls">
-                <!-- Creator Badge -->
-                <!-- Creator Badge -->
+                <!-- Creator Badge (Replaced broken img with button - Ayush) -->
                 <button onclick="openCreatorModal()" class="footer-badge">
-                    <img src="img/avatar.png" alt="AR">
                     <span>Designed by Ayush Rana</span>
                 </button>
 
-                <!-- Features Badge -->
+                <!-- Features Roadmap Trigger -->
                 <button onclick="openFeaturesModal()" class="footer-badge glow">
                     <span>🚀 Features & Roadmap</span>
                 </button>

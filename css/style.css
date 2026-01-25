@@ -1,3 +1,12 @@
+/* 
+   --------------------------------------------------------
+   WORKSTACK AI PRO - MAIN STYLESHEET
+   Version: 4.2
+   Author: Ayush Rana
+   Tone: Dark, Neon, Focused, Premium
+   --------------------------------------------------------
+*/
+
 :root {
     /* Color Palette - Premium Dark / Champagne Gold */
     --bg-primary: #050505;
@@ -1799,6 +1808,35 @@ body::before {
     opacity: 1;
     pointer-events: auto;
 }
+
+/* 
+   ------------------------------------------
+   HOTFIXES (Jan 24, 2026)
+   ------------------------------------------
+   Quick patches for mobile layout & z-index issues.
+   TODO: Move these to main sections in V5 rewrite.
+*/
+
+/* Fix for modal overlapping on small screens */
+@media (max-width: 480px) {
+    .auth-modal {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .role-grid {
+        grid-template-columns: 1fr;
+        /* Force single column */
+    }
+}
+
+/* Ensure toast notifications stay on top */
+.toast-notification {
+    z-index: 999999 !important;
+    /* Force top */
+}
+
+
 
 .modal-card {
     background: #151515;

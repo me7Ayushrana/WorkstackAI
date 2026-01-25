@@ -1,32 +1,50 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Page Routing / Guard Logic
-    const path = window.location.pathname;
+/*
+    WORKSTACK APPLICATION LOGIC
+    v4.0 - Rewrite for performance
+    Developer: Ayush Rana
+*/
 
-    if (path.includes('workspace')) {
+document.addEventListener('DOMContentLoaded', () => {
+    // console.log("Init Workstack..."); // DEBUG
+
+    // Router Logic
+    const currentPath = window.location.pathname;
+
+    // Route: Workspace
+    if (currentPath.includes('workspace')) {
+        // console.log("Loading Workspace...");
         checkAccess();
         renderWorkspace();
-    } else if (path.includes('roles')) {
-        // FORCE RESET: Ensure no role is pre-selected when landing here
+    }
+    // Route: Roles (Reset state)
+    else if (currentPath.includes('roles')) {
+        // Fixing bug where student role stuck
         sessionStorage.removeItem('selectedRole');
-    } else if (path.includes('payment')) {
+        // console.log("Roles page loaded. Session cleared.");
+    }
+    // Route: Payment
+    else if (currentPath.includes('payment')) {
         checkRoleSelection();
-    } else if (path.includes('fun-zone')) {
+    }
+    // Route: Fun Zone
+    else if (currentPath.includes('fun-zone')) {
         renderFunZone();
     }
 
-    // Event Listeners for Role Selection
+    // Role Selection Click Triggers
     const roleCards = document.querySelectorAll('.role-card');
     roleCards.forEach(card => {
         card.addEventListener('click', () => {
-            const role = card.dataset.role;
-            selectRole(role);
+            const roleID = card.dataset.role;
+            // console.log("Picked Role:", roleID);
+            selectRole(roleID);
         });
     });
 
-    // Payment Logic
-    const payBtn = document.getElementById('pay-btn');
-    if (payBtn) {
-        payBtn.addEventListener('click', processPayment);
+    // Payment Button Logic
+    const btnPay = document.getElementById('pay-btn');
+    if (btnPay) {
+        btnPay.addEventListener('click', processPayment);
     }
 });
 
