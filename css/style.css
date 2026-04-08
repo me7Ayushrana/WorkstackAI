@@ -598,3 +598,123 @@ body::before {
         background-position: -200% center;
     }
 
+    100% {
+        background-position: 200% center;
+    }
+}
+
+#workspace-title span {
+    background: linear-gradient(to right,
+            var(--accent) 20%,
+            #fff 40%,
+            #fff 60%,
+            var(--accent) 80%);
+    background-size: 200% auto;
+    color: transparent;
+    /* Fallback managed by webkit-text-fill */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShimmer 3s linear infinite;
+    display: inline-block;
+}
+
+/* 2. Floating Icons (Gentle Bob) */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.tool-header span:first-child {
+    display: inline-block;
+    animation: float 4s ease-in-out infinite;
+}
+
+/* 3. Search Bar Expansion */
+.search-input {
+    width: 100%;
+    padding: 20px 30px;
+    font-size: 1.15rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-primary);
+    backdrop-filter: blur(20px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    /* Improve centering transform origin */
+    transform-origin: center;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(20, 20, 20, 0.95);
+    box-shadow: 0 0 0 1px var(--accent-glow), 0 20px 60px rgba(0, 0, 0, 0.6);
+    transform: scale(1.02);
+    /* Subtle expansion */
+    width: 102%;
+    /* Slight width increase */
+    margin-left: -1%;
+    /* Center it back */
+}
+
+/* 4. Liquid Button Shine */
+.btn {
+    /* ... existing styles ... */
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    transition: none;
+}
+
+.btn:hover::after {
+    animation: shinePass 0.75s;
+}
+
+@keyframes shinePass {
+    100% {
+        left: 125%;
+    }
+}
+
+.project-card-mini {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 16px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-decoration: none;
+}
+
+.project-card-mini:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+}
+
+.auth-overlay {
+    position: fixed;
