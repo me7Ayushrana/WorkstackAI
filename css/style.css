@@ -1438,3 +1438,123 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.widget-card:hover .widget-delete-btn {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.widget-delete-btn:hover {
+    background: #ff0000;
+    transform: scale(1.2) rotate(90deg) !important;
+}
+
+/* Widget Controls (Move & Delete) */
+.widget-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    /* Hidden by default */
+    transform: translateY(-5px);
+    transition: all 0.2s ease;
+    z-index: 999;
+    /* Boosted Z-Index to beat everything */
+    pointer-events: none;
+    /* Container doesn't block, contents do */
+}
+
+.widget-card:hover .widget-controls {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    /* Enable clicks on hover */
+}
+
+.widget-control-btn {
+    background: rgba(0, 0, 0, 0.9);
+    /* Darker background for visibility */
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    /* Ensure button itself is top-level */
+    position: relative;
+    /* For z-index to work contextually if needed */
+}
+
+.widget-control-btn:hover {
+    transform: scale(1.15);
+    background: var(--accent);
+    color: black;
+    border-color: var(--accent);
+}
+
+.widget-control-btn.delete {
+    background: var(--danger);
+    width: 34px;
+    height: 34px;
+    color: white;
+}
+
+.widget-control-btn.delete:hover {
+    background: #ff0000;
+    transform: scale(1.15) rotate(90deg);
+}
+
+/* Ensure card doesn't clip popups if possible, but for internal controls we are fine */
+
+/* --- User Profile Dropdown (Premium) --- */
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 12px 6px 6px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.user-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-menu-btn img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 260px;
+    background: #0F0F0F;
+    /* Fallback */
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
