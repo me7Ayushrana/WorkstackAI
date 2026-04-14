@@ -1798,3 +1798,123 @@ body::before {
 .fun-zone-btn {
     border-radius: 50px;
     font-weight: 700;
+    border: 1px solid transparent;
+    background: linear-gradient(#0a0a0a, #0a0a0a) padding-box,
+        linear-gradient(45deg, #FF00FF, #00FFFF) border-box;
+    color: white;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.1);
+    transition: all 0.3s ease;
+}
+
+.fun-zone-btn:hover {
+    background: linear-gradient(#0a0a0a, #0a0a0a) padding-box,
+        linear-gradient(45deg, #00FFFF, #FF00FF) border-box;
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.3);
+    transform: translateY(-2px);
+}
+
+
+
+.mobile-warning-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-warning-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* Show only on mobile devices */
+@media (max-width: 768px) {
+    #mobile-warning {
+        display: flex;
+    }
+}
+
+/* --- Custom Modal Overlay --- */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    /* Top of everything */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 
+   ------------------------------------------
+   HOTFIXES (Jan 24, 2026)
+   ------------------------------------------
+   Quick patches for mobile layout & z-index issues.
+   TODO: Move these to main sections in V5 rewrite.
+*/
+
+/* Fix for modal overlapping on small screens */
+@media (max-width: 480px) {
+    .auth-modal {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .role-grid {
+        grid-template-columns: 1fr;
+        /* Force single column */
+    }
+}
+
+/* Ensure toast notifications stay on top */
+.toast-notification {
+    z-index: 999999 !important;
+    /* Force top */
+}
+
+
+
+.modal-card {
+    background: #151515;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 90%;
+}
+
+.modal-overlay.active .modal-card {
+    transform: scale(1);
+}
+
+/* Add Widget Modal Specifics */
+#widget-modal-overlay .modal-card {
+    width: 500px;
+    max-width: 95vw;
+}
+
+/* --- Premium Link Card (Creator Widget) --- */
+.premium-link-card {
+    background: linear-gradient(145deg, rgba(255, 215, 0, 0.05) 0%, rgba(0, 0, 0, 0.6) 100%) !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+    position: relative;
