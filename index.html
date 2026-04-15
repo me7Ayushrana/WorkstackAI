@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkstackAI | Focused Workspace</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- 
+        WORKSTACK AI - LANDING PAGE 
+        Version: 4.5 (Stable)
+        Developer: Ayush Rana
+        Last Updated: Jan 2026
+        Notes: Fixed the mobile responsive bug in Hero section.
+    -->
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">WorkstackAI.</div>
+            <!-- Auth Trigger Button (Managed by auth.js) -->
+            <button id="auth-trigger" class="btn-outline" style="padding: 8px 20px; font-size: 0.9rem;">Sign In</button>
+        </div>
+    </header>
+
+    <main class="centered-layout hero">
+        <div class="container">
+            <h1><span class="purple-text-glow">Built</span> for people who<br><span class="gold-text-glow">actually
+                    work.</span></h1>
+            <p style="margin: 0 auto; margin-bottom: 2.5rem; max-width: 600px; color: var(--text-secondary);">
+                A focused, role-based digital workspace. No distractions. No random tool directories.
+                Just the essential workflows you need to get things done.
+            </p>
+            <div style="display:flex; gap: 15px; justify-content: center;">
+                <a href="#" onclick="handleEnterWorkspace(event)" class="btn glow-btn">Enter Workspace</a>
+                <a href="fun-zone.html" class="btn-outline fun-zone-btn">🎮 Fun
+                    Zone</a>
+            </div>
+
+            <div
+                style="margin-top: 60px; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+                Student &nbsp; • &nbsp; Freelancer &nbsp; • &nbsp; Creator
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Modal Overlay -->
+    <div id="auth-modal-overlay" class="auth-overlay">
+        <div class="auth-modal">
+            <!-- Close Button -->
+            <button onclick="closeAuthModal()"
+                style="position: absolute; top: 20px; right: 20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 1.2rem; z-index: 10;">✕</button>
+
+            <!-- Main Auth Content -->
+            <div id="auth-main-content">
+                <!-- Tabs (Context Switcher) -->
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchTab('signin')">Sign In</div>
+                    <div class="auth-tab" onclick="switchTab('join')">Create Account</div>
+                </div>
+
+                <!-- Dynamic Header -->
+                <h2 id="auth-title" style="margin-bottom: 10px;">Welcome Back</h2>
+                <p id="auth-subtitle" style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem;">
+                    Access your focused workspace.
+                </p>
+
+                <!-- Premium Google Button -->
+                <button class="google-btn-premium" onclick="startGoogleLogin()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+                    <span id="google-text">Continue with Google</span>
+                </button>
+
+                <!-- Guest Sign In Button -->
+                <button class="google-btn-premium" onclick="startGuestLogin()" style="background: rgba(255, 183, 3, 0.08); border-color: rgba(255, 183, 3, 0.25); margin-top: 10px; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 1.1rem; margin-right: 8px;">⚡</span>
+                    <span style="color: var(--accent); font-weight: 600;">Instant Guest Entry (No Sign In)</span>
+                </button>
+
+                <!-- Trust / Security Note -->
+                <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px;">
+                    <span style="opacity: 0.7;">By continuing, you agree to our Terms.</span>
+                    <br>
+                    <span style="color: var(--accent); opacity: 0.8;">🔒 Secure Encryption</span>
+                </div>
+
+                <!-- Inline Error Message (hidden by default) -->
+                <div id="auth-error-box" class="hidden" style="
+                    background: rgba(239, 68, 68, 0.1);
+                    border: 1px solid rgba(239, 68, 68, 0.35);
+                    border-radius: 10px;
+                    padding: 12px 16px;
+                    margin-top: 4px;
+                    font-size: 0.85rem;
+                    color: #fca5a5;
+                    line-height: 1.5;
+                    text-align: left;
+                ">
+                    <div style="font-weight: 700; margin-bottom: 4px;">⚠️ Login Failed</div>
+                    <div id="auth-error-text">An error occurred. Please try again.</div>
+                </div>
+            </div>
+
+            <!-- Loading / Success State Container -->
+            <div id="auth-state-container" class="hidden" style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div id="auth-spinner" class="auth-spinner" style="margin: 0 auto 20px auto;"></div>
+                <div id="auth-success-icon" class="success-checkmark hidden">
+                    <div class="check-icon"></div>
+                </div>
+                <p id="auth-state-text" style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; font-weight: 500;">
+                    Verifying Credentials...
+                </p>
+            </div>
+
+            <div style="margin-top: 25px; font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; text-decoration: underline;"
+                onclick="closeAuthModal()">
+                Close Window
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER SECTION -->
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.6;">&copy; 2026 WorkstackAI. Optimized for
+                Focus.</p>
+
+            <div class="footer-controls">
+                <!-- Features Roadmap Trigger -->
+                <button onclick="openFeaturesModal()" class="footer-badge glow">
+                    <span>🚀 Features & Roadmap</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Creator Modal Overlay (Cleaner & Premium) -->
+    <div id="creator-modal-overlay" class="auth-overlay">
+        <div class="auth-modal"
+            style="text-align: left; max-width: 480px; border: 1px solid rgba(255, 255, 255, 0.08); background: #0a0a0a; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <!-- Close Button -->
+            <button onclick="closeCreatorModal()"
+                style="position: absolute; top: 20px; right: 20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 1.2rem; z-index: 10;">✕</button>
+
+            <!-- Profile Header -->
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
+                <div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 5px; color: #fff; letter-spacing: -0.5px;">Ayush Rana
+                    </h3>
+                    <p style="color: var(--accent); font-size: 0.9rem; font-weight: 500;">Student & Developer</p>
+                </div>
+                <a href="https://ayushhh-folio.netlify.app" target="_blank" class="btn-outline"
+                    style="padding: 8px 16px; font-size: 0.8rem; border-color: var(--accent); color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                    Know More ↗
+                </a>
+            </div>
+
+            <!-- Bio -->
+            <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem; margin-bottom: 25px;">
+                Passionate about building cleaner, faster, and more intelligent digital tools.
+            </p>
+
+            <!-- Social Chips -->
+            <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+                <a href="https://instagram.com/ayushrana.me" target="_blank" class="user-chip"
+                    style="text-decoration: none; padding: 10px 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                    <span>📸 Instagram</span>
+                </a>
+
+                <a href="mailto:ayushamit007@gmail.com" class="user-chip"
+                    style="text-decoration: none; padding: 10px 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                    <span>📧 Mail</span>
+                </a>
+            </div>
+
+            <!-- Featured Project Section -->
+            <div
+                style="background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px;">
+                <h4
+                    style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 15px;">
+                    Featured Projects
+                </h4>
+
+                <!-- Ethereal Nexus -->
+                <a href="https://ehereal-nexus.vercel.app/#projects" target="_blank"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div>
+                        <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 4px;">Ethereal Nexus 🌌</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">University Startup: Premium
+                            Academic Projects & Essentials
+                        </p>
+                    </div>
+                    <div
+                        style="width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; transform: rotate(-45deg);">
+                        ➜
+                    </div>
+                </a>
+
+                <!-- HomeGuard X -->
+                <a href="https://homeguard-x-2.onrender.com" target="_blank"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 4px;">HomeGuard X 🛡️</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Advanced Network Security Scanner
+                        </p>
+                    </div>
+                    <div
+                        style="width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; transform: rotate(-45deg);">
+                        ➜
+                    </div>
+                </a>
+            </div>
+
+            <!-- Admin View Trigger (Hidden) -->
+            <div id="admin-tools" style="margin-top: 2rem;" class="hidden">
+                <button onclick="viewProductRequests()" class="btn-outline"
+                    style="width: 100%; font-size: 0.85rem; opacity: 0.5;">
+                    Admin Tools
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features & Roadmap Modal -->
+    <div id="features-modal-overlay" class="auth-overlay">
+        <div class="auth-modal" style="max-width: 600px; text-align: left; max-height: 85vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem;">🚀 Features & Roadmap</h2>
+                <button onclick="closeFeaturesModal()"
+                    style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 1.2rem;">✕</button>
+            </div>
+
+            <!-- Existing Features -->
+            <div class="roadmap-section">
+                <h3 class="roadmap-title">✅ Live Now (Premium)</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">🔐</div>
+                        <div>
+                            <h4>Secure Auth</h4>
+                            <p>Premium Google-only login with encrypted sessions.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💳</div>
+                        <div>
+                            <h4>Smart Payments</h4>
+                            <p>Integrated Razorpay gateway with role-based unlocking.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🤖</div>
+                        <div>
+                            <h4>AI Assistant</h4>
+                            <p>Context-aware chatbot trained for productivity queries.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🎮</div>
+                        <div>
+                            <h4>Fun Zone</h4>
+                            <p>Exclusive gaming area with 15+ mini-games.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">👨‍💻</div>
+                        <div>
+                            <h4>Creator Profile</h4>
+                            <p>Interactive portfolio with "HomeGuard X" featured project.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🎨</div>
+                        <div>
+                            <h4>Personal Workspace</h4>
+                            <p>Build your own desk. Pin tools, add widgets, & customize.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Features -->
+            <div class="roadmap-section" style="margin-top: 30px;">
+                <h3 class="roadmap-title" style="color: var(--accent);">🚧 Upcoming Roadmap</h3>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="badge">In Progress</span>
+                        <h4>Tool Request System V2</h4>
+                        <p>A drag-and-drop builder for users to create their own tools.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge warn">Planned</span>
+                        <h4>Cloud Sync ☁️</h4>
+                        <p>Sync your workspace state across Desktop, Tablet, and Mobile.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge warn">Planned</span>
+                        <h4>Mobile App 📱</h4>
+                        <p>Native iOS & Android apps with offline support.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Team Spaces 👥</h4>
+                        <p>Real-time collaboration for efficient freelance teams.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Analytics Dashboard 📈</h4>
+                        <p>Track your productivity usage and tool metrics.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Voice Commands 🎙️</h4>
+                        <p>Narrate your tasks: "Hey Workstack, draft an email."</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Developer API 🔌</h4>
+                        <p>Build your own plugins and extensions for Workstack.</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="badge future">Concept</span>
+                        <h4>Focus Mode 🚫</h4>
+                        <p>Block distractions and notifications while you work.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="margin-top: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <p style="font-size: 0.9rem; color: #ffd700; margin-bottom: 8px; font-weight: 600;">
+                    ✨ 100% Free & Open Source. No payments.
+                </p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                    All features are unlocked by default. Cloud sync is enabled.<br>
+                    <span style="color: white; opacity: 0.8;">WorkstackAI is optimized for your productivity.</span>
+                </p>
+                <button class="btn" onclick="closeFeaturesModal()" style="margin-top: 15px; width: 100%;">Got
+                    it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script src="js/data.js?v=10"></script>
+    <script src="js/chatbot.js?v=8"></script>
+    <script src="js/auth.js?v=10"></script>
+
+    <script>
+        // --- Modal Logic ---
+        const authModal = document.getElementById('auth-modal-overlay');
+
+        function openAuthModal(mode = 'signin') {
+            authModal.classList.add('active');
+            switchTab(mode);
+        }
+
+        function closeAuthModal() {
+            authModal.classList.remove('active');
+            // Reset modal state
+            document.getElementById('auth-main-content').classList.remove('hidden');
+            document.getElementById('auth-state-container').classList.add('hidden');
+        }
+
+        function switchTab(mode) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const btnText = document.getElementById('google-text');
+
+            tabs.forEach(t => t.classList.remove('active'));
+
+            if (mode === 'join') {
+                tabs[1].classList.add('active');
+                title.innerText = "Create Account";
+                subtitle.innerText = "Join the workspace for professionals.";
+                btnText.innerText = "Sign up with Google";
+            } else {
+                tabs[0].classList.add('active');
+                title.innerText = "Welcome Back";
+                subtitle.innerText = "Access your focused workspace.";
+                btnText.innerText = "Continue with Google";
+            }
+        }
+
+        // --- Google Flow ---
+        function showAuthError(message) {
+            // Reset to main content
+            document.getElementById('auth-main-content').classList.remove('hidden');
+            document.getElementById('auth-state-container').classList.add('hidden');
+            // Show the error box
+            const errorBox = document.getElementById('auth-error-box');
+            const errorText = document.getElementById('auth-error-text');
+            errorBox.classList.remove('hidden');
+            errorText.textContent = message;
+            // Auto-hide after 8 seconds
+            setTimeout(() => errorBox.classList.add('hidden'), 8000);
+        }
+
+        function startGoogleLogin() {
+            // Hide error box
+            document.getElementById('auth-error-box').classList.add('hidden');
+            // Hide main content
+            document.getElementById('auth-main-content').classList.add('hidden');
+            // Show state container & spinner
+            const stateContainer = document.getElementById('auth-state-container');
+            stateContainer.classList.remove('hidden');
+            const spinner = document.getElementById('auth-spinner');
+            spinner.classList.remove('hidden');
+            const successIcon = document.getElementById('auth-success-icon');
+            successIcon.classList.add('hidden');
+            
+            const stateText = document.getElementById('auth-state-text');
+            stateText.innerText = "Connecting to Google...";
+
+            AUTH.loginWithGoogle().then(user => {
+                // Show Success State
+                spinner.classList.add('hidden');
+                successIcon.classList.remove('hidden');
+                stateText.innerHTML = `Welcome, <span style="color:var(--accent);">${user.name ? user.name.split(' ')[0] : 'User'}</span>! 👋<br><span style="font-size:0.8rem; opacity:0.7;">Preparing your workspace...</span>`;
+                
+                AUTH.updateHeader();
+                
+                setTimeout(() => {
+                    closeAuthModal();
+                    document.getElementById('auth-main-content').classList.remove('hidden');
+                    stateContainer.classList.add('hidden');
+                    
+                    if (window.pendingRedirect) {
+                        window.location.href = window.pendingRedirect;
+                    } else {
+                        window.location.href = "roles.html";
+                    }
+                }, 1600);
+            }).catch(e => {
+                console.error('Google Auth Error:', e);
+                
+                // Handle specific Firebase auth errors with friendly messages
+                let userMessage = 'Login failed. Please try again.';
+                if (e.code === 'auth/configuration-not-found') {
+                    userMessage = 'Google login is not enabled for this domain yet. Please use ⚡ Guest Entry below, or the site owner needs to add this domain to Firebase.';
+                } else if (e.code === 'auth/popup-blocked') {
+                    userMessage = 'Popup was blocked by your browser. Please allow popups for this site and try again.';
+                } else if (e.code === 'auth/popup-closed-by-user') {
+                    userMessage = 'Login window was closed. Click "Continue with Google" to try again.';
+                } else if (e.code === 'auth/network-request-failed') {
+                    userMessage = 'Network error. Please check your internet connection and try again.';
+                } else if (e.message) {
+                    userMessage = e.message;
+                }
+                
+                showAuthError(userMessage);
+            });
+        }
+
+        // --- Instant Guest Entry ---
+        function startGuestLogin() {
+            document.getElementById('auth-main-content').classList.add('hidden');
+            const stateContainer = document.getElementById('auth-state-container');
+            stateContainer.classList.remove('hidden');
+            const spinner = document.getElementById('auth-spinner');
+            spinner.classList.remove('hidden');
+            const successIcon = document.getElementById('auth-success-icon');
+            successIcon.classList.add('hidden');
+            
+            const stateText = document.getElementById('auth-state-text');
+            stateText.innerText = "Configuring guest session...";
+
+            setTimeout(() => {
+                const guestUser = {
+                    name: "Guest User",
+                    email: "guest@workstack.ai",
+                    avatar: "https://lh3.googleusercontent.com/a/default-user=s96-c",
+                    method: "dev_bypass"
+                };
+                
+                AUTH._saveSession(guestUser);
+                
+                spinner.classList.add('hidden');
+                successIcon.classList.remove('hidden');
+                stateText.innerHTML = `Welcome to <span style="color:var(--accent);">WorkstackAI</span>!<br><span style="font-size:0.8rem; opacity:0.7;">Loading your workspace...</span>`;
+                
+                AUTH.updateHeader();
+                
+                setTimeout(() => {
+                    closeAuthModal();
+                    document.getElementById('auth-main-content').classList.remove('hidden');
+                    stateContainer.classList.add('hidden');
+                    
+                    if (window.pendingRedirect) {
+                        window.location.href = window.pendingRedirect;
+                    } else {
+                        window.location.href = "roles.html";
+                    }
+                }, 1600);
+            }, 800);
+        }
+
+        // --- Intercept "Enter Workspace" ---
+        function handleEnterWorkspace(e) {
+            e.preventDefault();
+            if (AUTH.state.isLoggedIn) {
+                window.location.href = "roles.html";
+            } else {
+                window.pendingRedirect = "roles.html";
+                openAuthModal();
+            }
+        }
+        // --- Creator Modal ---
+        function openCreatorModal() {
+            document.getElementById('creator-modal-overlay').classList.add('active');
+        }
+        function closeCreatorModal() {
+            document.getElementById('creator-modal-overlay').classList.remove('active');
+        }
+
+        // --- Features Modal ---
+        function openFeaturesModal() {
+            document.getElementById('features-modal-overlay').classList.add('active');
+        }
+        function closeFeaturesModal() {
+            document.getElementById('features-modal-overlay').classList.remove('active');
+        }
+    </script>
+    <!-- Mobile Warning Overlay -->
+    <div id="mobile-warning">
+        <div class="mobile-warning-card">
+            <span class="mobile-warning-icon">🖥️ &gt; 📱</span>
+            <h3 style="margin-bottom: 10px; font-size: 1.4rem;">Desktop Recommended</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;">
+                WorkstackAI is designed for deep work on larger screens.
+                For the best experience, please switch to a Laptop or PC.
+            </p>
+            <button class="btn-outline" onclick="document.getElementById('mobile-warning').style.display='none'"
+                style="width: 100%; justify-content: center; border-color: rgba(255,255,255,0.2);">
+                Continue Anyway
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>
