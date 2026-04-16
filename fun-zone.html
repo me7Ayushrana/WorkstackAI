@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 | WorkstackAI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Special Gaming Theme Overrides */
+        body {
+            background-color: #050505;
+        }
+
+        #workspace-title {
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+            /* Purple Neon Glow */
+        }
+
+        .tool-card:hover {
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+            border-color: #8a2be2;
+        }
+
+        .tool-tag {
+            background: linear-gradient(135deg, #8a2be2, #ff00ff);
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container" style="display:flex; justify-content: space-between;">
+            <div class="logo">WorkstackAI.</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                <span id="role-badge" style="color: var(--success);">Free Zone</span>
+                <a href="index.html" style="margin-left: 20px; color: var(--text-muted);">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <div style="margin-bottom: 40px; text-align: center;">
+                <h1 id="workspace-title" style="font-size: 4rem;">🎮</h1>
+                <p id="workspace-desc"
+                    style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 35px auto;">
+                    Relax. Recharge. Play.</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container" style="margin-bottom: 50px;">
+                <input type="text" id="tool-search" class="search-input"
+                    placeholder="Search games, platforms, or portals..." autocomplete="off">
+                <div id="search-suggestions" class="suggestions-box hidden"></div>
+            </div>
+
+            <!-- Games Grid -->
+            <div class="section-header">
+                <div class="section-title">Instant Web Games</div>
+            </div>
+            <div id="games-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Platforms Section -->
+            <div class="section-header" style="margin-top: 60px;">
+                <div class="section-title">Major Platforms & Cloud Gaming</div>
+            </div>
+            <div id="platforms-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Portals Section -->
+            <div class="section-header" style="margin-top: 60px;">
+                <div class="section-title">Free Game Portals</div>
+            </div>
+            <div id="portals-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
