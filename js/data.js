@@ -58,3 +58,63 @@ const APP_DATABASE_V2 = {
                 desc: "Find answers backed by peer-reviewed science.",
                 toolName: "Consensus",
                 url: "https://consensus.app/",
+                bestFor: "Science",
+                pricing: "Freemium"
+            },
+            {
+                title: "Generative Presentations",
+                desc: "Create beautiful slides from just text.",
+                toolName: "Gamma",
+                url: "https://gamma.app/",
+                bestFor: "Slides",
+                pricing: "Freemium"
+            },
+            {
+                title: "Math & Science Solver",
+                desc: "Step-by-step solutions for complex problems.",
+                toolName: "WolframAlpha",
+                url: "https://www.wolframalpha.com/",
+                bestFor: "STEM",
+                pricing: "Freemium"
+            },
+            {
+                title: "Writing Assistant",
+                desc: "Tone checker, clarity, and grammar.",
+                toolName: "Grammarly",
+                url: "https://www.grammarly.com/",
+                bestFor: "Editing",
+                pricing: "Freemium"
+            }
+        ],
+        external_tools: [
+            { name: "iLovePDF", url: "https://www.ilovepdf.com/", category: "PDF Tools", pricing: "Free" },
+            { name: "Sejda PDF", url: "https://www.sejda.com/", category: "PDF Editor", pricing: "Freemium" },
+            { name: "ChatPDF", url: "https://www.chatpdf.com/", category: "PDF AI", pricing: "Freemium" },
+            { name: "Quillbot", url: "https://quillbot.com/", category: "Paraphrasing", pricing: "Freemium" },
+            { name: "Connected Papers", url: "https://www.connectedpapers.com/", category: "Research Viz", pricing: "Free" },
+            { name: "Notion", url: "https://www.notion.so/product/notion-for-education", category: "Notes", pricing: "Free" },
+            { name: "Obsidian", url: "https://obsidian.md/", category: "Second Brain", pricing: "Free" },
+            { name: "Zotero", url: "https://www.zotero.org/", category: "Citations", pricing: "Free" },
+            { name: "Google Scholar", url: "https://scholar.google.com/", category: "Research", pricing: "Free" },
+            { name: "SciSpace", url: "https://typeset.io/", category: "Paper Analysis", pricing: "Freemium" },
+            { name: "Quizlet", url: "https://quizlet.com/", category: "Flashcards", pricing: "Freemium" },
+            { name: "Anki", url: "https://apps.ankiweb.net/", category: "Memory", pricing: "Free" },
+            { name: "Khan Academy", url: "https://www.khanacademy.org/", category: "Courses", pricing: "Free" },
+            { name: "Coursera", url: "https://www.coursera.org/", category: "Certificates", pricing: "Freemium" },
+            { name: "Overleaf", url: "https://www.overleaf.com/", category: "LaTeX", pricing: "Freemium" },
+            { name: "Desmos", url: "https://www.desmos.com/calculator", category: "Graphing", pricing: "Free" },
+            { name: "CodePen", url: "https://codepen.io/", category: "Coding", pricing: "Free" },
+            { name: "Perplexity AI", url: "https://www.perplexity.ai/", category: "AI Research", pricing: "Free" },
+            { name: "NotebookLM", url: "https://notebooklm.google.com/", category: "PDF AI", pricing: "Free" },
+            { name: "Wolfram Alpha", url: "https://www.wolframalpha.com/", category: "STEM Solver", pricing: "Free" },
+            { name: "Excalidraw", url: "https://excalidraw.com/", category: "Whiteboard", pricing: "Free" }
+        ],
+        native_tools: [
+            { id: "pomodoro", name: "Deep Focus Timer", icon: "🧠", pricing: "Free" },
+            { id: "todo", name: "Kanban Board", icon: "📋", pricing: "Free" },
+            { id: "music-player", name: "YouTube Media Player", icon: "🎵", pricing: "Free" },
+            { id: "word-counter", name: "Word Counter", icon: "📊", pricing: "Free" },
+            { id: "markdown-scratchpad", name: "Markdown Scratchpad", icon: "✍️", pricing: "Free" },
+            { id: "soundboard", name: "Ambient Sound Mixer", icon: "🎧", pricing: "Free" },
+            { id: "gpa-calc", name: "Grade Predictor", icon: "📈", pricing: "Free" },
+            { id: "flashcards", name: "Quick Flashcards", icon: "🗂️", pricing: "Free" },
