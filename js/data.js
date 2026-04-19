@@ -118,3 +118,63 @@ const APP_DATABASE_V2 = {
             { id: "soundboard", name: "Ambient Sound Mixer", icon: "🎧", pricing: "Free" },
             { id: "gpa-calc", name: "Grade Predictor", icon: "📈", pricing: "Free" },
             { id: "flashcards", name: "Quick Flashcards", icon: "🗂️", pricing: "Free" },
+            { id: "calculator", name: "Scientific Calc", icon: "🧮", pricing: "Free" },
+            { id: "converter", name: "Unit Converter", icon: "🔄", pricing: "Free" }
+        ]
+    },
+    "freelancer": {
+        title: "Freelancer HQ",
+        description: "Run your business like a pro agency. Tools for every stage.",
+        ai_tools: [
+            {
+                title: "AI Legal Assistant",
+                desc: "Draft bulletproof contracts in seconds.",
+                toolName: "Bonsai",
+                url: "https://www.hellobonsai.com/",
+                bestFor: "Contracts",
+                pricing: "Paid"
+            },
+
+            {
+                title: "Smart Contracts & Docs",
+                desc: "Generate proposals and agreements.",
+                toolName: "ChatGPT",
+                url: "https://chat.openai.com/",
+                bestFor: "Drafting",
+                pricing: "Freemium"
+            },
+            {
+                title: "Meeting Intelligence",
+                desc: "Never take notes again. Transcribes calls.",
+                toolName: "Otter.ai",
+                url: "https://otter.ai/",
+                bestFor: "Meetings",
+                pricing: "Freemium"
+            },
+            {
+                title: "AI Cold Email",
+                desc: "Write high-converting outreach emails.",
+                toolName: "Lavender",
+                url: "https://www.lavender.ai/",
+                bestFor: "Sales",
+                pricing: "Freemium"
+            },
+            {
+                title: "Find Decision Makers",
+                desc: "Get email addresses for potential leads.",
+                toolName: "Hunter.io",
+                url: "https://hunter.io/",
+                bestFor: "Leads",
+                pricing: "Freemium"
+            },
+            {
+                title: "Automate Workflows",
+                desc: "Connect your apps to save time.",
+                toolName: "Zapier",
+                url: "https://zapier.com/",
+                bestFor: "Automation",
+                pricing: "Freemium"
+            }
+        ],
+        external_tools: [
+            { name: "Loom", url: "https://www.loom.com/", category: "Async Video", pricing: "Freemium" },
