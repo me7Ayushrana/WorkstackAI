@@ -178,3 +178,63 @@ const APP_DATABASE_V2 = {
         ],
         external_tools: [
             { name: "Loom", url: "https://www.loom.com/", category: "Async Video", pricing: "Freemium" },
+            { name: "Calendly", url: "https://calendly.com/", category: "Scheduling", pricing: "Freemium" },
+            { name: "Copy.ai", url: "https://www.copy.ai/", category: "Copywriting", pricing: "Freemium" },
+            { name: "ManyChat", url: "https://manychat.com/", category: "Chatbots", pricing: "Freemium" },
+            { name: "Cron", url: "https://cron.com/", category: "Calendar", pricing: "Free" },
+            { name: "Toggl Track", url: "https://toggl.com/track/", category: "Time Tracking", pricing: "Freemium" },
+            { name: "Contra", url: "https://contra.com/", category: "Commission-Free", pricing: "Free" },
+            { name: "Upwork", url: "https://www.upwork.com/", category: "Marketplace", pricing: "Free" },
+            { name: "Fiverr", url: "https://www.fiverr.com/", category: "Gigs", pricing: "Free" },
+            { name: "Mercury", url: "https://mercury.com/", category: "Banking", pricing: "Free" },
+            { name: "Wave Apps", url: "https://www.waveapps.com/", category: "Invoicing", pricing: "Free" },
+            { name: "Trello", url: "https://trello.com/", category: "Projects", pricing: "Freemium" },
+            { name: "Slack", url: "https://slack.com/", category: "Chat", pricing: "Freemium" },
+            { name: "Zoom", url: "https://zoom.us/", category: "Calls", pricing: "Freemium" },
+            { name: "WeTransfer", url: "https://wetransfer.com/", category: "File Sharing", pricing: "Freemium" },
+            { name: "Notion", url: "https://www.notion.so/", category: "Client Notes", pricing: "Free" },
+            { name: "Wave Accounting", url: "https://www.waveapps.com/accounting", category: "Accounting", pricing: "Free" },
+            { name: "Clockify", url: "https://clockify.me/", category: "Hour Tracking", pricing: "Free" },
+            { name: "Hemingway Editor", url: "https://hemingwayapp.com/", category: "Writing", pricing: "Free" },
+            { name: "DocuSign", url: "https://www.docusign.com/", category: "E-Signatures", pricing: "Freemium" },
+            { name: "Hunter.io", url: "https://hunter.io/", category: "Lead Gen", pricing: "Freemium" }
+        ],
+        native_tools: [
+            { id: "invoice-gen", name: "Smart Invoice", icon: "💸", pricing: "Free" },
+            { id: "time-tracker", name: "Time Tracker", icon: "⏳", pricing: "Free" },
+            { id: "expense-est", name: "Tax Shield", icon: "🛡️", pricing: "Free" },
+            { id: "music-player", name: "YouTube Media Player", icon: "🎵", pricing: "Free" },
+            { id: "markdown-scratchpad", name: "Markdown Scratchpad", icon: "✍️", pricing: "Free" },
+            { id: "soundboard", name: "Ambient Sound Mixer", icon: "🎧", pricing: "Free" },
+            { id: "rate-calc", name: "Rate Calculator", icon: "💰", pricing: "Free" },
+            { id: "calculator", name: "Scientific Calc", icon: "🧮", pricing: "Free" },
+            { id: "notes", name: "Sticky Notes", icon: "📝", pricing: "Free" }
+        ]
+    },
+    "creator": {
+        title: "Creator Studio",
+        description: "The world's best AI production suite. From idea to viral hit.",
+        ai_tools: [
+            {
+                title: "Viral Shorts Maker",
+                desc: "Turn 1 long video into 10 shorts instantly.",
+                toolName: "OpusClip",
+                url: "https://www.opus.pro/",
+                bestFor: "Repurposing",
+                pricing: "Freemium"
+            },
+            {
+                title: "Text to Video",
+                desc: "Generate cinematic video from text prompts.",
+                toolName: "Runway Gen-2",
+                url: "https://runwayml.com/",
+                bestFor: "Video FX",
+                pricing: "Freemium"
+            },
+            {
+                title: "AI Voice Generation",
+                desc: "Realistic AI text-to-speech. Clone voices.",
+                toolName: "ElevenLabs",
+                url: "https://elevenlabs.io/",
+                bestFor: "Voiceovers",
+                pricing: "Freemium"
