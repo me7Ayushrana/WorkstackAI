@@ -298,3 +298,60 @@ const APP_DATABASE_V2 = {
             { name: "CapCut", url: "https://www.capcut.com/", category: "Video Editor", pricing: "Free" },
             { name: "Pika Labs", url: "https://pika.art/", category: "AI Video", pricing: "Freemium" },
             { name: "Adobe Firefly", url: "https://firefly.adobe.com/", category: "AI Image Gen", pricing: "Freemium" },
+            { name: "ElevenLabs", url: "https://elevenlabs.io/", category: "AI Voice", pricing: "Freemium" },
+            { name: "Descript", url: "https://www.descript.com/", category: "Video Edit", pricing: "Freemium" },
+            { name: "Linktree", url: "https://linktr.ee/", category: "Bio Link", pricing: "Free" }
+        ],
+        native_tools: [
+            { id: "caption-fmt", name: "Caption Formatter", icon: "✍️", pricing: "Free" },
+            { id: "hashtag-gen", name: "Trend Finder", icon: "🔥", pricing: "Free" },
+            { id: "idea-board", name: "Idea Organizer", icon: "💡", pricing: "Free" },
+            { id: "thumb-test", name: "Thumbnail Tester", icon: "🖼️", pricing: "Free" },
+            { id: "music-player", name: "YouTube Media Player", icon: "🎵", pricing: "Free" },
+            { id: "markdown-scratchpad", name: "Markdown Scratchpad", icon: "✍️", pricing: "Free" },
+            { id: "soundboard", name: "Ambient Sound Mixer", icon: "🎧", pricing: "Free" },
+            { id: "converter", name: "Unit Converter", icon: "🔄", pricing: "Free" },
+            { id: "notes", name: "Sticky Notes", icon: "📝", pricing: "Free" }
+        ]
+    },
+    "fun_zone": {
+        title: "🎮 Zone",
+        description: "Curated best-in-class web games.",
+        games: [
+            { name: "Subway Surfers", url: "https://poki.com/en/g/subway-surfers", category: "Runner", desc: "The legendary endless runner.", pricing: "Free" },
+            { name: "Temple Run 2", url: "https://poki.com/en/g/temple-run-2", category: "Runner", desc: "Escape the temple.", pricing: "Free" },
+            { name: "Agar.io", url: "https://agar.io/", category: "Multiplayer", desc: "Eat cells, grow bigger.", pricing: "Free" },
+            { name: "Slither.io", url: "https://slither.io/", category: "Multiplayer", desc: "Classic snake battle royale.", pricing: "Free" },
+            { name: "Smash Karts", url: "https://smashkarts.io/", category: "Kart Battle", desc: "Mario Kart meets Fortnite.", pricing: "Free" },
+            { name: "Krunker.io", url: "https://krunker.io/", category: "FPS", desc: "Fast-paced pixel shooter.", pricing: "Free" },
+            { name: "Slope", url: "https://poki.com/en/g/slope", category: "Arcade", desc: "High speed reflex challenge.", pricing: "Free" },
+            { name: "Chess.com", url: "https://www.chess.com/", category: "Strategy", desc: "The classic game.", pricing: "Freemium" },
+            { name: "GeoGuessr", url: "https://www.geoguessr.com/", category: "Geography", desc: "Travel the world from home.", pricing: "Freemium" },
+            { name: "Neal.fun", url: "https://neal.fun/", category: "Explore", desc: "The deep sea, space, and chaos.", pricing: "Free" },
+            { name: "Wordle", url: "https://www.nytimes.com/games/wordle/index.html", category: "Puzzle", desc: "The daily word game.", pricing: "Free" },
+            { name: "Slow Roads", url: "https://slowroads.io/", category: "Relaxing", desc: "Infinite procedural driving.", pricing: "Free" }
+        ],
+        platforms: [
+            { name: "Steam", url: "https://store.steampowered.com/", category: "PC", pricing: "Store" },
+            { name: "Epic Games", url: "https://store.epicgames.com/", category: "PC", pricing: "Store" },
+            { name: "Xbox Cloud", url: "https://www.xbox.com/en-US/play", category: "Cloud", pricing: "Paid" },
+            { name: "GeForce Now", url: "https://www.nvidia.com/en-us/geforce-now/", category: "Cloud", pricing: "Freemium" },
+            { name: "Twitch", url: "https://www.twitch.tv/", category: "Streaming", pricing: "Free" }
+        ],
+        portals: [
+            { name: "Poki", url: "https://poki.com/", category: "All-in-One", pricing: "Free" },
+            { name: "CrazyGames", url: "https://www.crazygames.com/", category: "All-in-One", pricing: "Free" },
+            { name: "Y8.com", url: "https://www.y8.com/", category: "Portal", pricing: "Free" },
+            { name: "Kongregate", url: "https://www.kongregate.com/", category: "Portal", pricing: "Free" },
+            { name: "Armor Games", url: "https://armorgames.com/", category: "Portal", pricing: "Free" }
+        ]
+    },
+    "custom": {
+        title: "My Personal Workspace",
+        description: "Your custom command center. Pin your favorite tools and widgets here.",
+        // These arrays are empty because the user populates them via the "App Store" logic in app.js
+        ai_tools: [],
+        external_tools: [],
+        native_tools: []
+    }
+};
