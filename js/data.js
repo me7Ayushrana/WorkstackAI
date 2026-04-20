@@ -238,3 +238,63 @@ const APP_DATABASE_V2 = {
                 url: "https://elevenlabs.io/",
                 bestFor: "Voiceovers",
                 pricing: "Freemium"
+            },
+            {
+                title: "AI Audio Studio",
+                desc: "Edit audio by editing text. Studio quality.",
+                toolName: "Descript",
+                url: "https://www.descript.com/",
+                bestFor: "Editing",
+                pricing: "Freemium"
+            },
+            {
+                title: "Design Everything",
+                desc: "Thumbnails, posts, logos. Essential.",
+                toolName: "Canva",
+                url: "https://www.canva.com/",
+                bestFor: "Design",
+                pricing: "Freemium"
+            },
+            {
+                title: "Generative Art",
+                desc: "The gold standard for AI imagery.",
+                toolName: "Midjourney",
+                url: "https://www.midjourney.com/",
+                bestFor: "Visuals",
+                pricing: "Paid"
+            },
+            {
+                title: "AI Music",
+                desc: "Create radio-quality songs in seconds.",
+                toolName: "Suno",
+                url: "https://suno.com/",
+                bestFor: "Music",
+                pricing: "Free"
+            },
+            {
+                title: "Studio Voice Fix",
+                desc: "Make bad mics sound professional.",
+                toolName: "Adobe Enhance",
+                url: "https://podcast.adobe.com/enhance",
+                bestFor: "Audio Fix",
+                pricing: "Free"
+            }
+        ],
+        external_tools: [
+            { name: "Veed.io", url: "https://www.veed.io/", category: "Online Editor", pricing: "Freemium" },
+            { name: "Pexels", url: "https://www.pexels.com/", category: "Stock Video", pricing: "Free" },
+            { name: "Gumroad", url: "https://gumroad.com/", category: "Sales", pricing: "Free" },
+            { name: "Beehiiv", url: "https://www.beehiiv.com/", category: "Newsletters", pricing: "Freemium" },
+            { name: "Submagic", url: "https://submagic.co/", category: "Captions", pricing: "Freemium" },
+            { name: "CapCut Desktop", url: "https://www.capcut.com/", category: "Editor", pricing: "Free" },
+            { name: "DaVinci Resolve", url: "https://www.blackmagicdesign.com/products/davinciresolve", category: "Pro Editor", pricing: "Free" },
+            { name: "OBS Studio", url: "https://obsproject.com/", category: "Streaming", pricing: "Free" },
+            { name: "Figma", url: "https://www.figma.com/", category: "UI Design", pricing: "Freemium" },
+            { name: "Unsplash", url: "https://unsplash.com/", category: "Stock Photos", pricing: "Free" },
+            { name: "Mixkit", url: "https://mixkit.co/", category: "Assets", pricing: "Free" },
+            { name: "Coolors", url: "https://coolors.co/", category: "Palettes", pricing: "Free" },
+            { name: "RapidTags", url: "https://rapidtags.io/", category: "SEO", pricing: "Free" },
+            { name: "Canva", url: "https://www.canva.com/", category: "Design", pricing: "Free" },
+            { name: "CapCut", url: "https://www.capcut.com/", category: "Video Editor", pricing: "Free" },
+            { name: "Pika Labs", url: "https://pika.art/", category: "AI Video", pricing: "Freemium" },
+            { name: "Adobe Firefly", url: "https://firefly.adobe.com/", category: "AI Image Gen", pricing: "Freemium" },
