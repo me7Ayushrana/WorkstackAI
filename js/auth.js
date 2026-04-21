@@ -48,3 +48,53 @@ const AUTH = {
                     resolve(userData);
                 }).catch((error) => {
                     console.error("Google Auth Failed:", error);
+                    reject(error);
+                });
+        });
+    },
+
+    logout: function () {
+        firebase.auth().signOut().then(() => {
+            // Clear V4 session keys
+            localStorage.removeItem('ws_session_v4');
+            localStorage.removeItem('ws_user_profile');
+            
+            // Note: Keeping 'hasPaid' for UX continuity
+            this.state.isLoggedIn = false;
+            this.state.user = null;
+            window.location.reload();
+        });
+    },
+
+    // --- Internals ---
+    _saveSession: function (user) {
+        localStorage.setItem('ws_session_v4', 'true');
+        localStorage.setItem('ws_user_profile', JSON.stringify(user));
+        this.state.isLoggedIn = true;
+        this.state.user = user;
+    },
+
+    // --- Admin Backdoor (Dev Use Only) ---
+    checkAdminBypass: function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        // Secret token for demo access
+        if (urlParams.get('access_token') === 'workstack_admin_vip') {
+            console.log("Admin Access Granted 🔓");
+            localStorage.setItem('hasPaid', 'true');
+            alert("Admin Access Unlocked! Welcome, Creator.");
+
+            try {
+                const newUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            } catch (e) { /* Ignore old browsers */ }
+
+            if (window.location.pathname.includes('payment.html')) {
+                window.location.href = 'roles.html';
+            }
+        }
+    },
+
+    // --- UI Helpers ---
+    checkProtection: function () {
+        // 1. Auth Guard
+        if (!this.state.isLoggedIn) {
