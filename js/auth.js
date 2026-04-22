@@ -98,3 +98,53 @@ const AUTH = {
     checkProtection: function () {
         // 1. Auth Guard
         if (!this.state.isLoggedIn) {
+            window.location.href = "index.html?auth_required=true";
+            return;
+        }
+    },
+
+    updateHeader: function () {
+        const headerBtn = document.getElementById('auth-trigger');
+        if (!headerBtn) return;
+
+        if (this.state.isLoggedIn && this.state.user) {
+            const firstName = this.state.user.name ? this.state.user.name.split(' ')[0] : 'User';
+            const avatarSrc = this.state.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=E5C558&color=000&size=96`;
+            
+            // Dropdown HTML Structure
+            headerBtn.innerHTML = `
+                <div class="user-menu-container" style="position: relative;">
+                    <button class="user-menu-btn" onclick="AUTH.toggleMenu()" title="Account Options">
+                        <img src="${avatarSrc}" alt="User" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=E5C558&color=000&size=96'">
+                        <span>${firstName}</span>
+                        <span style="font-size: 0.8rem; opacity: 0.5;">▼</span>
+                    </button>
+                    
+                    <!-- Dropdown Content (Hidden by default) -->
+                    <div id="user-dropdown" class="user-dropdown-menu hidden">
+                        <div class="dropdown-header">
+                            <img src="${avatarSrc}" class="dropdown-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=E5C558&color=000&size=96'">
+                            <div>
+                                <div class="dropdown-name">${this.state.user.name || firstName}</div>
+                                <div class="dropdown-email">${this.state.user.email || ''}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="roles.html" class="dropdown-item">
+                            <span>🎭</span> Switch Role
+                        </a>
+                        <a href="#" class="dropdown-item disabled" title="Coming Soon">
+                            <span>⚙️</span> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item dangerous" onclick="AUTH.logout()">
+                            <span>🚪</span> Log Out
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Remove default event listeners to prevent conflicts
+            headerBtn.onclick = null;
+            headerBtn.style.padding = "0";
+            headerBtn.style.border = "none";
+        } else {
