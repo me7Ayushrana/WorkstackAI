@@ -198,3 +198,53 @@ const SYNC = {
     save: function(key, value) {
         if (!db) return;
         const currentUser = firebase.auth().currentUser;
+        if (!currentUser) return;
+        
+        const docRef = db.collection('users').doc(currentUser.uid);
+        
+        let data = {};
+        if (key === 'userTheme') {
+            data.theme = value;
+        } else if (key === 'myFocusWidgets') {
+            data.widgets = value; // array
+        } else if (key === 'workstack_notes') {
+            data.notes = value; // string
+        }
+        
+        docRef.set(data, { merge: true })
+            .catch(err => console.error("Firestore sync error:", err));
+    },
+
+    saveDebounced: function(key, value, delay = 1000) {
+        if (this.debouncers[key]) clearTimeout(this.debouncers[key]);
+        this.debouncers[key] = setTimeout(() => {
+            this.save(key, value);
+        }, delay);
+    }
+};
+
+// Listen to Firebase Auth state changes
+if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            const userData = {
+                name: user.displayName,
+                email: user.email,
+                avatar: user.photoURL,
+                method: "google_oauth"
+            };
+            AUTH.state.isLoggedIn = true;
+            AUTH.state.user = userData;
+            localStorage.setItem('ws_session_v4', 'true');
+            localStorage.setItem('ws_user_profile', JSON.stringify(userData));
+            AUTH.updateHeader();
+
+            // Sync from Firestore to LocalStorage
+            const docRef = db.collection('users').doc(user.uid);
+            docRef.get().then(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    let needsUpdate = false;
+                    
+                    if (data.theme && localStorage.getItem('userTheme') !== data.theme) {
+                        localStorage.setItem('userTheme', data.theme);
