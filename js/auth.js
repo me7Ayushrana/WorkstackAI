@@ -148,3 +148,53 @@ const AUTH = {
             headerBtn.style.padding = "0";
             headerBtn.style.border = "none";
         } else {
+            headerBtn.innerHTML = `Sign In`;
+            headerBtn.onclick = () => {
+                if (typeof openAuthModal === 'function') openAuthModal();
+                else window.location.href = 'index.html';
+            };
+        }
+    },
+
+    toggleMenu: function() {
+        const menu = document.getElementById('user-dropdown');
+        if (menu) {
+            menu.classList.toggle('hidden');
+            // Event Listener: Close when clicking outside
+            if (!menu.classList.contains('hidden')) {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!e.target.closest('.user-menu-container')) {
+                        menu.classList.add('hidden');
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }
+        }
+    }
+};
+
+// Auto-run logic
+document.addEventListener('DOMContentLoaded', () => {
+    // Check for persisted Firebase user if strict session is needed, 
+    // but we use localStorage for generic state to be faster. 
+    // Ideally we would wait for onAuthStateChanged but for this static MPA style, localStorage is fine.
+
+    // Admin Check
+    AUTH.checkAdminBypass();
+
+    // Header
+    AUTH.updateHeader();
+});
+
+// Auto-run logic on protected pages
+if (window.location.pathname.includes('payment.html') || window.location.pathname.includes('roles.html') || window.location.pathname.includes('workspace.html')) {
+    AUTH.checkProtection();
+}
+
+// --- Cloud Sync Implementation ---
+const SYNC = {
+    debouncers: {},
+    
+    save: function(key, value) {
+        if (!db) return;
+        const currentUser = firebase.auth().currentUser;
