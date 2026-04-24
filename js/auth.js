@@ -248,3 +248,53 @@ if (typeof firebase !== 'undefined') {
                     
                     if (data.theme && localStorage.getItem('userTheme') !== data.theme) {
                         localStorage.setItem('userTheme', data.theme);
+                        needsUpdate = true;
+                    }
+                    
+                    let localWidgets = [];
+                    try {
+                        localWidgets = JSON.parse(localStorage.getItem('myFocusWidgets') || '[]');
+                    } catch(e) {}
+                    
+                    if (data.widgets && JSON.stringify(data.widgets) !== JSON.stringify(localWidgets)) {
+                        localStorage.setItem('myFocusWidgets', JSON.stringify(data.widgets));
+                        needsUpdate = true;
+                    }
+                    if (data.notes && localStorage.getItem('workstack_notes') !== data.notes) {
+                        localStorage.setItem('workstack_notes', data.notes);
+                        needsUpdate = true;
+                    }
+                    
+                    if (needsUpdate) {
+                        // Apply changes without reloading the page if possible
+                        if (window.setTheme && data.theme) {
+                            window.setTheme(data.theme);
+                        }
+                        if (window.renderFocusDesk) {
+                            if (typeof myWidgets !== 'undefined') {
+                                myWidgets = data.widgets;
+                            }
+                            window.renderFocusDesk();
+                        }
+                        const notesArea = document.getElementById('sticky-note');
+                        if (notesArea && data.notes) {
+                            notesArea.value = data.notes;
+                        }
+                    }
+                } else {
+                    // Seed Firestore document with current localstorage data
+                    let localWidgets = [];
+                    try {
+                        localWidgets = JSON.parse(localStorage.getItem('myFocusWidgets') || '[]');
+                    } catch(e) {}
+
+                    const initialData = {
+                        theme: localStorage.getItem('userTheme') || 'midnight',
+                        widgets: localWidgets,
+                        notes: localStorage.getItem('workstack_notes') || ''
+                    };
+                    docRef.set(initialData);
+                }
+            }).catch(err => {
+                console.error("Error fetching Firestore user config:", err);
+            });
