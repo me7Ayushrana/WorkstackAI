@@ -298,3 +298,21 @@ if (typeof firebase !== 'undefined') {
             }).catch(err => {
                 console.error("Error fetching Firestore user config:", err);
             });
+        } else {
+            // Keep session alive if logged in via dev bypass
+            const profile = JSON.parse(localStorage.getItem('ws_user_profile') || 'null');
+            if (profile && profile.method === 'dev_bypass') {
+                AUTH.state.isLoggedIn = true;
+                AUTH.state.user = profile;
+                AUTH.updateHeader();
+                return;
+            }
+
+            AUTH.state.isLoggedIn = false;
+            AUTH.state.user = null;
+            localStorage.removeItem('ws_session_v4');
+            localStorage.removeItem('ws_user_profile');
+            AUTH.updateHeader();
+        }
+    });
+}
