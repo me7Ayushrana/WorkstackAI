@@ -38,3 +38,43 @@ const CHAT_DATA = {
     ]
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Inject HTML if not present
+    if (!document.getElementById('chatbot-widget')) {
+        const widget = document.createElement('div');
+        widget.id = 'chatbot-widget';
+        widget.innerHTML = `
+            <div id="chat-bubble" onclick="toggleChat()">
+                💬
+            </div>
+            <div id="chat-window" class="hidden">
+                <div class="chat-header">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="avatar">🤖</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.95rem;">Stacky</div>
+                            <div style="font-size:0.7rem; opacity:0.8;">Sales Assistant</div>
+                        </div>
+                    </div>
+                    <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+                </div>
+                <div id="chat-messages">
+                    <div class="message bot-message">
+                        Hi! I'm Stacky. 👋 <br>
+                        I can tell you why WorkstackAI will change your workflow forever.<br>
+                        <b>Ask me anything!</b>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Ask a question..." onkeypress="handleChatInput(event)">
+                    <button id="chat-send" onclick="sendUserMessage()">→</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(widget);
+    }
+});
+
+function toggleChat() {
+    const window = document.getElementById('chat-window');
+    const bubble = document.getElementById('chat-bubble');
