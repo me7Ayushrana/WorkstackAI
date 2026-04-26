@@ -78,3 +78,43 @@ document.addEventListener('DOMContentLoaded', () => {
 function toggleChat() {
     const window = document.getElementById('chat-window');
     const bubble = document.getElementById('chat-bubble');
+    if (window.classList.contains('hidden')) {
+        window.classList.remove('hidden');
+        window.classList.add('chat-open-anim');
+        bubble.classList.add('hidden');
+    } else {
+        window.classList.add('hidden');
+        bubble.classList.remove('hidden');
+    }
+}
+
+function handleChatInput(e) {
+    if (e.key === 'Enter') sendUserMessage();
+}
+
+function sendUserMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    // User Message
+    addMessage(text, 'user-message');
+    input.value = '';
+
+    // Bot Typing Delay
+    showTyping();
+    setTimeout(() => {
+        removeTyping();
+        const response = getBotResponse(text);
+        addMessage(response, 'bot-message');
+    }, 1200);
+}
+
+function addMessage(text, className) {
+    const container = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = `message ${className}`;
+    div.innerHTML = text;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
