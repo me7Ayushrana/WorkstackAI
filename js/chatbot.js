@@ -118,3 +118,43 @@ function addMessage(text, className) {
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
 }
+
+function showTyping() {
+    const container = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.id = 'typing-indicator';
+    div.className = `message bot-message`;
+    div.innerHTML = '<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+}
+
+function getBotResponse(input) {
+    const lower = input.toLowerCase().trim();
+
+    // 1. Sanity Check: Too short?
+    if (lower.length < 2) return "I didn't quite catch that. 🤔";
+
+    // 2. Stop Words Check (Don't respond to just "and", "the", etc.)
+    const stopWords = ["and", "or", "the", "a", "an", "but", "if", "so"];
+    if (stopWords.includes(lower)) {
+        return "I'm listening! Go on... " + lower + " what?";
+    }
+
+    // 3. Check Keywords
+    for (const [key, reply] of Object.entries(CHAT_DATA.keywords)) {
+        if (lower.includes(key)) return reply;
+    }
+
+    // 4. Random Default Response (Fallback)
+    const defaults = CHAT_DATA.default_responses;
+    if (defaults && defaults.length > 0) {
+        return defaults[Math.floor(Math.random() * defaults.length)];
+    }
+
+    return "I'm not sure how to answer that yet!";
