@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace | WorkstackAI</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="container" style="display:flex; justify-content: space-between; align-items:center;">
+            <div class="logo">WorkstackAI.</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); display:flex; align-items:center; gap:20px;">
+                <!-- Theme Dots -->
+                <div style="display:flex; gap:8px;">
+                    <div onclick="setTheme('midnight')"
+                        style="width:12px; height:12px; border-radius:50%; background:#E5C558; cursor:pointer; border:1px solid #333;"
+                        title="Midnight Gold"></div>
+                    <div onclick="setTheme('cyberpunk')"
+                        style="width:12px; height:12px; border-radius:50%; background:#00f3ff; cursor:pointer; border:1px solid #333;"
+                        title="Cyberpunk"></div>
+                    <div onclick="setTheme('forest')"
+                        style="width:12px; height:12px; border-radius:50%; background:#4ade80; cursor:pointer; border:1px solid #333;"
+                        title="Forest"></div>
+                    <div onclick="setTheme('sunset')"
+                        style="width:12px; height:12px; border-radius:50%; background:#f43f5e; cursor:pointer; border:1px solid #333;"
+                        title="Sunset"></div>
+                </div>
+
+                <span id="role-badge">Workspace</span>
+
+                <!-- User Avatar / Logout (managed by auth.js) -->
+                <button id="auth-trigger" class="btn-outline" onclick="AUTH.logout()" style="padding: 7px 16px; font-size: 0.85rem;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <div style="margin-bottom: 40px; text-align: center;">
+                <h1 id="workspace-title" style="margin-bottom: 15px;">Loading...</h1>
+                <p id="workspace-desc"
+                    style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 35px auto;">Please wait while
+                    we configure your environment.</p>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="tool-search" class="search-input"
+                        placeholder="Type to search WorkstackAI... (e.g. 'PDF', 'Design')">
+                    <div id="search-suggestions" class="suggestions-box hidden"></div>
+                </div>
+            </div>
+
+            <!-- MY FOCUS DESK (Custom Workspace) -->
