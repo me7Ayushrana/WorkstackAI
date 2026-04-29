@@ -58,3 +58,63 @@
             </div>
 
             <!-- MY FOCUS DESK (Custom Workspace) -->
+            <div id="focus-desk-section" class="hidden" style="margin-bottom: 50px;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <div class="section-title">✨ My Focus Desk</div>
+                        <span style="font-size: 0.8rem; color: var(--accent);">PERSONAL WIDGETS</span>
+                    </div>
+                    <div id="focus-desk-stats" class="focus-stats-badge" style="background: rgba(229, 197, 88, 0.05); border: 1px solid var(--accent-glow); padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; gap: 12px; font-size: 0.8rem; color: var(--text-secondary); backdrop-filter: blur(10px);">
+                        <div>🔥 Level: <span id="focus-level" style="color: var(--accent); font-weight: 700;">Novice</span></div>
+                        <div style="width: 1px; height: 12px; background: var(--border);"></div>
+                        <div>⏱️ Focus: <span id="focus-total-time" style="color: var(--text-primary); font-weight: 600;">0m</span></div>
+                    </div>
+                </div>
+                <div id="focus-desk-grid" class="tool-grid">
+                    <!-- Widgets injected here -->
+                    <!-- Add Button -->
+                    <div class="tool-card add-widget-card" onclick="openWidgetModal()">
+                        <div style="font-size: 2rem; color: var(--text-secondary);">+</div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Add Widget</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden" style="text-align:center; padding: 40px; color: var(--text-secondary);">
+                <h3>No tools found matching your search.</h3>
+                <p>Try a generic term like "AI", "Text", or "Video".</p>
+            </div>
+
+            <!-- Native Tool Tabbed Interface -->
+            <div id="active-tool-container" class="hidden" style="margin-bottom: 40px;">
+                <div id="active-tool-tabs" class="tool-tabs">
+                    <!-- Tabs injected here -->
+                </div>
+                <div id="active-tool-content" class="tool-content-area native-tool-container">
+                    <!-- Tool content injected here -->
+                </div>
+            </div>
+
+            <!-- AI Decision Zone -->
+            <div class="section-header">
+                <div class="section-title">AI Decision Zone</div>
+                <span style="font-size: 0.8rem; color: var(--accent);">RECOMMENDED WORKFLOWS</span>
+            </div>
+            <div id="ai-zone-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Native Tools -->
+            <div class="section-header" id="header-native">
+                <div class="section-title">Native Tools</div>
+            </div>
+            <div id="native-tools-grid" class="tool-grid"
+                style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- External Tools -->
+            <div class="section-header" id="header-external">
+                <div class="section-title">Curated Toolkit</div>
+            </div>
