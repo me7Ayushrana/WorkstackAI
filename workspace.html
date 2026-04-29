@@ -118,3 +118,63 @@
             <div class="section-header" id="header-external">
                 <div class="section-title">Curated Toolkit</div>
             </div>
+            <div id="external-tools-grid" class="tool-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <div
+                style="margin-top: 80px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.8rem; color: var(--text-muted);">
+                <strong>Disclaimer:</strong> Workstack does not own third-party tools linked above. All trademarks
+                belong to their respective owners. External tools open in a new tab.
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script src="js/data.js?v=10"></script>
+    <script src="js/auth.js?v=10"></script>
+    <script src="js/app.js?v=10"></script>
+
+    <!-- Add Widget Modal -->
+    <div id="widget-modal-overlay" class="auth-overlay">
+        <div class="auth-modal" style="max-width: 400px;">
+            <h3 style="margin-bottom: 15px;">Add to Focus Desk</h3>
+
+            <!-- Type Switcher -->
+            <div class="auth-tabs" style="margin-bottom: 20px;">
+                <button class="auth-tab active" id="tab-link" onclick="switchWidgetTab('link')">🔗 Custom Link</button>
+                <button class="auth-tab" id="tab-tool" onclick="switchWidgetTab('tool')">🛠️ Native Tool</button>
+            </div>
+
+            <!-- Link Form -->
+            <div id="widget-form-link">
+                <input type="text" id="w-name" class="input-field" placeholder="Name (e.g. 'Lofi Music')">
+                <input type="url" id="w-url" class="input-field" placeholder="URL (https://...)">
+            </div>
+
+            <!-- Tool Select -->
+            <div id="widget-form-tool" class="hidden">
+                <select id="w-tool-select" class="input-field">
+                    <option value="" disabled selected>Select a Tool</option>
+                    <option value="pomodoro">🧠 Deep Focus Timer</option>
+                    <option value="todo">📋 Kanban Board</option>
+                    <option value="music-player">🎵 YouTube Media Player</option>
+                    <option value="word-counter">📊 Word Counter</option>
+                    <option value="calculator">🧮 Scientific Calc</option>
+                    <option value="notes">📝 Sticky Notes</option>
+                    <option value="converter">🔄 Unit Converter</option>
+                    <option value="markdown-scratchpad">✍️ Markdown Scratchpad</option>
+                    <option value="soundboard">🎧 Ambient Sound Mixer</option>
+                    <option value="gpa-calc">📈 Grade Predictor</option>
+                    <option value="flashcards">🗂️ Quick Flashcards</option>
+                    <option value="invoice-gen">💸 Smart Invoice</option>
+                    <option value="time-tracker">⏳ Time Tracker</option>
+                    <option value="expense-est">🛡️ Tax Shield</option>
+                    <option value="rate-calc">💰 Rate Calculator</option>
+                    <option value="caption-fmt">✍️ Caption Formatter</option>
+                    <option value="hashtag-gen">🔥 Trend Finder</option>
