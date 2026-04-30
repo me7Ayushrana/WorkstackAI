@@ -178,3 +178,63 @@
                     <option value="rate-calc">💰 Rate Calculator</option>
                     <option value="caption-fmt">✍️ Caption Formatter</option>
                     <option value="hashtag-gen">🔥 Trend Finder</option>
+                    <option value="idea-board">💡 Idea Organizer</option>
+                    <option value="thumb-test">🖼️ Thumbnail Tester</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex: 1;" onclick="confirmAddWidget()">Add Widget</button>
+                <button class="btn-outline" style="flex: 1;" onclick="closeWidgetModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal-overlay" class="modal-overlay">
+        <div class="modal-card" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🗑️</div>
+            <h3 id="confirm-title" style="margin-bottom: 10px;">Remove Item?</h3>
+            <p id="confirm-msg" style="color: var(--text-secondary); margin-bottom: 25px;">Are you sure you want to delete this?</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-outline" style="flex: 1;" onclick="closeConfirmModal()">Cancel</button>
+                <button id="confirm-btn-action" class="btn" style="flex: 1; background: var(--danger); border-color: var(--danger);">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Warning Overlay -->
+    <div id="mobile-warning">
+        <div class="mobile-warning-card">
+            <span class="mobile-warning-icon">🖥️ &gt; 📱</span>
+            <h3 style="margin-bottom: 10px; font-size: 1.4rem;">Desktop Recommended</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;">
+                WorkstackAI is designed for deep work on larger screens.
+                For the best experience, please switch to a Laptop or PC.
+            </p>
+            <button class="btn-outline" onclick="document.getElementById('mobile-warning').style.display='none'"
+                style="width: 100%; justify-content: center; border-color: rgba(255,255,255,0.2);">
+                Continue Anyway
+            </button>
+        </div>
+    </div>
+
+    <!-- Global Floating Music Player Button -->
+    <button id="floating-music-btn" onclick="toggleFloatingMusicPlayer()" title="Open Focus Music Player" 
+        style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--accent); border: 2px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.5); color: #000; font-size: 1.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(1);">
+        🎵
+    </button>
+
+    <!-- Global Floating Music Player Panel -->
+    <div id="floating-music-panel" class="hidden" 
+        style="position: fixed; bottom: 105px; right: 30px; width: 340px; background: rgba(30, 28, 26, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: #e5e4e7; font-family: system-ui, -apple-system, sans-serif; z-index: 9999; text-align: left; transition: all 0.3s ease;">
+        
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.2rem;">🎵</span>
+                <span style="font-weight: 600; color: #fff;">Focus Music</span>
+            </div>
+            <button onclick="toggleFloatingMusicPlayer()" style="background: none; border: none; color: #888; cursor: pointer; font-size: 1rem;">✕</button>
+        </div>
+
+        <!-- Youtube Input -->
