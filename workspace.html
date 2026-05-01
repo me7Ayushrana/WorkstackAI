@@ -238,3 +238,56 @@
         </div>
 
         <!-- Youtube Input -->
+        <div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 0.8rem; color: #a0a0a0;">Paste YouTube Link or Video ID:</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="float-yt-url" class="input-field" style="margin: 0; padding: 8px 12px; font-size: 0.85rem; height: 36px; box-sizing: border-box;" placeholder="https://www.youtube.com/...">
+                <button class="btn" onclick="loadFloatYoutubeMedia()" style="padding: 0 15px; font-size: 0.85rem; height: 36px; line-height: 36px; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--accent); color: #000; border: none; border-radius: 6px;">Load</button>
+            </div>
+        </div>
+
+        <!-- Mode Selector -->
+        <div id="float-mode-selector" class="hidden" style="margin-bottom: 15px; padding: 12px; background: rgba(255, 183, 3, 0.05); border: 1px dashed var(--accent); border-radius: 8px; text-align: center;">
+            <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: #fff; font-weight: 600;">Select Playback Mode:</p>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" onclick="selectFloatPlayMode('audio')" style="flex: 1; font-size: 0.8rem; padding: 8px; background: var(--accent); color: #000; border: none;">🎧 Audio</button>
+                <button class="btn btn-outline" onclick="selectFloatPlayMode('video')" style="flex: 1; font-size: 0.8rem; padding: 8px;">📺 Video</button>
+            </div>
+        </div>
+
+        <!-- Player Panel -->
+        <div id="float-player-panel" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 0.7rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em;" id="float-mode-badge">AUDIO-ONLY</span>
+                <span style="font-size: 0.7rem; color: #888; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;" id="float-player-status">IDLE</span>
+            </div>
+            
+            <!-- Video Wrapper -->
+            <div id="float-video-wrapper" style="width: 100%; height: 180px; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);" class="hidden">
+                <div id="float-yt-target"></div>
+            </div>
+
+            <h4 id="float-player-title" style="margin: 0 0 15px 0; font-size: 0.95rem; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">No track loaded</h4>
+
+            <!-- Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-outline" onclick="toggleFloatPlayMedia()" id="float-play-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border-radius: 6px;">▶</button>
+                    <button class="btn-outline" onclick="stopFloatPlayMedia()" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 6px;">⏹</button>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.15); padding: 4px 8px; border-radius: 6px;">
+                    <span style="font-size: 0.9rem;">🔊</span>
+                    <input type="range" min="0" max="100" value="80" id="float-volume-range" oninput="changeFloatMediaVolume(this.value)" style="width: 70px; accent-color: var(--accent); cursor: pointer; height: 3px;">
+                    <span id="float-volume-label" style="font-size: 0.75rem; color: #a0a0a0; width: 20px; text-align: right; font-weight: 600;">80</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden target for audio-only -->
+        <div id="float-yt-hidden-container" style="width:0; height:0; overflow:hidden; position:absolute; opacity:0; pointer-events:none;">
+            <div id="float-yt-audio-target"></div>
+        </div>
+    </div>
+</body>
+</html>
