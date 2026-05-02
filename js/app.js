@@ -58,3 +58,63 @@ function selectRole(role) {
 function checkRoleSelection() {
     // Legacy function removed or emptied to prevent auto-redirects
 }
+
+function processPayment() {
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    // Simulate API call
+    setTimeout(() => {
+        localStorage.setItem('hasPaid', 'true');
+        sessionStorage.removeItem('selectedRole'); // Force re-selection
+        window.location.href = 'roles.html';
+    }, 1500);
+}
+
+function checkAccess() {
+    const role = sessionStorage.getItem('selectedRole');
+
+    if (!role) {
+        window.location.href = 'roles.html';
+    }
+}
+
+function renderFunZone() {
+    const data = APP_DATABASE_V2['fun_zone'];
+
+    // Render Web Games
+    const gamesContainer = document.getElementById('games-grid');
+    if (gamesContainer) {
+        gamesContainer.innerHTML = data.games.map(game => `
+            <div class="tool-card">
+                 <div class="tool-header">
+                    <span class="tool-tag">${game.category}</span>
+                </div>
+                <h4>${game.name}</h4>
+                <p>${game.desc}</p>
+                <a href="${game.url}" target="_blank" class="btn-outline" style="display:block; text-align:center; padding: 8px; border-radius: 4px; font-size: 0.9rem;">Play Now ↗</a>
+            </div>
+        `).join('');
+    }
+
+    // Render Platforms
+    const platformsContainer = document.getElementById('platforms-grid');
+    if (platformsContainer && data.platforms) {
+        platformsContainer.innerHTML = data.platforms.map(p => `
+            <div class="tool-card" style="border-color: rgba(255,255,255,0.1);">
+                 <div class="tool-header">
+                    <span class="tool-tag" style="background:var(--accent); color:black;">${p.category}</span>
+                </div>
+                <h4>${p.name}</h4>
+                <p>${p.desc}</p>
+                <a href="${p.url}" target="_blank" class="btn btn-outline" style="width:100%; justify-content:center;">Visit ↗</a>
+            </div>
+        `).join('');
+    }
+
+    // Render Portals
+    const portalsContainer = document.getElementById('portals-grid');
+    if (portalsContainer && data.portals) {
+        portalsContainer.innerHTML = data.portals.map(p => `
+            <div class="tool-card" style="border-color: rgba(229, 197, 88, 0.4); background: rgba(229, 197, 88, 0.05);">
