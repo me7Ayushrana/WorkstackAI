@@ -118,3 +118,63 @@ function renderFunZone() {
     if (portalsContainer && data.portals) {
         portalsContainer.innerHTML = data.portals.map(p => `
             <div class="tool-card" style="border-color: rgba(229, 197, 88, 0.4); background: rgba(229, 197, 88, 0.05);">
+                 <div class="tool-header">
+                    <span class="tool-tag" style="background:var(--accent); color:black;">${p.category}</span>
+                </div>
+                <h4>${p.name}</h4>
+                <p>${p.desc}</p>
+                <a href="${p.url}" target="_blank" class="btn btn-outline" style="width:100%; justify-content:center;">Open Portal ↗</a>
+            </div>
+        `).join('');
+    }
+
+    // Init Search for Fun Zone
+    initSearch(data);
+}
+
+/* --- Workspace Rendering --- */
+function renderWorkspace() {
+    const roleKey = sessionStorage.getItem('selectedRole');
+    const data = APP_DATABASE_V2[roleKey];
+
+    if (!data) return;
+
+    try {
+        // Sets Headers with Greeting
+        const hour = new Date().getHours();
+        let greeting = "Welcome back";
+        if (hour < 12) greeting = "Good morning";
+        else if (hour < 18) greeting = "Good afternoon";
+        else greeting = "Good evening";
+
+        // Get Name from correct localStorage key
+        let displayName = "there";
+        try {
+            const userStr = localStorage.getItem('ws_user_profile');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                if (user.name) displayName = user.name.split(' ')[0];
+            }
+        } catch (e) {
+            console.error("Name fetch error", e);
+        }
+
+        document.getElementById('workspace-title').innerHTML = `${greeting}, <span style="color:var(--accent);">${displayName}</span> 👋`;
+        document.getElementById('workspace-desc').textContent = data.description;
+
+        // Render AI Decision Zone
+        const aiContainer = document.getElementById('ai-zone-grid');
+        if (aiContainer && data.ai_tools) {
+            aiContainer.innerHTML = data.ai_tools.map((tool, index) => `
+                <div class="tool-card ai-decision-card" style="animation-delay: ${(index * 0.05) + 0.2}s;">
+                    <div class="tool-header">
+                        <span class="tool-tag">${tool.bestFor}</span>
+                        ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+                    </div>
+                    <h4>${tool.title}</h4>
+                    <p>${tool.desc}</p>
+                    <a href="${tool.url}" target="_blank" class="btn-outline" style="font-size: 0.8rem; width: 100%;">Open ${tool.toolName} ↗</a>
+                </div>
+            `).join('');
+        }
+
