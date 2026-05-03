@@ -178,3 +178,63 @@ function renderWorkspace() {
             `).join('');
         }
 
+        // Render Native Tools Sidebar/Grid
+        const nativeContainer = document.getElementById('native-tools-grid');
+        if (nativeContainer && data.native_tools) {
+            nativeContainer.innerHTML = data.native_tools.map((tool, index) => `
+                <div class="tool-card" onclick="loadNativeTool('${tool.id}')" style="cursor: pointer; animation-delay: ${index * 0.05}s;">
+                    <div class="tool-header">
+                        <span style="font-size: 1.5rem;">${tool.icon}</span>
+                        <span class="pricing-tag free">Free</span>
+                    </div>
+                    <h4>${tool.name}</h4>
+                    <div style="margin-top:auto;">
+                        <button class="btn-outline" style="width:100%; justify-content:center; margin-top:10px;" onclick="event.stopPropagation(); loadNativeTool('${tool.id}')">Open Tool</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render External Tools
+        const extContainer = document.getElementById('external-tools-grid');
+        if (extContainer && data.external_tools) {
+            extContainer.innerHTML = data.external_tools.map((tool, index) => `
+                <div class="tool-card" style="animation-delay: ${(index * 0.05) + 0.4}s;">
+                    <div class="tool-header">
+                        <span class="tool-tag">${tool.category}</span>
+                        ${tool.pricing ? `<span class="pricing-tag ${tool.pricing.toLowerCase()}">${tool.pricing}</span>` : ''}
+                    </div>
+                    <h4>${tool.name}</h4>
+                    <p>External Resource</p>
+                    <a href="${tool.url}" target="_blank" class="btn-outline" style="display:block; text-align:center; padding: 8px; border-radius: 4px; font-size: 0.9rem;">Launch ↗</a>
+                </div>
+            `).join('');
+        }
+
+        // Initialize Search Listener with Data
+        initSearch(data);
+
+        // Initialize Focus Desk (Custom)
+        initFocusDesk(data);
+
+        if (roleKey === 'custom') {
+            renderCustomWorkspaceMode();
+        }
+
+        // Apply Premium Animations
+        setTimeout(applyVisualEffects, 100);
+        setTimeout(initSpotlightEffect, 200);
+
+    } catch (e) {
+        console.error("Workspace Render Error:", e);
+        document.getElementById('workspace-title').textContent = "System Error";
+        document.getElementById('workspace-desc').textContent = "Could not load workspace configuration. Please refresh.";
+    }
+}
+
+/* --- Theme Switcher Logic --- */
+const THEMES = {
+    midnight: { class: '', bg: '#020202', accent: '#E5C558' },
+    cyberpunk: { class: 'theme-bg-cyberpunk', bg: '#050a14', accent: '#00f3ff' },
+    forest: { class: 'theme-bg-forest', bg: '#051405', accent: '#4ade80' },
+    sunset: { class: 'theme-bg-sunset', bg: '#1a0505', accent: '#f43f5e' },
