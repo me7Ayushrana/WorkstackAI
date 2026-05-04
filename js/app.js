@@ -238,3 +238,63 @@ const THEMES = {
     cyberpunk: { class: 'theme-bg-cyberpunk', bg: '#050a14', accent: '#00f3ff' },
     forest: { class: 'theme-bg-forest', bg: '#051405', accent: '#4ade80' },
     sunset: { class: 'theme-bg-sunset', bg: '#1a0505', accent: '#f43f5e' },
+    snow: { class: 'theme-bg-snow', bg: '#0B1026', accent: '#60a5fa' }
+};
+
+/* --- Mouse Spotlight Effect (The "Magic") --- */
+function initSpotlightEffect() {
+    const cards = document.querySelectorAll('.tool-card');
+    cards.forEach(card => {
+        card.onmousemove = e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        };
+    });
+}
+
+window.setTheme = function (themeName) {
+    const theme = THEMES[themeName];
+    if (!theme) return;
+
+    // Reset Classes
+    document.body.className = '';
+
+    // Apply Class
+    if (theme.class) {
+        document.body.classList.add(theme.class);
+    } else {
+        // Default Midnight fallback
+        document.body.style.background = theme.bg;
+    }
+
+    // Apply Colors
+    document.documentElement.style.setProperty('--bg-primary', theme.bg);
+    // For realistic image themes, we make the cards slightly more transparent
+    const glassBg = theme.class ? 'rgba(0, 0, 0, 0.6)' : 'rgba(20, 20, 20, 0.7)';
+    document.documentElement.style.setProperty('--bg-glass', glassBg);
+
+    document.documentElement.style.setProperty('--accent', theme.accent);
+    document.documentElement.style.setProperty('--accent-glow', `${theme.accent}40`);
+
+    localStorage.setItem('userTheme', themeName);
+    if (typeof SYNC !== 'undefined') {
+        SYNC.save('userTheme', themeName);
+    }
+}
+
+// Load Theme on Init
+const savedTheme = localStorage.getItem('userTheme');
+// Default to Midnight if nothing saved
+if (savedTheme) {
+    setTheme(savedTheme);
+} else {
+    setTheme('midnight');
+}
+
+function renderCustomWorkspaceMode() {
+    // 1. Unhide Focus Desk immediately as it's the hero
+    document.getElementById('focus-desk-section').classList.remove('hidden');
+
