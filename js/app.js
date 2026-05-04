@@ -298,3 +298,63 @@ function renderCustomWorkspaceMode() {
     // 1. Unhide Focus Desk immediately as it's the hero
     document.getElementById('focus-desk-section').classList.remove('hidden');
 
+    // 2. Hide standard sections initially
+    document.querySelector('.dashboard .section-header').innerHTML = `<div class="section-title">📦 Tool Library</div><span style="font-size:0.8rem; color:var(--text-secondary);">ADD TO YOUR DESK</span>`;
+
+    // Hide the static headers for Native/External to avoid empty gaps
+    if (document.getElementById('header-native')) document.getElementById('header-native').style.display = 'none';
+    if (document.getElementById('header-external')) document.getElementById('header-external').style.display = 'none';
+
+    document.getElementById('ai-zone-grid').innerHTML = '';
+    document.getElementById('native-tools-grid').innerHTML = '';
+    document.getElementById('external-tools-grid').innerHTML = '';
+
+    // 3. Populate "App Store" Grid (Native + External)
+    const appStoreContainer = document.getElementById('ai-zone-grid');
+    appStoreContainer.className = "tool-grid";
+
+    // Aggregate ALL tools
+    const allNative = [
+        ...APP_DATABASE_V2.student.native_tools,
+        ...APP_DATABASE_V2.freelancer.native_tools,
+        ...APP_DATABASE_V2.creator.native_tools
+    ];
+    const uniqueNative = Array.from(new Map(allNative.map(item => [item.id, item])).values());
+
+    const allExternal = [
+        ...APP_DATABASE_V2.student.external_tools,
+        ...APP_DATABASE_V2.freelancer.external_tools,
+        ...APP_DATABASE_V2.creator.external_tools,
+        ...APP_DATABASE_V2.fun_zone.games, // Why not?
+    ];
+    // De-duplicate URLs
+    const uniqueExternal = Array.from(new Map(allExternal.map(item => [item.url, item])).values());
+
+    // Generate HTML
+    let storeHTML = '';
+
+    // Native Section
+    storeHTML += uniqueNative.map(tool => `
+        <div class="tool-card">
+            <div class="tool-header">
+                <span style="font-size: 1.5rem;">${tool.icon}</span>
+                <button class="btn-outline" style="font-size:0.7rem; padding:4px 8px; margin-left:auto;" onclick="addNativeWidget('${tool.id}', '${tool.name}')">+ Pin</button>
+            </div>
+            <h4>${tool.name}</h4>
+            <div style="margin-top:auto;">
+                <button class="btn btn-outline" style="width:100%;" onclick="loadNativeTool('${tool.id}')">Open</button>
+            </div>
+        </div>
+    `).join('');
+
+    // External Section
+    storeHTML += uniqueExternal.map(tool => `
+        <div class="tool-card">
+            <div class="tool-header">
+                <span style="font-size: 1.5rem;">🔗</span>
+                <span class="tool-tag">${tool.category || 'Link'}</span>
+                <button class="btn-outline" style="font-size:0.7rem; padding:4px 8px; margin-left:auto;" onclick="addLinkWidget('${tool.url}', '${tool.name}')">+ Pin</button>
+            </div>
+            <h4>${tool.name}</h4>
+            <div style="margin-top:auto;">
+                <button class="btn btn-outline" style="width:100%;" onclick="window.open('${tool.url}')">Visit ↗</button>
