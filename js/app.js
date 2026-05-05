@@ -358,3 +358,63 @@ function renderCustomWorkspaceMode() {
             <h4>${tool.name}</h4>
             <div style="margin-top:auto;">
                 <button class="btn btn-outline" style="width:100%;" onclick="window.open('${tool.url}')">Visit ↗</button>
+            </div>
+        </div>
+    `).join('');
+
+    appStoreContainer.innerHTML = storeHTML;
+
+    // 4. Update Description
+    document.getElementById('workspace-desc').innerHTML = `
+        Welcome to your personal dashboard.<br>
+        <span style="color:var(--accent);">Pin tools</span> from below or <span style="color:var(--accent);">Add Widgets</span> to build your flow.
+    `;
+}
+
+// Helper to add external link widget quickly
+window.addLinkWidget = function (url, name) {
+    if (myWidgets.find(w => w.url === url)) {
+        return alert("Link already pinned!");
+    }
+    myWidgets.push({ type: 'link', name, url });
+    saveWidgets();
+    renderFocusDesk();
+    document.getElementById('focus-desk-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Global Helper to add pinned widget
+window.addNativeWidget = function (id, name) {
+    // Check duplication
+    if (myWidgets.find(w => w.id === id)) {
+        alert("Tool already pinned!");
+        return;
+    }
+    myWidgets.push({ type: 'tool', id, name });
+    saveWidgets();
+    renderFocusDesk();
+
+    // Scroll to top
+    document.getElementById('focus-desk-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* --- My Focus Desk Logic --- */
+let myWidgets = [];
+
+function initFocusDesk(roleData) {
+    const section = document.getElementById('focus-desk-section');
+    if (!section) return;
+
+    // Load from LocalStorage
+    const stored = localStorage.getItem('myFocusWidgets');
+    if (stored) {
+        try {
+            myWidgets = JSON.parse(stored);
+            
+            // Remove 24h Focus Radio
+            myWidgets = myWidgets.filter(w => w.name !== '24h Focus Radio' && w.url !== 'https://www.youtube.com/watch?v=jfKfPfyJRdk');
+            
+            // Remove Designed By Ayush widget
+            myWidgets = myWidgets.filter(w => !w.name?.includes('Designed By Ayush') && w.url !== 'https://ayushhh-folio.netlify.app');
+            
+            // Replace Gemini AI with Claude AI
+            let hasClaude = false;
