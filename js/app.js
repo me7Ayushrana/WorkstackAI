@@ -478,3 +478,63 @@ function renderMoveControls(index) {
 
 // Helper to render a tool widget
 function renderToolWidget(widget, index) {
+    return `
+        <div class="tool-card widget-card" onclick="loadNativeTool('${widget.id}')">
+            <div class="widget-controls">
+                ${renderMoveControls(index)}
+                <button class="widget-control-btn delete" onclick="event.stopPropagation(); deleteWidget(${index})" title="Remove">✕</button>
+            </div>
+            <div class="tool-header">
+                <span style="font-size: 1.5rem;">🛠️</span>
+                <span class="pricing-tag free">Native</span>
+            </div>
+            <h4>${widget.name}</h4>
+            <div style="margin-top:auto;">
+                <button class="btn btn-outline" style="width:100%;">Open Tool</button>
+            </div>
+        </div>
+    `;
+}
+
+// Helper to render a link widget
+function renderLinkWidget(widget, index) {
+    // Check for special premium flag or specific name
+    const specialClass = widget.isPremium || widget.name.includes('Ayush') ? 'premium-link-card' : '';
+    const specialLabel = widget.isPremium || widget.name.includes('Ayush') ? 'CREATOR' : 'LINK';
+
+    return `
+        <div class="tool-card widget-card ${specialClass}" onclick="window.open('${widget.url}', '_blank')">
+            <div class="widget-controls">
+                ${renderMoveControls(index)}
+                <button class="widget-control-btn delete" onclick="event.stopPropagation(); deleteWidget(${index})" title="Remove">✕</button>
+            </div>
+            <div class="tool-header">
+                <div class="tool-icon" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px;">
+                    ${widget.name.includes('Ayush') ? '<img src="https://github.com/me7Ayuhrana.png" style="width:100%; height:100%; border-radius:50%;">' : '🔗'}
+                </div>
+                <span class="pricing-tag" style="${widget.name.includes('Ayush') ? 'background:linear-gradient(45deg, #FFD700, #FFA500); color:black;' : ''}">${specialLabel}</span>
+            </div>
+            <div class="tool-body">
+                <h4>${widget.name}</h4>
+                <p style="font-size: 0.9rem; opacity: 0.7;">${widget.name.includes('Ayush') ? 'Know more about me & my work.' : 'External Resource'}</p>
+            </div>
+            <button class="btn btn-outline" style="width:100%; margin-top:auto;">Visit Link ↗</button>
+        </div>
+    `;
+}
+
+function renderFocusDesk() {
+    const grid = document.getElementById('focus-desk-grid');
+    if (!grid) return;
+
+    // Clear grid but keep the "Add" button (which is the last child usually or we re-append it)
+    // Actually simpler to just rebuild string
+
+    // 1. Generate Widget HTML
+    const widgetsHTML = myWidgets.map((w, index) => {
+        let content = '';
+        let action = '';
+
+        if (w.type === 'tool') {
+            content = `
+                <div class="tool-header">
