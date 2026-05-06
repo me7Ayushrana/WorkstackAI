@@ -418,3 +418,63 @@ function initFocusDesk(roleData) {
             
             // Replace Gemini AI with Claude AI
             let hasClaude = false;
+            myWidgets = myWidgets.map(w => {
+                if (w.name === 'Gemini AI' || w.url === 'https://gemini.google.com') {
+                    hasClaude = true;
+                    return { type: 'link', url: 'https://claude.ai', name: 'Claude AI' };
+                }
+                if (w.name === 'Claude AI' || w.url === 'https://claude.ai') {
+                    hasClaude = true;
+                }
+                return w;
+            });
+            
+            if (!hasClaude) {
+                const insertIdx = Math.min(2, myWidgets.length);
+                myWidgets.splice(insertIdx, 0, { type: 'link', url: 'https://claude.ai', name: 'Claude AI' });
+            }
+            saveWidgets();
+        } catch (e) {
+            console.error("Migration error", e);
+        }
+    } else {
+        // Default widgets for first time — clean, no personal branding
+        myWidgets = [
+            { type: 'tool', id: 'pomodoro', name: 'Deep Focus Timer' },
+            { type: 'tool', id: 'music-player', name: 'YouTube Media Player' },
+            { type: 'link', url: 'https://claude.ai', name: 'Claude AI' },
+            { type: 'tool', id: 'soundboard', name: 'Ambient Sound Mixer' }
+        ];
+        saveWidgets();
+    }
+
+    // Force-inject YouTube Media Player if missing (Migration Fix)
+    const hasMusicWidget = myWidgets.some(w => w.id === 'music-player');
+    if (!hasMusicWidget) {
+        myWidgets.unshift({
+            type: 'tool',
+            id: 'music-player',
+            name: 'YouTube Media Player'
+        });
+        saveWidgets();
+    }
+
+    // Update stats badge
+    if (typeof updateFocusDeskStats === 'function') {
+        updateFocusDeskStats();
+    }
+
+    renderFocusDesk();
+    section.classList.remove('hidden');
+}
+
+// Helper to render move controls for widgets
+function renderMoveControls(index) {
+    return `
+        <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, -1)" title="Move Left">←</button>
+        <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, 1)" title="Move Right">→</button>
+    `;
+}
+
+// Helper to render a tool widget
+function renderToolWidget(widget, index) {
