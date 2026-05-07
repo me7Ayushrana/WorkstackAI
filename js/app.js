@@ -538,3 +538,63 @@ function renderFocusDesk() {
         if (w.type === 'tool') {
             content = `
                 <div class="tool-header">
+                    <span style="font-size: 1.5rem;">🛠️</span>
+                    <span class="pricing-tag free">Native</span>
+                </div>
+                <h4>${w.name}</h4>
+                <div style="margin-top:auto;">
+                    <button class="btn btn-outline" style="width:100%;">Open Tool</button>
+                </div>
+            `;
+            action = `loadNativeTool('${w.id}')`;
+        } else {
+            content = `
+                <div class="tool-header">
+                    <span style="font-size: 1.5rem;">🔗</span>
+                    <span class="pricing-tag">Link</span>
+                </div>
+                <h4>${w.name}</h4>
+                <div style="margin-top:auto;">
+                    <button class="btn btn-outline" style="width:100%;">Visit Link ↗</button>
+                </div>
+            `;
+            action = `window.open('${w.url}', '_blank')`;
+        }
+
+        return `
+            <div class="tool-card widget-card" onclick="${action}">
+                <div class="widget-controls">
+                    <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, -1)" title="Move Left">←</button>
+                    <button class="widget-control-btn delete" onclick="event.stopPropagation(); deleteWidget(${index})" title="Remove">✕</button>
+                    <button class="widget-control-btn" onclick="event.stopPropagation(); moveWidget(${index}, 1)" title="Move Right">→</button>
+                </div>
+                ${content}
+            </div>
+        `;
+    }).join('');
+
+    // 2. Add Button HTML
+    const addBtnHTML = `
+        <div class="tool-card add-widget-card" onclick="openWidgetModal()">
+            <div style="font-size: 2rem; color: var(--text-secondary);">+</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Add Widget</p>
+        </div>
+    `;
+
+    grid.innerHTML = widgetsHTML + addBtnHTML;
+    
+    // Re-initialize animations for dynamic widgets
+    setTimeout(() => {
+        if (typeof applyVisualEffects === 'function') applyVisualEffects();
+        if (typeof initSpotlightEffect === 'function') initSpotlightEffect();
+    }, 50);
+}
+
+function saveWidgets() {
+    localStorage.setItem('myFocusWidgets', JSON.stringify(myWidgets));
+    if (typeof SYNC !== 'undefined') {
+        SYNC.save('myFocusWidgets', myWidgets);
+    }
+}
+
+// Global Widget Functions
