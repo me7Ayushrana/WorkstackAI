@@ -598,3 +598,63 @@ function saveWidgets() {
 }
 
 // Global Widget Functions
+// Global Widget Functions
+window.deleteWidget = function (index) {
+    openConfirmModal({
+        title: "Remove Widget?",
+        message: "Are you sure you want to remove this from your Focus Desk?",
+        onConfirm: () => {
+            myWidgets.splice(index, 1);
+            saveWidgets();
+            renderFocusDesk();
+        }
+    });
+}
+
+window.moveWidget = function (index, direction) {
+    const newIndex = index + direction;
+    // Bounds check
+    if (newIndex < 0 || newIndex >= myWidgets.length) return;
+
+    // Swap
+    const temp = myWidgets[index];
+    myWidgets[index] = myWidgets[newIndex];
+    myWidgets[newIndex] = temp;
+
+    saveWidgets();
+    renderFocusDesk();
+}
+
+// Modal Logic
+window.openWidgetModal = function () {
+    document.getElementById('widget-modal-overlay').classList.add('active');
+}
+window.closeWidgetModal = function () {
+    document.getElementById('widget-modal-overlay').classList.remove('active');
+}
+
+/* --- Generic Confirmation Modal Logic --- */
+let currentConfirmAction = null;
+
+window.openConfirmModal = function ({ title, message, onConfirm }) {
+    const overlay = document.getElementById('confirm-modal-overlay');
+    if (!overlay) {
+        // Fallback if HTML is missing
+        if (confirm(message)) onConfirm();
+        return;
+    }
+    document.getElementById('confirm-title').innerText = title;
+    document.getElementById('confirm-msg').innerText = message;
+
+    currentConfirmAction = onConfirm;
+
+    // Bind Action (Once)
+    const btn = document.getElementById('confirm-btn-action');
+    btn.onclick = () => {
+        if (currentConfirmAction) currentConfirmAction();
+        closeConfirmModal();
+    };
+
+    overlay.classList.add('active');
+}
+
