@@ -658,3 +658,63 @@ window.openConfirmModal = function ({ title, message, onConfirm }) {
     overlay.classList.add('active');
 }
 
+window.closeConfirmModal = function () {
+    document.getElementById('confirm-modal-overlay').classList.remove('active');
+    currentConfirmAction = null;
+}
+
+let activeWidgetTab = 'link';
+window.switchWidgetTab = function (tab) {
+    activeWidgetTab = tab;
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+
+    if (tab === 'link') {
+        document.getElementById('widget-form-link').classList.remove('hidden');
+        document.getElementById('widget-form-tool').classList.add('hidden');
+    } else {
+        document.getElementById('widget-form-link').classList.add('hidden');
+        document.getElementById('widget-form-tool').classList.remove('hidden');
+    }
+}
+
+window.confirmAddWidget = function () {
+    // Limits removed - completely free app
+
+    if (activeWidgetTab === 'link') {
+        const name = document.getElementById('w-name').value;
+        const url = document.getElementById('w-url').value;
+        if (!name || !url) return alert("Please enter name and URL");
+
+        myWidgets.push({ type: 'link', name, url });
+    } else {
+        const select = document.getElementById('w-tool-select');
+        const id = select.value;
+        const name = select.options[select.selectedIndex].text.replace('🧠 ', '').replace('📋 ', '').replace('📊 ', '').replace('🧮 ', ''); // Clean emoji
+
+        if (!id) return alert("Select a tool");
+        myWidgets.push({ type: 'tool', id, name });
+    }
+
+    saveWidgets();
+    renderFocusDesk();
+    closeWidgetModal();
+
+    // Clear inputs
+    document.getElementById('w-name').value = '';
+    document.getElementById('w-url').value = '';
+}
+
+/* --- Search & Suggestions Logic --- */
+let searchableTerms = [];
+
+function initSearch(data) {
+    const searchInput = document.getElementById('tool-search');
+    const suggestionBox = document.getElementById('search-suggestions');
+    if (!searchInput) return;
+
+    // Collect all terms for autocomplete
+    searchableTerms = [];
+
+    // Store URL/ID for direct action
+    const addTerm = (term, type, actionData) => {
