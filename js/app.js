@@ -718,3 +718,63 @@ function initSearch(data) {
 
     // Store URL/ID for direct action
     const addTerm = (term, type, actionData) => {
+        if (!term) return;
+        const exists = searchableTerms.find(t => t.text.toLowerCase() === term.toLowerCase());
+        if (!exists) {
+            searchableTerms.push({
+                text: term,
+                type: type,
+                url: actionData?.url,
+                startId: actionData?.id
+            });
+        }
+    };
+
+    // Event Listeners
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value;
+        filterTools(query);
+        showSuggestions(query);
+    });
+
+    // Close suggestions on click outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) {
+            if (suggestionBox) suggestionBox.classList.add('hidden');
+        }
+    });
+
+    // Process Data for Search
+    if (data.ai_tools) {
+        data.ai_tools.forEach(t => {
+            addTerm(t.toolName, 'AI Tool', { url: t.url });
+            addTerm(t.bestFor, 'Category');
+        });
+        data.external_tools.forEach(t => {
+            addTerm(t.name, 'External', { url: t.url });
+            addTerm(t.category, 'Category');
+        });
+        data.native_tools.forEach(t => {
+            addTerm(t.name, 'Native', { id: t.id });
+        });
+    }
+
+    // Process Fun Zone specific data
+    if (data.games) {
+        data.games.forEach(g => {
+            addTerm(g.name, 'Game', { url: g.url });
+            addTerm(g.category, 'Category');
+        });
+    }
+    if (data.platforms) {
+        data.platforms.forEach(p => {
+            addTerm(p.name, 'Platform', { url: p.url });
+        });
+    }
+    if (data.portals) {
+        data.portals.forEach(p => {
+            addTerm(p.name, 'Portal', { url: p.url });
+        });
+    }
+}
+
