@@ -778,3 +778,63 @@ function initSearch(data) {
     }
 }
 
+function showSuggestions(query) {
+    const box = document.getElementById('search-suggestions');
+    if (!box) return;
+
+    if (!query || query.length < 1) {
+        box.classList.add('hidden');
+        return;
+    }
+
+    const matches = searchableTerms
+        .filter(term => term.text.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 5);
+
+    if (matches.length > 0) {
+        box.innerHTML = matches.map(m => `
+            <div class="suggestion-item" onclick="applySuggestion('${m.text.replace(/'/g, "\\'")}')">
+                <span>${m.text}</span>
+                <span style="font-size:0.7rem; opacity:0.5; border:1px solid currentColor; padding:2px 4px; border-radius:4px;">${m.type}</span>
+            </div>
+        `).join('');
+        box.classList.remove('hidden');
+    } else {
+        box.classList.add('hidden');
+    }
+}
+
+// Global scope for visual onclick
+window.applySuggestion = function (text) {
+    const input = document.getElementById('tool-search');
+    const termObj = searchableTerms.find(t => t.text === text);
+
+    // ACTION: If it matches a tool with a URL/ID, execute immediately
+    if (termObj) {
+        if (termObj.url) {
+            window.open(termObj.url, '_blank');
+            return;
+        }
+        if (termObj.startId) {
+            loadNativeTool(termObj.startId);
+            // Scroll to native tool area
+            document.getElementById('active-tool-container').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('search-suggestions').classList.add('hidden');
+            return;
+        }
+    }
+
+    // Default: Just filter
+    input.value = text;
+    filterTools(text);
+    document.getElementById('search-suggestions').classList.add('hidden');
+}
+
+/* --- Visual Effects (New) --- */
+function applyVisualEffects() {
+    const cards = document.querySelectorAll('.tool-card');
+
+    cards.forEach((card, index) => {
+        // 1. Staggered Animation Delay
+        card.style.animationDelay = `${index * 50}ms`;
+
