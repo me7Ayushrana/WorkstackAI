@@ -838,3 +838,63 @@ function applyVisualEffects() {
         // 1. Staggered Animation Delay
         card.style.animationDelay = `${index * 50}ms`;
 
+        // 2. 3D Tilt Effect on Mouse Move
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -5; // Max 5deg tilt
+            const rotateY = ((x - centerX) / centerX) * 5;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        });
+
+        // Reset on Leave
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+        });
+    });
+}
+
+function filterTools(query) {
+    const allCards = document.querySelectorAll('.tool-card');
+    const lowerQuery = query.toLowerCase();
+    let visibleCount = 0;
+
+    allCards.forEach(card => {
+        const title = card.querySelector('h4')?.textContent.toLowerCase() || "";
+        const desc = card.querySelector('p')?.textContent.toLowerCase() || "";
+        const tag = card.querySelector('.tool-tag')?.textContent.toLowerCase() || "";
+
+        const isVisible = (card.style.display !== 'none');
+        const shouldBeVisible = (title.includes(lowerQuery) || desc.includes(lowerQuery) || tag.includes(lowerQuery));
+
+        if (shouldBeVisible) {
+            visibleCount++;
+            if (!isVisible) {
+                card.style.display = 'flex';
+                card.style.animation = 'fadeIn 0.3s ease-out';
+            }
+        } else {
+            if (isVisible) {
+                card.style.display = 'none';
+            }
+        }
+    });
+
+    // Handle "No Results"
+    const noResults = document.getElementById('no-results');
+    const sections = document.querySelectorAll('.section-header');
+
+    if (visibleCount === 0) {
+        if (noResults) noResults.classList.remove('hidden');
+        sections.forEach(s => s.classList.add('hidden'));
+    } else {
+        if (noResults) noResults.classList.add('hidden');
+        sections.forEach(s => s.classList.remove('hidden'));
+    }
+}
