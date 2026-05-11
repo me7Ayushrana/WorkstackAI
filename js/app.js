@@ -898,3 +898,63 @@ function filterTools(query) {
         sections.forEach(s => s.classList.remove('hidden'));
     }
 }
+
+
+/* --- Native Tools Implementation --- */
+/* --- Native Tools Implementation (Tabbed) --- */
+let openTools = []; // Array of { id, name }
+let activeToolId = null;
+
+window.loadNativeTool = function (toolId) {
+    if (!toolId) return;
+
+    // 0. Ensure Data is Loaded
+    if (typeof APP_DATABASE_V2 === 'undefined') {
+        alert("Error: Tool Data not loaded. Please refresh.");
+        return;
+    }
+
+    // 1. Ensure DOM Elements Exist (Self-Healing due to potential Cache issues)
+    let container = document.getElementById('active-tool-container');
+
+    // Fallback for cache mismatch (if user still has old ID but new JS)
+    if (!container) {
+        container = document.getElementById('active-tool-display');
+        if (container) {
+            // Upgrade old container to new structure dynamically
+            container.id = 'active-tool-container';
+            container.className = 'native-tool-container hidden';
+        }
+    }
+
+    if (!container) {
+        // Create from scratch if totally missing
+        container = document.createElement('div');
+        container.id = 'active-tool-container';
+        container.className = 'hidden';
+        container.style.marginBottom = '40px';
+
+        // Inject after search container or at top
+        const search = document.querySelector('.search-container');
+        if (search && search.parentNode) search.parentNode.insertBefore(container, search.nextSibling);
+        else {
+            const main = document.querySelector('.container');
+            if (main) main.prepend(container);
+        }
+    }
+
+    // Ensure Tabs/Content structure exists
+    let tabsContainer = document.getElementById('active-tool-tabs');
+    let contentContainer = document.getElementById('active-tool-content');
+
+    if (!tabsContainer || !contentContainer) {
+        container.innerHTML = `
+             <div id="active-tool-tabs" class="tool-tabs"></div>
+             <div id="active-tool-content" class="tool-content-area native-tool-container"></div>
+        `;
+        tabsContainer = document.getElementById('active-tool-tabs');
+        contentContainer = document.getElementById('active-tool-content');
+    }
+
+    // 2. Check if already open
+    const exists = openTools.find(t => t.id === toolId);
