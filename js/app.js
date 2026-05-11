@@ -958,3 +958,63 @@ window.loadNativeTool = function (toolId) {
 
     // 2. Check if already open
     const exists = openTools.find(t => t.id === toolId);
+
+    // Show container
+    container.classList.remove('hidden');
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (exists) {
+        switchToolTab(toolId);
+        return;
+    }
+
+    // 3. Get Tool Name
+    let toolName = "Tool";
+    const allTools = [
+        ...APP_DATABASE_V2.student.native_tools,
+        ...APP_DATABASE_V2.freelancer.native_tools,
+        ...APP_DATABASE_V2.creator.native_tools
+    ];
+    const original = allTools.find(t => t.id === toolId);
+    if (original) toolName = original.name;
+
+    openTools.push({ id: toolId, name: toolName });
+
+    // 4. Create Tab
+    const tabBtn = document.createElement('div');
+    tabBtn.className = `tool-tab-btn`;
+    tabBtn.id = `tab-btn-${toolId}`;
+    tabBtn.innerHTML = `
+        <span>${toolName}</span>
+        <span class="tab-close" onclick="event.stopPropagation(); closeToolTab('${toolId}')">✕</span>
+    `;
+    tabBtn.onclick = () => switchToolTab(toolId);
+    tabsContainer.appendChild(tabBtn);
+
+    // 5. Create Content DOM
+    const contentDiv = document.createElement('div');
+    contentDiv.id = `tool-content-${toolId}`;
+    contentDiv.className = 'tool-pane hidden'; // Hidden by default
+    contentDiv.innerHTML = getToolHTML(toolId); // Use helper to get HTML
+    contentContainer.appendChild(contentDiv);
+
+    // 6. Initialize Tool Logic with Safety
+    try {
+        initToolLogic(toolId);
+    } catch (e) {
+        console.error(`Failed to init logic for ${toolId}`, e);
+    }
+
+    // 7. Activate
+    switchToolTab(toolId);
+}
+
+window.switchToolTab = function (toolId) {
+    activeToolId = toolId;
+
+    // Update Tabs
+    document.querySelectorAll('.tool-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`tab-btn-${toolId}`).classList.add('active');
+
+    // Update Content
+    document.querySelectorAll('.tool-pane').forEach(p => p.classList.add('hidden'));
