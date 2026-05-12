@@ -1018,3 +1018,63 @@ window.switchToolTab = function (toolId) {
 
     // Update Content
     document.querySelectorAll('.tool-pane').forEach(p => p.classList.add('hidden'));
+    document.getElementById(`tool-content-${toolId}`).classList.remove('hidden');
+}
+
+window.closeToolTab = function (toolId) {
+    if (toolId === 'music-player') {
+        destroyMediaYTPlayer();
+    }
+
+    // Remove from DOM
+    const tab = document.getElementById(`tab-btn-${toolId}`);
+    const content = document.getElementById(`tool-content-${toolId}`);
+    if (tab) tab.remove();
+    if (content) content.remove();
+
+    // Remove from State
+    openTools = openTools.filter(t => t.id !== toolId);
+
+    // If we closed the active one, switch to the last one available
+    if (openTools.length > 0) {
+        if (activeToolId === toolId) {
+            switchToolTab(openTools[openTools.length - 1].id);
+        }
+    } else {
+        // No tools left, hide container
+        document.getElementById('active-tool-container').classList.add('hidden');
+        activeToolId = null;
+    }
+}
+
+// Helper to get HTML (Extracted from old switch)
+function getToolHTML(toolId) {
+    switch (toolId) {
+        case 'music-player': return renderMusicPlayer();
+        case 'pomodoro': return renderPomodoro();
+        case 'word-counter': return renderWordCounter();
+        case 'todo': return renderTodo();
+        case 'gpa-calc': return renderGPACalc();
+        case 'invoice-gen': return renderInvoiceGen();
+        case 'time-tracker': return renderTimeTracker();
+        case 'expense-est': return renderTaxShield();
+        case 'caption-fmt': return renderCaptionFmt();
+        case 'hashtag-gen': return renderHashtagGen();
+        case 'idea-board': return renderIdeaBoard();
+        case 'thumb-test': return renderThumbTester();
+        case 'flashcards': return renderFlashcards();
+        case 'rate-calc': return renderRateCalc();
+        case 'calculator': return renderCalculator();
+        case 'converter': return renderConverter();
+        case 'notes': return renderNotes();
+        case 'markdown-scratchpad': return renderMarkdownScratchpad();
+        case 'soundboard': return renderSoundboard();
+        default: return `<p>Tool loading logic missing for ID: ${toolId}</p>`;
+    }
+}
+
+function initToolLogic(toolId) {
+    if (toolId === 'word-counter') initWordCounter();
+    if (toolId === 'pomodoro') initPomodoro();
+    if (toolId === 'converter') setTimeout(window.updateUnits, 50);
+    if (toolId === 'notes') initStickyNotes();
