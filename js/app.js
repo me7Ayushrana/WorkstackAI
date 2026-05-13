@@ -1138,3 +1138,63 @@ function initPomodoro() {
             isRunning = false;
             startBtn.textContent = "Resume Focus";
             startBtn.classList.remove('btn');
+            startBtn.classList.add('btn-outline');
+        } else {
+            // Start
+            isRunning = true;
+            startBtn.textContent = "Pause";
+            startBtn.classList.remove('btn-outline');
+            startBtn.classList.add('btn');
+
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateDisplay();
+                    // Track focus minute every 60 seconds
+                    if (timeLeft % 60 === 0) {
+                        if (typeof trackFocusMinute === 'function') trackFocusMinute();
+                    }
+                } else {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    startBtn.textContent = "Start Focus";
+                    startBtn.classList.remove('btn');
+                    startBtn.classList.add('btn-outline');
+                    if (typeof trackFocusSessionComplete === 'function') trackFocusSessionComplete();
+                    alert("Focus Session Complete!");
+                }
+            }, 1000);
+        }
+    });
+
+    document.getElementById('reset-timer').addEventListener('click', () => {
+        clearInterval(timerInterval);
+        isRunning = false;
+        startBtn.textContent = "Start Focus";
+        startBtn.classList.remove('btn-outline');
+        startBtn.classList.add('btn');
+        // Reset to input value
+        window.updateTimerDuration();
+    });
+}
+
+function renderWordCounter() {
+    return `
+        <div class="input-group">
+            <textarea id="word-input" class="input-field" rows="10" placeholder="Type or paste text here..."></textarea>
+        </div>
+        <div style="display: flex; gap: 30px; color: var(--text-secondary);">
+            <div>Words: <span id="count-words" style="color: var(--accent); font-weight:bold;">0</span></div>
+            <div>Chars: <span id="count-chars" style="color: var(--accent); font-weight:bold;">0</span></div>
+        </div>
+    `;
+}
+function initWordCounter() {
+    const area = document.getElementById('word-input');
+    area.addEventListener('input', () => {
+        const text = area.value.trim();
+        document.getElementById('count-chars').textContent = text.length;
+        document.getElementById('count-words').textContent = text ? text.split(/\s+/).length : 0;
+    });
+}
+
