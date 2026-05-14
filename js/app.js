@@ -1258,3 +1258,63 @@ window.calculateGPA = function () {
     let totalPts = 0;
     let totalCreds = 0;
     creds.forEach((c, i) => {
+        const cr = parseFloat(c.value) || 0;
+        const gr = parseFloat(grades[i].value) || 0;
+        totalPts += cr * gr;
+        totalCreds += cr;
+    });
+    const gpa = totalCreds ? (totalPts / totalCreds).toFixed(2) : 0.00;
+    document.getElementById('gpa-result').textContent = gpa;
+}
+
+// -- Freelancer Tools --
+
+function renderInvoiceGen() {
+    return `
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+             <h3 style="margin:0;">Settings</h3>
+             <select id="inv-currency" class="input-field" style="width:auto; padding:5px 10px; margin:0;" onchange="renderInvoiceItems()">
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+                <option value="₹">INR (₹)</option>
+                <option value="¥">JPY (¥)</option>
+             </select>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="inv-client" class="input-field" placeholder="Client Name / Business">
+            <input type="text" id="inv-date" class="input-field" placeholder="Date (YYYY-MM-DD)" onfocus="(this.type='date')" onblur="(this.type='text')">
+        </div>
+
+        <div style="margin-top:20px;">
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:5px;">Line Items</p>
+            <div id="inv-items-container">
+                <!-- Items injected here -->
+            </div>
+            <button class="btn-outline" onclick="addInvoiceItem()" style="width:100%; margin-top:10px; border-style:dashed;">+ Add Item</button>
+        </div>
+
+        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; font-size:1.2rem; font-weight:bold;">
+            <span>Total:</span>
+            <span id="inv-final-total" style="color:var(--accent);">$0.00</span>
+        </div>
+
+        <button class="btn" onclick="printInvoice()" style="width:100%; margin-top:20px;">📄 Generate & Download PDF</button>
+
+        <!-- Hidden Print Template -->
+        <div id="print-area" style="display:none;"></div>
+    `;
+}
+
+// Global state for items
+let invoiceItems = [];
+
+window.initInvoice = function () {
+    invoiceItems = [{ desc: '', qty: 1, price: 0 }];
+    renderInvoiceItems();
+}
+
+window.addInvoiceItem = function () {
+    invoiceItems.push({ desc: '', qty: 1, price: 0 });
+    renderInvoiceItems();
