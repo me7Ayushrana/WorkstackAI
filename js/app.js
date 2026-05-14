@@ -1198,3 +1198,63 @@ function initWordCounter() {
     });
 }
 
+function renderTodo() {
+    return `
+        <div>
+            <div style="display:flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="todo-input" class="input-field" placeholder="New Task...">
+                <button class="btn" onclick="addTodo()">Add</button>
+            </div>
+            <ul id="todo-list" style="list-style: none;"></ul>
+        </div>
+    `;
+}
+window.addTodo = function () {
+    const input = document.getElementById('todo-input');
+    if (!input.value) return;
+    const list = document.getElementById('todo-list');
+    const li = document.createElement('li');
+    li.style.padding = "10px";
+    li.style.borderBottom = "1px solid var(--border)";
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.innerHTML = `<span>${input.value}</span> <button onclick="this.parentElement.remove()" style="color:var(--danger); background:none; border:none; cursor:pointer;">Done</button>`;
+    list.appendChild(li);
+    input.value = '';
+}
+
+function renderGPACalc() {
+    return `
+     <p style="color: var(--text-muted);">Simple 4.0 Scale Calculator</p>
+     <div id="course-rows">
+        <div class="input-group" style="display:flex; gap:10px;">
+            <input type="number" placeholder="Credits" class="input-field creds">
+            <input type="number" placeholder="Grade (0-4)" class="input-field grade">
+        </div>
+     </div>
+     <button class="btn btn-outline" onclick="addCourseRow()" style="margin-top:10px;">+ Add Course</button>
+     
+     <div style="margin-top: 20px; font-size: 1.5rem;">
+        GPA: <span id="gpa-result" style="color: var(--accent);">0.00</span>
+     </div>
+     <button class="btn" onclick="calculateGPA()" style="margin-top: 20px;">Calculate</button>
+    `;
+}
+window.addCourseRow = function () {
+    const div = document.createElement('div');
+    div.className = "input-group";
+    div.style.display = "flex";
+    div.style.gap = "10px";
+    div.style.marginTop = "10px";
+    div.innerHTML = `
+        <input type="number" placeholder="Credits" class="input-field creds">
+        <input type="number" placeholder="Grade (0-4)" class="input-field grade">
+    `;
+    document.getElementById('course-rows').appendChild(div);
+}
+window.calculateGPA = function () {
+    const creds = document.querySelectorAll('.creds');
+    const grades = document.querySelectorAll('.grade');
+    let totalPts = 0;
+    let totalCreds = 0;
+    creds.forEach((c, i) => {
