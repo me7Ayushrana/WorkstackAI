@@ -1378,3 +1378,63 @@ window.printInvoice = function () {
         <head>
             <title>Invoice_${client}_${date}</title>
             <style>
+                body { font-family: 'Helvetica', sans-serif; color: #333; padding: 40px; max-width: 800px; margin: 0 auto; }
+                .header { display: flex; justify-content: space-between; margin-bottom: 50px; }
+                .header h1 { margin: 0; color: #111; }
+                .details { margin-bottom: 30px; }
+                table { width: 100%; border-collapse: collapse; }
+                th { text-align: left; background: #f9f9f9; padding: 10px; font-weight: bold; }
+                .total { margin-top: 30px; text-align: right; font-size: 1.5rem; font-weight: bold; }
+                .footer { margin-top: 50px; font-size: 0.8rem; color: #777; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div>
+                    <h1>INVOICE</h1>
+                    <p style="color:#555;">Generated via WorkstackAI</p>
+                </div>
+                <div style="text-align:right;">
+                    <p><strong>Date:</strong> ${date}</p>
+                </div>
+            </div>
+
+            <div class="details">
+                <p><strong>Bill To:</strong><br>${client}</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th style="text-align:center;">Qty</th>
+                        <th style="text-align:right;">Price</th>
+                        <th style="text-align:right;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsHTML}
+                </tbody>
+            </table>
+
+            <div class="total">
+                Total: ${currency}${total}
+            </div>
+
+            <div class="footer">
+                Thank you for your business.
+            </div>
+            <script>window.print(); window.onafterprint = function(){ window.close(); }</script>
+        </body>
+        </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+}
+
+function renderTimeTracker() {
+    return `
+        <div style="text-align:center;">
+            <div id="stopwatch" style="font-size: 3rem; font-weight: 800; font-family: monospace;">00:00:00</div>
