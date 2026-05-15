@@ -1318,3 +1318,63 @@ window.initInvoice = function () {
 window.addInvoiceItem = function () {
     invoiceItems.push({ desc: '', qty: 1, price: 0 });
     renderInvoiceItems();
+}
+
+window.removeInvoiceItem = function (index) {
+    if (invoiceItems.length > 1) {
+        invoiceItems.splice(index, 1);
+        renderInvoiceItems();
+    }
+}
+
+window.renderInvoiceItems = function () {
+    const container = document.getElementById('inv-items-container');
+    if (!container) return;
+
+    const currency = document.getElementById('inv-currency')?.value || '$';
+
+    container.innerHTML = invoiceItems.map((item, i) => `
+        <div class="inv-item-row" style="display:flex; gap:10px; margin-bottom:10px;">
+            <input type="text" class="input-field" style="flex:2; margin:0;" placeholder="Description" value="${item.desc}" oninput="updateInvItem(${i}, 'desc', this.value)">
+            <input type="number" class="input-field" style="flex:1; margin:0;" placeholder="Qty" value="${item.qty}" min="1" oninput="updateInvItem(${i}, 'qty', this.value)">
+            <input type="number" class="input-field" style="flex:1; margin:0;" placeholder="Price" value="${item.price}" oninput="updateInvItem(${i}, 'price', this.value)">
+            <button onclick="removeInvoiceItem(${i})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:1.2rem;">&times;</button>
+        </div>
+    `).join('');
+
+    calcInvoiceTotal();
+}
+
+window.updateInvItem = function (index, field, value) {
+    invoiceItems[index][field] = field === 'desc' ? value : parseFloat(value) || 0;
+    calcInvoiceTotal();
+}
+
+window.calcInvoiceTotal = function () {
+    const currency = document.getElementById('inv-currency')?.value || '$';
+    const total = invoiceItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
+    const totalEl = document.getElementById('inv-final-total');
+    if (totalEl) totalEl.innerText = `${currency}${total.toFixed(2)}`;
+    return total;
+}
+
+window.printInvoice = function () {
+    const client = document.getElementById('inv-client').value || 'Client';
+    const date = document.getElementById('inv-date').value || new Date().toISOString().split('T')[0];
+    const currency = document.getElementById('inv-currency').value;
+    const total = window.calcInvoiceTotal().toFixed(2);
+
+    const itemsHTML = invoiceItems.map(item => `
+        <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:10px;">${item.desc || 'Service'}</td>
+            <td style="padding:10px; text-align:center;">${item.qty}</td>
+            <td style="padding:10px; text-align:right;">${currency}${item.price.toFixed(2)}</td>
+            <td style="padding:10px; text-align:right;">${currency}${(item.qty * item.price).toFixed(2)}</td>
+        </tr>
+    `).join('');
+
+    const printContent = `
+        <html>
+        <head>
+            <title>Invoice_${client}_${date}</title>
+            <style>
