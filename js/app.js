@@ -1438,3 +1438,63 @@ function renderTimeTracker() {
     return `
         <div style="text-align:center;">
             <div id="stopwatch" style="font-size: 3rem; font-weight: 800; font-family: monospace;">00:00:00</div>
+            <div style="margin-top: 20px; display:flex; gap:10px; justify-content:center;">
+                <button class="btn" onclick="toggleTimer()" id="toggle-btn">Start</button>
+                <button class="btn btn-outline" onclick="resetStopwatch()">Stop & Log</button>
+            </div>
+            <ul id="time-logs" style="text-align:left; margin-top:20px; list-style:none; opacity:0.7;"></ul>
+        </div>
+    `;
+}
+let watchInterval;
+let watchSeconds = 0;
+let isRunning = false;
+
+window.toggleTimer = function () {
+    const btn = document.getElementById('toggle-btn');
+    if (!isRunning) {
+        isRunning = true;
+        btn.textContent = "Pause";
+        watchInterval = setInterval(() => {
+            watchSeconds++;
+            const h = Math.floor(watchSeconds / 3600);
+            const m = Math.floor((watchSeconds % 3600) / 60);
+            const s = watchSeconds % 60;
+            document.getElementById('stopwatch').textContent =
+                `${h < 10 ? '0' : ''}${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }, 1000);
+    } else {
+        isRunning = false;
+        btn.textContent = "Resume";
+        clearInterval(watchInterval);
+    }
+}
+window.resetStopwatch = function () {
+    if (watchSeconds === 0) return;
+    const log = document.createElement('li');
+    log.innerHTML = `Session: ${document.getElementById('stopwatch').textContent}`;
+    document.getElementById('time-logs').prepend(log);
+
+    clearInterval(watchInterval);
+    isRunning = false;
+    watchSeconds = 0;
+    document.getElementById('stopwatch').textContent = "00:00:00";
+    document.getElementById('toggle-btn').textContent = "Start";
+}
+
+function renderTaxShield() {
+    return `
+        <p>Simple Breakdown (30% Rule)</p>
+        <input type="number" id="tax-income" class="input-field" placeholder="Annual Income ($)">
+        <button class="btn" onclick="calcTax()">Estimate</button>
+        <div style="margin-top: 20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="tool-card" style="padding:15px; border-color:var(--danger);">
+                <span class="text-muted">Set Aside</span>
+                <h3 id="tax-owe" style="color:var(--danger);">$0</h3>
+            </div>
+            <div class="tool-card" style="padding:15px; border-color:var(--accent);">
+                <span class="text-muted">Keep</span>
+                <h3 id="tax-keep" style="color:var(--accent);">$0</h3>
+            </div>
+        </div>
+    `;
