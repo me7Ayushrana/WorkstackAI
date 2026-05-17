@@ -1558,3 +1558,63 @@ window.addIdea = function () {
 }
 
 // -- NEW: Flashcards --
+function renderFlashcards() {
+    return `
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+             <input type="text" id="fc-front" class="input-field" placeholder="Front (Question)">
+             <input type="text" id="fc-back" class="input-field" placeholder="Back (Answer)">
+             <button class="btn" onclick="addCard()">Add</button>
+        </div>
+        <div id="card-display" style="perspective:1000px; height:200px; cursor:pointer; display:none;" onclick="flipCard()">
+             <div id="card-inner" style="width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 0.6s; border:1px solid var(--border); border-radius:10px; background:var(--bg-card);">
+                 <div class="card-face" style="position:absolute; width:100%; height:100%; backface-visibility:hidden; display:flex; justify-content:center; align-items:center; font-size:1.5rem; text-align:center; padding:20px;">
+                    <span id="card-front-text">Front</span>
+                 </div>
+                 <div class="card-face" style="position:absolute; width:100%; height:100%; backface-visibility:hidden; display:flex; justify-content:center; align-items:center; font-size:1.5rem; text-align:center; padding:20px; transform:rotateY(180deg); background:var(--accent); color:black;">
+                    <span id="card-back-text">Back</span>
+                 </div>
+             </div>
+        </div>
+        <p id="fc-count" style="text-align:center; margin-top:10px; color:var(--text-muted);">0 Cards</p>
+    `;
+}
+let flashcards = [];
+let isFlipped = false;
+window.addCard = function () {
+    const f = document.getElementById('fc-front').value;
+    const b = document.getElementById('fc-back').value;
+    if (!f || !b) return;
+    flashcards.push({ f, b });
+    document.getElementById('fc-front').value = '';
+    document.getElementById('fc-back').value = '';
+    document.getElementById('fc-count').textContent = flashcards.length + " Cards (Click to Flip)";
+    if (flashcards.length === 1) showCard(0);
+}
+window.showCard = function (idx) {
+    document.getElementById('card-display').style.display = 'block';
+    document.getElementById('card-front-text').textContent = flashcards[idx].f;
+    document.getElementById('card-back-text').textContent = flashcards[idx].b;
+}
+window.flipCard = function () {
+    const inner = document.getElementById('card-inner');
+    if (isFlipped) {
+        inner.style.transform = 'rotateY(0deg)';
+    } else {
+        inner.style.transform = 'rotateY(180deg)';
+    }
+    isFlipped = !isFlipped;
+}
+
+// -- NEW: Rate Calc --
+function renderRateCalc() {
+    return `
+        <h3>Freelance Rate Calculator</h3>
+        <div class="input-group" style="margin-top:10px;">
+            <label>Goal Annual Income ($)</label>
+            <input type="number" id="rc-goal" class="input-field" value="100000">
+        </div>
+        <div class="input-group">
+            <label>Billable Hours / Week</label>
+            <input type="number" id="rc-hours" class="input-field" value="25">
+        </div>
+        <div class="input-group">
