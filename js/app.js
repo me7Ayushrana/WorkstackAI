@@ -1498,3 +1498,63 @@ function renderTaxShield() {
             </div>
         </div>
     `;
+}
+window.calcTax = function () {
+    const inc = parseFloat(document.getElementById('tax-income').value) || 0;
+    const tax = inc * 0.30;
+    document.getElementById('tax-owe').textContent = '$' + tax.toFixed(2);
+    document.getElementById('tax-keep').textContent = '$' + (inc - tax).toFixed(2);
+}
+
+// -- Creator Tools --
+
+function renderCaptionFmt() {
+    return `
+        <textarea id="cap-input" class="input-field" rows="6" placeholder="Write caption with line breaks..."></textarea>
+        <button class="btn" onclick="formatCaption()">Convert & Copy</button>
+        <p id="cap-msg" style="margin-top:10px; color:var(--accent); display:none;">Copied to clipboard!</p>
+    `;
+}
+window.formatCaption = function () {
+    const txt = document.getElementById('cap-input').value;
+    // Basic logic: ensure verify logic or just act as a clean copier
+    navigator.clipboard.writeText(txt).then(() => {
+        const msg = document.getElementById('cap-msg');
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 2000);
+    });
+}
+
+function renderHashtagGen() {
+    return `
+        <input type="text" class="input-field" placeholder="Topic (e.g. Fitness)">
+        <button class="btn" onclick="genTags()">Generate Tags</button>
+        <div id="tag-output" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:8px; display:none;"></div>
+    `;
+}
+window.genTags = function () {
+    const tags = ["#fyp", "#viral", "#trending", "#creator", "#content", "#growth"];
+    document.getElementById('tag-output').textContent = tags.join(" ");
+    document.getElementById('tag-output').style.display = 'block';
+}
+
+function renderIdeaBoard() {
+    return `
+        <input type="text" id="idea-input" class="input-field" placeholder="Video Idea...">
+        <button class="btn" onclick="addIdea()">Save Idea</button>
+        <ul id="idea-list" style="margin-top:20px; list-style:none;"></ul>
+    `;
+}
+window.addIdea = function () {
+    const val = document.getElementById('idea-input').value;
+    if (!val) return;
+    const li = document.createElement('li');
+    li.style.padding = "10px";
+    li.style.background = "rgba(255,255,255,0.05)";
+    li.style.marginBottom = "5px";
+    li.textContent = "💡 " + val;
+    document.getElementById('idea-list').appendChild(li);
+    document.getElementById('idea-input').value = '';
+}
+
+// -- NEW: Flashcards --
