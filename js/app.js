@@ -1618,3 +1618,63 @@ function renderRateCalc() {
             <input type="number" id="rc-hours" class="input-field" value="25">
         </div>
         <div class="input-group">
+            <label>Weeks Off / Year</label>
+            <input type="number" id="rc-vacation" class="input-field" value="4">
+        </div>
+        <button class="btn" onclick="calcRate()">Calculate Hourly Rate</button>
+        <div style="margin-top:20px; text-align:center;">
+             <h3>You should charge:</h3>
+             <h1 id="rc-result" style="color:var(--accent); font-size:3rem;">$0/hr</h1>
+        </div>
+    `;
+}
+window.calcRate = function () {
+    const goal = parseFloat(document.getElementById('rc-goal').value);
+    const hours = parseFloat(document.getElementById('rc-hours').value);
+    const vacation = parseFloat(document.getElementById('rc-vacation').value);
+
+    const workWeeks = 52 - vacation;
+    const totalHours = workWeeks * hours;
+    // Add 30% for taxes/overhead buffer
+    const billableGoal = goal * 1.30;
+
+    const rate = (billableGoal / totalHours).toFixed(0);
+    document.getElementById('rc-result').textContent = `$${rate}/hr`;
+}
+
+// -- NEW: Thumbnail Tester --
+function renderThumbTester() {
+    return `
+        <p>Preview your thumbnail in different contexts.</p>
+        <input type="file" id="thumb-upload" class="input-field" accept="image/*" onchange="loadThumb(event)">
+        
+        <div id="thumb-prev-area" style="display:none; margin-top:20px;">
+            <h4>Home Page (Dark)</h4>
+            <div style="background:#0f0f0f; padding:10px; width:300px; border-radius:10px;">
+                <img id="t-img-1" style="width:100%; border-radius:8px; aspect-ratio:16/9; object-fit:cover;">
+                <div style="margin-top:5px; height:10px; width:80%; background:#333; border-radius:2px;"></div>
+                <div style="margin-top:5px; height:10px; width:40%; background:#333; border-radius:2px;"></div>
+            </div>
+
+            <h4 style="margin-top:20px;">Sidebar (Small)</h4>
+            <div style="background:#fff; padding:10px; width:180px; color:black; border-radius:5px;">
+                 <img id="t-img-2" style="width:100%; border-radius:4px; aspect-ratio:16/9; object-fit:cover;">
+                 <div style="margin-top:5px; height:8px; width:90%; background:#ccc;"></div>
+            </div>
+        </div>
+    `;
+}
+window.loadThumb = function (event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        document.getElementById('t-img-1').src = reader.result;
+        document.getElementById('t-img-2').src = reader.result;
+        document.getElementById('thumb-prev-area').style.display = 'block';
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+// -- NEW: Calculator --
+function renderCalculator() {
+    return `
+        <div style="max-width:300px; margin:0 auto; background:var(--bg-card); padding:20px; border-radius:15px; border:1px solid var(--border);">
