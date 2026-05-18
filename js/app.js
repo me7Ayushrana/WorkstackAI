@@ -1678,3 +1678,63 @@ window.loadThumb = function (event) {
 function renderCalculator() {
     return `
         <div style="max-width:300px; margin:0 auto; background:var(--bg-card); padding:20px; border-radius:15px; border:1px solid var(--border);">
+            <input type="text" id="calc-disp" readonly style="width:100%; margin-bottom:15px; background:#111; border:none; color:white; font-size:1.5rem; text-align:right; padding:10px; border-radius:5px;">
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
+                <button class="btn-outline" onclick="calcInput('C')">C</button>
+                <button class="btn-outline" onclick="calcInput('(')">(</button>
+                <button class="btn-outline" onclick="calcInput(')')">)</button>
+                <button class="btn-outline" onclick="calcInput('/')">÷</button>
+                
+                <button class="btn-outline" onclick="calcInput('7')">7</button>
+                <button class="btn-outline" onclick="calcInput('8')">8</button>
+                <button class="btn-outline" onclick="calcInput('9')">9</button>
+                <button class="btn-outline" onclick="calcInput('*')">×</button>
+                
+                <button class="btn-outline" onclick="calcInput('4')">4</button>
+                <button class="btn-outline" onclick="calcInput('5')">5</button>
+                <button class="btn-outline" onclick="calcInput('6')">6</button>
+                <button class="btn-outline" onclick="calcInput('-')">-</button>
+                
+                <button class="btn-outline" onclick="calcInput('1')">1</button>
+                <button class="btn-outline" onclick="calcInput('2')">2</button>
+                <button class="btn-outline" onclick="calcInput('3')">3</button>
+                <button class="btn-outline" onclick="calcInput('+')">+</button>
+                
+                <button class="btn-outline" onclick="calcInput('0')">0</button>
+                <button class="btn-outline" onclick="calcInput('.')">.</button>
+                <button class="btn" style="grid-column:span 2;" onclick="calcEval()">=</button>
+            </div>
+        </div>
+    `;
+}
+window.calcInput = function (v) {
+    const d = document.getElementById('calc-disp');
+    if (v === 'C') d.value = '';
+    else d.value += v;
+}
+window.calcEval = function () {
+    try {
+        const d = document.getElementById('calc-disp');
+        d.value = eval(d.value);
+    } catch (e) {
+        alert("Invalid Expression");
+    }
+}
+
+// -- NEW: Unit Converter --
+function renderConverter() {
+    return `
+        <div style="display:flex; gap:10px;">
+            <select id="conv-type" class="input-field" onchange="updateUnits()">
+                <option value="len">Length</option>
+                <option value="weight">Weight</option>
+            </select>
+            <input type="number" id="conv-val" class="input-field" placeholder="Value">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+             <select id="conv-from" class="input-field"></select>
+             <span>to</span>
+             <select id="conv-to" class="input-field"></select>
+        </div>
+        <button class="btn" onclick="convert()" style="margin-top:10px;">Convert</button>
+        <h2 id="conv-res" style="margin-top:20px; color:var(--accent);"></h2>
