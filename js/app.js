@@ -1738,3 +1738,63 @@ function renderConverter() {
         </div>
         <button class="btn" onclick="convert()" style="margin-top:10px;">Convert</button>
         <h2 id="conv-res" style="margin-top:20px; color:var(--accent);"></h2>
+    `;
+}
+const units = {
+    len: ['Meters', 'Feet', 'Inches', 'Kilometers', 'Miles'],
+    weight: ['Kilograms', 'Pounds', 'Ounces', 'Grams']
+};
+const factors = {
+    len: { Meters: 1, Feet: 3.28084, Inches: 39.3701, Kilometers: 0.001, Miles: 0.000621371 },
+    weight: { Kilograms: 1, Pounds: 2.20462, Ounces: 35.274, Grams: 1000 }
+};
+window.updateUnits = function () {
+    const type = document.getElementById('conv-type').value;
+    const from = document.getElementById('conv-from');
+    const to = document.getElementById('conv-to');
+
+    const opts = units[type].map(u => `<option value="${u}">${u}</option>`).join('');
+    from.innerHTML = opts;
+    to.innerHTML = opts;
+}
+window.convert = function () {
+    const type = document.getElementById('conv-type').value;
+    const val = parseFloat(document.getElementById('conv-val').value);
+    const f = document.getElementById('conv-from').value;
+    const t = document.getElementById('conv-to').value;
+
+    if (isNaN(val)) return;
+
+    // Convert to base then to target
+    const base = val / factors[type][f];
+    const res = base * factors[type][t];
+
+    document.getElementById('conv-res').textContent = `${val} ${f} = ${res.toFixed(4)} ${t}`;
+}
+// Units initialized via initToolLogic
+// setTimeout(window.updateUnits, 500);
+
+// -- NEW: Sticky Notes --
+function renderNotes() {
+    return `
+        <textarea id="sticky-note" class="input-field" rows="12" placeholder="Start typing... Auto-saved locally." style="background:#fff2cc; color:#333; font-family:cursive; padding:20px; font-size:1.2rem;"></textarea>
+        <p style="text-align:right; font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Auto-saved to LocalStorage</p>
+    `;
+}
+function initStickyNotes() {
+    const saved = localStorage.getItem('workstack_notes');
+    const el = document.getElementById('sticky-note');
+    if (saved && el) el.value = saved;
+
+    if (el) {
+        el.addEventListener('input', () => {
+            localStorage.setItem('workstack_notes', el.value);
+            if (typeof SYNC !== 'undefined') {
+                SYNC.saveDebounced('workstack_notes', el.value);
+            }
+        });
+    }
+}
+
+// -- YouTube Media Player Tool --
+let mediaYTPlayer = null;
