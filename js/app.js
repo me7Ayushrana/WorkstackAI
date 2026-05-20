@@ -1858,3 +1858,63 @@ function renderMusicPlayer() {
             <div id="yt-hidden-container" style="width:0; height:0; overflow:hidden; position:absolute; opacity:0; pointer-events:none;">
                 <div id="yt-native-audio-target"></div>
             </div>
+
+            <!-- Quick Play Focus Tracks Section -->
+            <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;">⚡ Quick Play Focus Tracks</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;" id="quick-tracks-grid">
+                    <div onclick="loadQuickTrack('jfKfPfyJRdk', 'Lofi Study Beats')" style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease;" class="quick-track-card">
+                        <span style="font-size: 1.2rem; display: block; margin-bottom: 4px;">🎧</span>
+                        <span style="font-size: 0.75rem; font-weight: 500; color: #fff; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Lofi Study Beats</span>
+                    </div>
+                    <div onclick="loadQuickTrack('4oStw0r33so', 'Rain on Window')" style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease;" class="quick-track-card">
+                        <span style="font-size: 1.2rem; display: block; margin-bottom: 4px;">🌧️</span>
+                        <span style="font-size: 0.75rem; font-weight: 500; color: #fff; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Rain on Window</span>
+                    </div>
+                    <div onclick="loadQuickTrack('D1f2dSi7kG4', 'Ambient Focus')" style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease;" class="quick-track-card">
+                        <span style="font-size: 1.2rem; display: block; margin-bottom: 4px;">✨</span>
+                        <span style="font-size: 0.75rem; font-weight: 500; color: #fff; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ambient Focus</span>
+                    </div>
+                    <div onclick="loadQuickTrack('4xDzrJKvOOY', 'Deep Work Synth')" style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease;" class="quick-track-card">
+                        <span style="font-size: 1.2rem; display: block; margin-bottom: 4px;">🚀</span>
+                        <span style="font-size: 0.75rem; font-weight: 500; color: #fff; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Deep Work Synth</span>
+                    </div>
+                    <div onclick="loadQuickTrack('A7VCSigfex8', 'Nature Forest')" style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease;" class="quick-track-card">
+                        <span style="font-size: 1.2rem; display: block; margin-bottom: 4px;">🌲</span>
+                        <span style="font-size: 0.75rem; font-weight: 500; color: #fff; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nature Forest</span>
+                    </div>
+                    <div onclick="loadQuickTrack('5qap5aO4i9A', 'Cafe Ambient')" style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease;" class="quick-track-card">
+                        <span style="font-size: 1.2rem; display: block; margin-bottom: 4px;">☕</span>
+                        <span style="font-size: 0.75rem; font-weight: 500; color: #fff; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Cafe Ambient</span>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .quick-track-card {
+                    transform: translateY(0);
+                }
+                .quick-track-card:hover {
+                    background: rgba(255, 255, 255, 0.05) !important;
+                    border-color: var(--accent) !important;
+                    transform: translateY(-2px);
+                }
+            </style>
+        </div>
+    `;
+}
+
+function initMusicPlayerTool() {
+    // Registered on demand.
+}
+
+function loadYoutubeMedia() {
+    const urlInput = document.getElementById('yt-media-url');
+    if (!urlInput) return;
+    const url = urlInput.value.trim();
+    if (!url) return alert("Please enter a YouTube link or Video ID.");
+    
+    let videoId = url;
+    if (url.length !== 11) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
