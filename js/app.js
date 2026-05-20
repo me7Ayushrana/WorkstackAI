@@ -1798,3 +1798,63 @@ function initStickyNotes() {
 
 // -- YouTube Media Player Tool --
 let mediaYTPlayer = null;
+let currentMediaVideoId = '';
+let currentPlayMode = 'audio';
+let mediaYTState = -1;
+
+function renderMusicPlayer() {
+    return `
+        <div class="music-player-tool" style="max-width: 550px; margin: 0 auto; padding: 25px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); text-align: left; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+            <h3 style="margin-top: 0; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                <span style="font-size: 1.5rem;">🎵</span> YouTube Media Player
+            </h3>
+            
+            <div style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Paste YouTube Link or Video ID:</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="yt-media-url" class="input-field" style="margin: 0; flex: 1; padding: 10px 14px;" placeholder="e.g. https://www.youtube.com/watch?v=jfKfPfyJRdk">
+                    <button class="btn" onclick="loadYoutubeMedia()" style="padding: 10px 24px; font-weight: 600;">Load Track</button>
+                </div>
+            </div>
+
+            <div id="media-mode-selector" class="hidden" style="margin-bottom: 20px; padding: 20px; background: rgba(255, 183, 3, 0.05); border: 1px dashed var(--accent); border-radius: var(--radius); text-align: center;">
+                <p style="margin: 0 0 15px 0; font-size: 0.95rem; color: var(--text-primary); font-weight: 600;">Choose Playback Mode:</p>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn" onclick="selectPlayMode('audio')" style="flex: 1; font-size: 0.9rem; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>🎧 Audio Only</span>
+                    </button>
+                    <button class="btn btn-outline" onclick="selectPlayMode('video')" style="flex: 1; font-size: 0.9rem; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>📺 Video & Audio</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="media-player-panel" class="hidden" style="margin-bottom: 10px; padding: 20px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <span style="font-size: 0.75rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;" id="player-mode-badge">AUDIO-ONLY MODE</span>
+                    <span style="font-size: 0.75rem; color: #888; font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px;" id="media-player-status">IDLE</span>
+                </div>
+                
+                <div id="yt-video-wrapper" style="width: 100%; height: 260px; background: #000; border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; transition: all 0.3s ease; border: 1px solid var(--border);" class="hidden">
+                    <div id="yt-native-target"></div>
+                </div>
+
+                <h4 id="media-player-title" style="margin: 0 0 20px 0; font-size: 1.15rem; color: var(--text-primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">No track loaded</h4>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-outline" onclick="togglePlayMedia()" id="media-play-btn" style="width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border-radius: 8px;" title="Play/Pause">▶</button>
+                        <button class="btn-outline" onclick="stopPlayMedia()" style="width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border-radius: 8px;" title="Stop">⏹</button>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+                        <span style="font-size: 1rem; color: var(--text-secondary);">🔊</span>
+                        <input type="range" min="0" max="100" value="80" id="media-volume-range" oninput="changeMediaVolume(this.value)" style="width: 100px; accent-color: var(--accent); cursor: pointer;">
+                        <span id="media-volume-label" style="font-size: 0.8rem; color: var(--text-secondary); width: 25px; text-align: right; font-weight: 600;">80</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="yt-hidden-container" style="width:0; height:0; overflow:hidden; position:absolute; opacity:0; pointer-events:none;">
+                <div id="yt-native-audio-target"></div>
+            </div>
