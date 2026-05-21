@@ -1918,3 +1918,63 @@ function loadYoutubeMedia() {
     if (url.length !== 11) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
+        if (match && match[2].length === 11) {
+            videoId = match[2];
+        } else {
+            return alert("Invalid YouTube URL or Video ID. Please paste a standard watch link or short sharing URL.");
+        }
+    }
+    
+    currentMediaVideoId = videoId;
+    
+    const selector = document.getElementById('media-mode-selector');
+    if (selector) selector.classList.remove('hidden');
+    const panel = document.getElementById('media-player-panel');
+    if (panel) panel.classList.add('hidden');
+}
+
+function selectPlayMode(mode) {
+    currentPlayMode = mode;
+    
+    const selector = document.getElementById('media-mode-selector');
+    if (selector) selector.classList.add('hidden');
+    
+    const panel = document.getElementById('media-player-panel');
+    if (panel) panel.classList.remove('hidden');
+    
+    const badge = document.getElementById('player-mode-badge');
+    if (badge) {
+        badge.textContent = mode === 'audio' ? '🎧 AUDIO-ONLY MODE' : '📺 VIDEO & AUDIO MODE';
+        badge.style.color = mode === 'audio' ? 'var(--accent)' : '#4ade80';
+    }
+    
+    const wrapper = document.getElementById('yt-video-wrapper');
+    if (wrapper) {
+        if (mode === 'video') {
+            wrapper.classList.remove('hidden');
+        } else {
+            wrapper.classList.add('hidden');
+        }
+    }
+    
+    initMediaYTPlayer();
+}
+
+function initMediaYTPlayer() {
+    destroyMediaYTPlayer();
+    
+    const targetId = currentPlayMode === 'video' ? 'yt-native-target' : 'yt-native-audio-target';
+    
+    if (currentPlayMode === 'video') {
+        const wrapper = document.getElementById('yt-video-wrapper');
+        if (wrapper) {
+            wrapper.innerHTML = '<div id="yt-native-target"></div>';
+        }
+    } else {
+        const container = document.getElementById('yt-hidden-container');
+        if (container) {
+            container.innerHTML = '<div id="yt-native-audio-target"></div>';
+        }
+    }
+    
+    const initInstance = () => {
