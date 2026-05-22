@@ -2038,3 +2038,63 @@ function initMediaYTPlayer() {
         
         const previousCallback = window.onYouTubeIframeAPIReady;
         window.onYouTubeIframeAPIReady = () => {
+            if (previousCallback) previousCallback();
+            initInstance();
+        };
+        
+        const poll = setInterval(() => {
+            if (window.YT && window.YT.Player) {
+                clearInterval(poll);
+                initInstance();
+            }
+        }, 500);
+    } else {
+        initInstance();
+    }
+}
+
+function destroyMediaYTPlayer() {
+    if (mediaYTPlayer) {
+        try {
+            mediaYTPlayer.destroy();
+        } catch (e) {}
+        mediaYTPlayer = null;
+    }
+    mediaYTState = -1;
+}
+
+function updateMediaUIState(state) {
+    const status = document.getElementById('media-player-status');
+    const playBtn = document.getElementById('media-play-btn');
+    if (!status || !playBtn) return;
+    
+    switch (state) {
+        case -1:
+            status.textContent = 'IDLE';
+            playBtn.textContent = '▶';
+            break;
+        case 0:
+            status.textContent = 'ENDED';
+            playBtn.textContent = '▶';
+            break;
+        case 1:
+            status.textContent = 'PLAYING';
+            playBtn.textContent = '⏸';
+            break;
+        case 2:
+            status.textContent = 'PAUSED';
+            playBtn.textContent = '▶';
+            break;
+        case 3:
+            status.textContent = 'BUFFERING...';
+            break;
+        case 5:
+            status.textContent = 'READY';
+            playBtn.textContent = '▶';
+            break;
+    }
+}
+
+function togglePlayMedia() {
+    if (!mediaYTPlayer) return;
+    try {
