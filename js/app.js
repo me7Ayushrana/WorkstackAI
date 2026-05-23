@@ -2098,3 +2098,63 @@ function updateMediaUIState(state) {
 function togglePlayMedia() {
     if (!mediaYTPlayer) return;
     try {
+        if (mediaYTState === 1) {
+            mediaYTPlayer.pauseVideo();
+        } else {
+            mediaYTPlayer.playVideo();
+        }
+    } catch (e) {}
+}
+
+function stopPlayMedia() {
+    if (!mediaYTPlayer) return;
+    try {
+        mediaYTPlayer.stopVideo();
+        updateMediaUIState(-1);
+    } catch (e) {}
+}
+
+function changeMediaVolume(val) {
+    const label = document.getElementById('media-volume-label');
+    if (label) label.textContent = val;
+    if (mediaYTPlayer) {
+        try {
+            mediaYTPlayer.setVolume(parseInt(val));
+        } catch (e) {}
+    }
+}
+
+window.loadYoutubeMedia = loadYoutubeMedia;
+window.selectPlayMode = selectPlayMode;
+window.togglePlayMedia = togglePlayMedia;
+window.stopPlayMedia = stopPlayMedia;
+window.changeMediaVolume = changeMediaVolume;
+
+// -- Global Floating Music Player --
+let floatYTPlayer = null;
+let currentFloatVideoId = '';
+let currentFloatPlayMode = 'audio';
+let floatYTState = -1;
+
+window.toggleFloatingMusicPlayer = function() {
+    const panel = document.getElementById('floating-music-panel');
+    const btn = document.getElementById('floating-music-btn');
+    if (!panel) return;
+    
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        btn.style.transform = 'scale(0.9)';
+        btn.innerHTML = '🎵';
+    } else {
+        btn.style.transform = 'scale(1)';
+    }
+};
+
+window.loadFloatYoutubeMedia = function() {
+    const urlInput = document.getElementById('float-yt-url');
+    if (!urlInput) return;
+    const url = urlInput.value.trim();
+    if (!url) return alert("Please enter a YouTube link or Video ID.");
+    
+    let videoId = url;
+    if (url.length !== 11) {
