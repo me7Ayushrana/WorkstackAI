@@ -2158,3 +2158,63 @@ window.loadFloatYoutubeMedia = function() {
     
     let videoId = url;
     if (url.length !== 11) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        if (match && match[2].length === 11) {
+            videoId = match[2];
+        } else {
+            return alert("Invalid YouTube URL or Video ID. Please check the link.");
+        }
+    }
+    
+    currentFloatVideoId = videoId;
+    
+    const selector = document.getElementById('float-mode-selector');
+    if (selector) selector.classList.remove('hidden');
+    const panel = document.getElementById('float-player-panel');
+    if (panel) panel.classList.add('hidden');
+};
+
+window.selectFloatPlayMode = function(mode) {
+    currentFloatPlayMode = mode;
+    
+    const selector = document.getElementById('float-mode-selector');
+    if (selector) selector.classList.add('hidden');
+    
+    const panel = document.getElementById('float-player-panel');
+    if (panel) panel.classList.remove('hidden');
+    
+    const badge = document.getElementById('float-mode-badge');
+    if (badge) {
+        badge.textContent = mode === 'audio' ? '🎧 AUDIO-ONLY' : '📺 VIDEO & AUDIO';
+        badge.style.color = mode === 'audio' ? 'var(--accent)' : '#4ade80';
+    }
+    
+    const wrapper = document.getElementById('float-video-wrapper');
+    if (wrapper) {
+        if (mode === 'video') {
+            wrapper.classList.remove('hidden');
+        } else {
+            wrapper.classList.add('hidden');
+        }
+    }
+    
+    initFloatYTPlayer();
+};
+
+function initFloatYTPlayer() {
+    destroyFloatYTPlayer();
+    
+    const targetId = currentFloatPlayMode === 'video' ? 'float-yt-target' : 'float-yt-audio-target';
+    
+    if (currentFloatPlayMode === 'video') {
+        const wrapper = document.getElementById('float-video-wrapper');
+        if (wrapper) {
+            wrapper.innerHTML = '<div id="float-yt-target"></div>';
+        }
+    } else {
+        const container = document.getElementById('float-yt-hidden-container');
+        if (container) {
+            container.innerHTML = '<div id="float-yt-audio-target"></div>';
+        }
+    }
