@@ -2218,3 +2218,63 @@ function initFloatYTPlayer() {
             container.innerHTML = '<div id="float-yt-audio-target"></div>';
         }
     }
+    
+    const initInstance = () => {
+        try {
+            const vol = parseInt(document.getElementById('float-volume-range')?.value || '80');
+            
+            floatYTPlayer = new window.YT.Player(targetId, {
+                host: 'https://www.youtube-nocookie.com',
+                height: currentFloatPlayMode === 'video' ? '100%' : '0',
+                width: currentFloatPlayMode === 'video' ? '100%' : '0',
+                videoId: currentFloatVideoId,
+                playerVars: {
+                    autoplay: 1,
+                    controls: currentFloatPlayMode === 'video' ? 1 : 0,
+                    disablekb: 1,
+                    fs: 1,
+                    modestbranding: 1,
+                    rel: 0,
+                    showinfo: 0
+                },
+                events: {
+                    onReady: (event) => {
+                        event.target.setVolume(vol);
+                        const status = document.getElementById('float-player-status');
+                        if (status) status.textContent = 'PLAYING';
+                        
+                        const titleEl = document.getElementById('float-player-title');
+                        if (titleEl) {
+                            try {
+                                titleEl.textContent = event.target.getVideoData().title || 'YouTube Track';
+                            } catch (e) {
+                                titleEl.textContent = 'Active YouTube Track';
+                            }
+                        }
+                        
+                        const playBtn = document.getElementById('float-play-btn');
+                        if (playBtn) playBtn.textContent = '⏸';
+                    },
+                    onStateChange: (event) => {
+                        floatYTState = event.data;
+                        updateFloatMediaUIState(event.data);
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Error creating YT Player instance:", e);
+        }
+    };
+    
+    if (typeof window.YT === 'undefined' || typeof window.YT.Player === 'undefined') {
+        if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScript = document.getElementsByTagName('script')[0];
+            if (firstScript && firstScript.parentNode) {
+                firstScript.parentNode.insertBefore(tag, firstScript);
+            } else {
+                document.head.appendChild(tag);
+            }
+        }
+        
