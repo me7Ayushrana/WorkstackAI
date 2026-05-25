@@ -2278,3 +2278,63 @@ function initFloatYTPlayer() {
             }
         }
         
+        const previousCallback = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+            if (previousCallback) previousCallback();
+            initInstance();
+        };
+        
+        const poll = setInterval(() => {
+            if (window.YT && window.YT.Player) {
+                clearInterval(poll);
+                initInstance();
+            }
+        }, 500);
+    } else {
+        initInstance();
+    }
+}
+
+function destroyFloatYTPlayer() {
+    if (floatYTPlayer) {
+        try {
+            floatYTPlayer.destroy();
+        } catch (e) {}
+        floatYTPlayer = null;
+    }
+    floatYTState = -1;
+}
+
+function updateFloatMediaUIState(state) {
+    const status = document.getElementById('float-player-status');
+    const playBtn = document.getElementById('float-play-btn');
+    if (!status || !playBtn) return;
+    
+    switch (state) {
+        case -1:
+            status.textContent = 'IDLE';
+            playBtn.textContent = '▶';
+            break;
+        case 0:
+            status.textContent = 'ENDED';
+            playBtn.textContent = '▶';
+            break;
+        case 1:
+            status.textContent = 'PLAYING';
+            playBtn.textContent = '⏸';
+            break;
+        case 2:
+            status.textContent = 'PAUSED';
+            playBtn.textContent = '▶';
+            break;
+        case 3:
+            status.textContent = 'BUFFERING...';
+            break;
+        case 5:
+            status.textContent = 'READY';
+            playBtn.textContent = '▶';
+            break;
+    }
+}
+
+window.toggleFloatPlayMedia = function() {
