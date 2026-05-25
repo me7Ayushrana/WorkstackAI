@@ -2338,3 +2338,63 @@ function updateFloatMediaUIState(state) {
 }
 
 window.toggleFloatPlayMedia = function() {
+    if (!floatYTPlayer) return;
+    try {
+        if (floatYTState === 1) {
+            floatYTPlayer.pauseVideo();
+        } else {
+            floatYTPlayer.playVideo();
+        }
+    } catch (e) {}
+};
+
+window.stopFloatPlayMedia = function() {
+    if (!floatYTPlayer) return;
+    try {
+        floatYTPlayer.stopVideo();
+        updateFloatMediaUIState(-1);
+    } catch (e) {}
+};
+
+window.changeFloatMediaVolume = function(val) {
+    const label = document.getElementById('float-volume-label');
+    if (label) label.textContent = val;
+    if (floatYTPlayer) {
+        try {
+            floatYTPlayer.setVolume(parseInt(val));
+        } catch (e) {}
+    }
+};
+
+window.loadQuickTrack = function(videoId, title) {
+    const urlInput = document.getElementById('yt-media-url');
+    if (urlInput) urlInput.value = videoId;
+    
+    const floatInput = document.getElementById('float-yt-url');
+    if (floatInput) floatInput.value = videoId;
+    
+    currentMediaVideoId = videoId;
+    currentFloatVideoId = videoId;
+    
+    const selector = document.getElementById('media-mode-selector');
+    if (selector) selector.classList.remove('hidden');
+    const panel = document.getElementById('media-player-panel');
+    if (panel) panel.classList.add('hidden');
+    
+    const floatSelector = document.getElementById('float-mode-selector');
+    if (floatSelector) floatSelector.classList.remove('hidden');
+    const floatPanel = document.getElementById('float-player-panel');
+    if (floatPanel) floatPanel.classList.add('hidden');
+};
+
+/* --- Dynamic Focus Stats Tracking & Gamification --- */
+function trackFocusMinute() {
+    let mins = parseInt(localStorage.getItem('ws_total_focus_mins') || '0');
+    mins += 1;
+    localStorage.setItem('ws_total_focus_mins', mins.toString());
+    updateFocusDeskStats();
+}
+
+function trackFocusSessionComplete() {
+    let mins = parseInt(localStorage.getItem('ws_total_focus_mins') || '0');
+    const val = parseInt(document.getElementById('custom-min')?.value || 25);
