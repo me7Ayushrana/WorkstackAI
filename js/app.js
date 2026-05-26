@@ -2398,3 +2398,63 @@ function trackFocusMinute() {
 function trackFocusSessionComplete() {
     let mins = parseInt(localStorage.getItem('ws_total_focus_mins') || '0');
     const val = parseInt(document.getElementById('custom-min')?.value || 25);
+    mins += val;
+    localStorage.setItem('ws_total_focus_mins', mins.toString());
+    
+    let sessions = parseInt(localStorage.getItem('ws_total_focus_sessions') || '0');
+    sessions += 1;
+    localStorage.setItem('ws_total_focus_sessions', sessions.toString());
+    
+    updateFocusDeskStats();
+}
+
+window.updateFocusDeskStats = function() {
+    const totalTimeEl = document.getElementById('focus-total-time');
+    const levelEl = document.getElementById('focus-level');
+    if (!totalTimeEl || !levelEl) return;
+    
+    const mins = parseInt(localStorage.getItem('ws_total_focus_mins') || '0');
+    totalTimeEl.textContent = `${mins}m`;
+    
+    let level = "Novice";
+    if (mins >= 120) level = "Deep Master";
+    else if (mins >= 60) level = "Zen Monk";
+    else if (mins >= 25) level = "Elite Focus";
+    else if (mins >= 5) level = "Getting Started";
+    
+    levelEl.textContent = level;
+};
+
+/* --- Native Tool: Markdown Scratchpad --- */
+function renderMarkdownScratchpad() {
+    return `
+        <div class="markdown-scratchpad-container" style="display: flex; flex-direction: column; gap: 15px; height: 100%; min-height: 400px;">
+            <div class="scratchpad-header" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Live Markdown Editor</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="copyMarkdownText()">Copy Markdown</button>
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="copyMarkdownHTML()">Copy HTML</button>
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: var(--danger); color: var(--danger);" onclick="clearMarkdownText()">Clear</button>
+                </div>
+            </div>
+            <div class="scratchpad-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex-grow: 1; height: 100%; min-height: 320px;">
+                <textarea id="markdown-input" class="input-field" style="width: 100%; height: 100%; min-height: 300px; resize: vertical; font-family: monospace; font-size: 0.9rem; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 6px; color: white;" placeholder="Type markdown here... (e.g. # Hello World, **bold**, - list item)"></textarea>
+                <div id="markdown-preview" class="preview-pane" style="height: 100%; min-height: 300px; padding: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 6px; overflow-y: auto; color: var(--text-primary); font-size: 0.95rem; line-height: 1.5;"></div>
+            </div>
+        </div>
+    `;
+}
+
+function initMarkdownScratchpad() {
+    const input = document.getElementById('markdown-input');
+    const preview = document.getElementById('markdown-preview');
+    if (!input || !preview) return;
+
+    const saved = localStorage.getItem('ws_markdown_scratchpad');
+    if (saved) {
+        input.value = saved;
+    }
+
+    const renderMarkdown = () => {
+        const text = input.value;
+        localStorage.setItem('ws_markdown_scratchpad', text);
