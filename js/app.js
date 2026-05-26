@@ -2458,3 +2458,63 @@ function initMarkdownScratchpad() {
     const renderMarkdown = () => {
         const text = input.value;
         localStorage.setItem('ws_markdown_scratchpad', text);
+        
+        let html = text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/^### (.*$)/gim, '<h3 style="margin-top: 12px; margin-bottom: 6px; color: var(--accent); font-size: 1.15rem; font-weight: 700;">$1</h3>')
+            .replace(/^## (.*$)/gim, '<h2 style="margin-top: 16px; margin-bottom: 8px; color: var(--text-primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; font-size: 1.35rem; font-weight: 700;">$1</h2>')
+            .replace(/^# (.*$)/gim, '<h1 style="margin-top: 20px; margin-bottom: 10px; color: var(--accent); border-bottom: 2px solid var(--accent-glow); padding-bottom: 6px; font-size: 1.6rem; font-weight: 800;">$1</h1>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color: white; font-weight: 700;">$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em style="font-style: italic; color: var(--text-secondary);">$1</em>')
+            .replace(/`(.*?)`/g, '<code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: var(--accent);">$1</code>')
+            .replace(/^\> (.*$)/gim, '<blockquote style="border-left: 4px solid var(--accent); padding-left: 12px; margin: 10px 0; color: var(--text-secondary); font-style: italic; background: rgba(255,255,255,0.01); padding: 8px 12px; border-radius: 0 4px 4px 0;">$1</blockquote>')
+            .replace(/^\s*\-\s+(.*$)/gim, '<li style="margin-left: 15px; margin-bottom: 4px; list-style-type: disc;">$1</li>')
+            .replace(/^\s*\*\s+(.*$)/gim, '<li style="margin-left: 15px; margin-bottom: 4px; list-style-type: disc;">$1</li>')
+            .replace(/^\s*\d+\.\s+(.*$)/gim, '<li style="margin-left: 15px; margin-bottom: 4px; list-style-type: decimal;">$1</li>')
+            .replace(/\n$/gim, '<br />')
+            .replace(/\n/gim, '<br />');
+
+        preview.innerHTML = html || `<p style="color: var(--text-muted); font-style: italic;">No markdown content yet. Type in the editor to see live preview...</p>`;
+    };
+
+    input.addEventListener('input', renderMarkdown);
+    renderMarkdown();
+
+    window.copyMarkdownText = () => {
+        navigator.clipboard.writeText(input.value);
+        alert("Markdown copied to clipboard!");
+    };
+
+    window.copyMarkdownHTML = () => {
+        navigator.clipboard.writeText(preview.innerHTML);
+        alert("HTML copied to clipboard!");
+    };
+
+    window.clearMarkdownText = () => {
+        if (confirm("Are you sure you want to clear the scratchpad?")) {
+            input.value = '';
+            renderMarkdown();
+        }
+    };
+}
+
+/* --- Native Tool: Ambient Sound Mixer --- */
+function renderSoundboard() {
+    return `
+        <div class="soundboard-container" style="display: flex; flex-direction: column; gap: 20px; padding: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">Mix custom ambient sounds to block out distractions.</p>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="presetAmbient('focus')">🧠 Focus</button>
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="presetAmbient('relax')">🌊 Calm</button>
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: var(--danger); color: var(--danger);" onclick="stopAllAmbient()">Mute All</button>
+                </div>
+            </div>
+            
+            <div style="position: relative; width: 100%; height: 80px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;">
+                <canvas id="ambient-visualizer" style="width: 100%; height: 100%; display: block;"></canvas>
+                <div id="visualizer-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none; transition: opacity 0.3s;">
+                    Visualizer Idle (Play a sound to activate)
+                </div>
