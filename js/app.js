@@ -2518,3 +2518,63 @@ function renderSoundboard() {
                 <div id="visualizer-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none; transition: opacity 0.3s;">
                     Visualizer Idle (Play a sound to activate)
                 </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="sound-slider-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: white;">🌧️ Rain Shower</span>
+                        <button id="btn-ambient-rain" class="btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="toggleAmbientSound('rain')">Play</button>
+                    </div>
+                    <input type="range" id="slider-ambient-rain" min="0" max="1" step="0.05" value="0.5" class="input-field" style="width:100%; height: 6px; padding: 0; margin: 0;" oninput="changeAmbientVolume('rain', this.value)">
+                </div>
+
+                <div class="sound-slider-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: white;">🌊 Ocean Waves</span>
+                        <button id="btn-ambient-ocean" class="btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="toggleAmbientSound('ocean')">Play</button>
+                    </div>
+                    <input type="range" id="slider-ambient-ocean" min="0" max="1" step="0.05" value="0.5" class="input-field" style="width:100%; height: 6px; padding: 0; margin: 0;" oninput="changeAmbientVolume('ocean', this.value)">
+                </div>
+
+                <div class="sound-slider-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: white;">🔥 Campfire Crackle</span>
+                        <button id="btn-ambient-campfire" class="btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="toggleAmbientSound('campfire')">Play</button>
+                    </div>
+                    <input type="range" id="slider-ambient-campfire" min="0" max="1" step="0.05" value="0.5" class="input-field" style="width:100%; height: 6px; padding: 0; margin: 0;" oninput="changeAmbientVolume('campfire', this.value)">
+                </div>
+
+                <div class="sound-slider-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: white;">🧠 White Noise</span>
+                        <button id="btn-ambient-whitenoise" class="btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="toggleAmbientSound('whitenoise')">Play</button>
+                    </div>
+                    <input type="range" id="slider-ambient-whitenoise" min="0" max="1" step="0.05" value="0.5" class="input-field" style="width:100%; height: 6px; padding: 0; margin: 0;" oninput="changeAmbientVolume('whitenoise', this.value)">
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.ambientSoundManager = {
+    ctx: null,
+    analyser: null,
+    isPlaying: {},
+    gains: {},
+    sources: {},
+    visualizerActive: false,
+    
+    init() {
+        if (this.ctx) return;
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.analyser = this.ctx.createAnalyser();
+        this.analyser.fftSize = 64;
+        this.analyser.connect(this.ctx.destination);
+        this.drawVisualizer();
+    },
+    
+    getNoiseBuffer(type) {
+        const sampleRate = this.ctx.sampleRate;
+        const duration = 4;
+        const bufferSize = sampleRate * duration;
