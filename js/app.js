@@ -2578,3 +2578,63 @@ window.ambientSoundManager = {
         const sampleRate = this.ctx.sampleRate;
         const duration = 4;
         const bufferSize = sampleRate * duration;
+        const buffer = this.ctx.createBuffer(1, bufferSize, sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        if (type === 'white') {
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+        } else if (type === 'pink') {
+            let b0, b1, b2, b3, b4, b5, b6;
+            b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                data[i] *= 0.11;
+                b6 = white * 0.115926;
+            }
+        } else if (type === 'brown') {
+            let lastOut = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                data[i] = (lastOut + (0.02 * white)) / 1.02;
+                lastOut = data[i];
+                data[i] *= 3.5;
+            }
+        } else if (type === 'campfire') {
+            for (let i = 0; i < bufferSize; i++) {
+                let hum = (Math.random() * 2 - 1) * 0.015;
+                let pop = 0;
+                if (Math.random() < 0.0003) {
+                    pop = (Math.random() * 2 - 1) * 0.5;
+                } else if (Math.random() < 0.001) {
+                    pop = (Math.random() * 2 - 1) * 0.15;
+                }
+                data[i] = hum + pop;
+            }
+        }
+        return buffer;
+    },
+    
+    start(soundId) {
+        this.init();
+        if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+        
+        if (this.isPlaying[soundId]) return;
+        
+        const gainNode = this.ctx.createGain();
+        const sliderVal = parseFloat(document.getElementById(`slider-ambient-${soundId}`)?.value || 0.5);
+        gainNode.gain.value = sliderVal * 0.4;
+        
+        let source;
+        
+        if (soundId === 'whitenoise') {
