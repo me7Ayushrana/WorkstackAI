@@ -2638,3 +2638,63 @@ window.ambientSoundManager = {
         let source;
         
         if (soundId === 'whitenoise') {
+            source = this.ctx.createBufferSource();
+            source.buffer = this.getNoiseBuffer('white');
+            source.loop = true;
+            source.connect(gainNode);
+        } else if (soundId === 'rain') {
+            source = this.ctx.createBufferSource();
+            source.buffer = this.getNoiseBuffer('pink');
+            source.loop = true;
+            
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 1800;
+            
+            source.connect(filter);
+            filter.connect(gainNode);
+        } else if (soundId === 'ocean') {
+            source = this.ctx.createBufferSource();
+            source.buffer = this.getNoiseBuffer('brown');
+            source.loop = true;
+            
+            const lfo = this.ctx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = 0.07;
+            
+            const lfoGain = this.ctx.createGain();
+            lfoGain.gain.value = 0.15;
+            
+            lfo.connect(lfoGain);
+            lfoGain.connect(gainNode.gain);
+            lfo.start();
+            source.connect(gainNode);
+            
+            this.sources[`${soundId}-lfo`] = lfo;
+        } else if (soundId === 'campfire') {
+            source = this.ctx.createBufferSource();
+            source.buffer = this.getNoiseBuffer('campfire');
+            source.loop = true;
+            source.connect(gainNode);
+        }
+        
+        gainNode.connect(this.analyser);
+        source.start();
+        
+        this.sources[soundId] = source;
+        this.gains[soundId] = gainNode;
+        this.isPlaying[soundId] = true;
+        
+        const btn = document.getElementById(`btn-ambient-${soundId}`);
+        if (btn) {
+            btn.textContent = 'Pause';
+            btn.style.borderColor = 'var(--accent)';
+            btn.style.color = 'var(--accent)';
+        }
+        
+        const placeholder = document.getElementById('visualizer-placeholder');
+        if (placeholder) placeholder.style.opacity = '0';
+    },
+    
+    stop(soundId) {
+        if (!this.isPlaying[soundId]) return;
