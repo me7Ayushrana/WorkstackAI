@@ -2758,3 +2758,63 @@ window.ambientSoundManager = {
             
             ctx2d.clearRect(0, 0, canvas.width, canvas.height);
             
+            const anyPlaying = Object.values(this.isPlaying).some(v => v);
+            if (!anyPlaying) {
+                ctx2d.beginPath();
+                ctx2d.strokeStyle = 'rgba(255,255,255,0.05)';
+                ctx2d.lineWidth = 2;
+                ctx2d.moveTo(0, canvas.height / 2);
+                ctx2d.lineTo(canvas.width, canvas.height / 2);
+                ctx2d.stroke();
+                return;
+            }
+            
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+            
+            ctx2d.shadowBlur = 8;
+            ctx2d.shadowColor = 'var(--accent)';
+            
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+                
+                const grad = ctx2d.createLinearGradient(0, canvas.height, 0, 0);
+                grad.addColorStop(0, 'rgba(229, 197, 88, 0.1)');
+                grad.addColorStop(1, 'var(--accent)');
+                
+                ctx2d.fillStyle = grad;
+                ctx2d.fillRect(x, canvas.height - barHeight - 5, barWidth - 2, barHeight + 5);
+                
+                x += barWidth;
+            }
+        };
+        
+        draw();
+    }
+};
+
+function initSoundboard() {
+    setTimeout(() => {
+        window.ambientSoundManager.drawVisualizer();
+        ['rain', 'ocean', 'campfire', 'whitenoise'].forEach(id => {
+            const isPlaying = window.ambientSoundManager.isPlaying[id];
+            const btn = document.getElementById(`btn-ambient-${id}`);
+            const slider = document.getElementById(`slider-ambient-${id}`);
+            
+            if (btn) {
+                btn.textContent = isPlaying ? 'Pause' : 'Play';
+                if (isPlaying) {
+                    btn.style.borderColor = 'var(--accent)';
+                    btn.style.color = 'var(--accent)';
+                } else {
+                    btn.style.borderColor = 'var(--border)';
+                    btn.style.color = 'white';
+                }
+            }
+            if (slider && window.ambientSoundManager.gains[id]) {
+                slider.value = window.ambientSoundManager.gains[id].gain.value / 0.4;
+            }
+        });
+        
+        const active = Object.values(window.ambientSoundManager.isPlaying).some(v => v);
