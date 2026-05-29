@@ -2698,3 +2698,63 @@ window.ambientSoundManager = {
     
     stop(soundId) {
         if (!this.isPlaying[soundId]) return;
+        
+        try {
+            this.sources[soundId].stop();
+        } catch(e) {}
+        
+        if (this.sources[`${soundId}-lfo`]) {
+            try { this.sources[`${soundId}-lfo`].stop(); } catch(e) {}
+            delete this.sources[`${soundId}-lfo`];
+        }
+        
+        delete this.sources[soundId];
+        delete this.gains[soundId];
+        this.isPlaying[soundId] = false;
+        
+        const btn = document.getElementById(`btn-ambient-${soundId}`);
+        if (btn) {
+            btn.textContent = 'Play';
+            btn.style.borderColor = 'var(--border)';
+            btn.style.color = 'white';
+        }
+        
+        const active = Object.values(this.isPlaying).some(v => v);
+        if (!active) {
+            const placeholder = document.getElementById('visualizer-placeholder');
+            if (placeholder) placeholder.style.opacity = '1';
+        }
+    },
+    
+    setVolume(soundId, val) {
+        if (this.gains[soundId]) {
+            this.gains[soundId].gain.setValueAtTime(parseFloat(val) * 0.4, this.ctx.currentTime);
+        }
+    },
+    
+    drawVisualizer() {
+        const canvas = document.getElementById('ambient-visualizer');
+        if (!canvas) {
+            this.visualizerActive = false;
+            return;
+        }
+        
+        this.visualizerActive = true;
+        const ctx2d = canvas.getContext('2d');
+        const analyserNode = this.analyser;
+        const bufferLength = analyserNode.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        
+        if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+        }
+        
+        const draw = () => {
+            if (!this.visualizerActive) return;
+            requestAnimationFrame(draw);
+            
+            analyserNode.getByteFrequencyData(dataArray);
+            
+            ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+            
