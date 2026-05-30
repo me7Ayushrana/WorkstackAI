@@ -2818,3 +2818,59 @@ function initSoundboard() {
         });
         
         const active = Object.values(window.ambientSoundManager.isPlaying).some(v => v);
+        const placeholder = document.getElementById('visualizer-placeholder');
+        if (placeholder) {
+            placeholder.style.opacity = active ? '0' : '1';
+        }
+    }, 50);
+}
+
+window.presetAmbient = function(presetType) {
+    window.ambientSoundManager.init();
+    window.stopAllAmbient();
+    
+    if (presetType === 'focus') {
+        const rainSlider = document.getElementById('slider-ambient-rain');
+        const noiseSlider = document.getElementById('slider-ambient-whitenoise');
+        
+        if (rainSlider) rainSlider.value = 0.3;
+        if (noiseSlider) noiseSlider.value = 0.6;
+        
+        window.ambientSoundManager.start('rain');
+        window.ambientSoundManager.setVolume('rain', 0.3);
+        
+        window.ambientSoundManager.start('whitenoise');
+        window.ambientSoundManager.setVolume('whitenoise', 0.6);
+    } else if (presetType === 'relax') {
+        const oceanSlider = document.getElementById('slider-ambient-ocean');
+        const campfireSlider = document.getElementById('slider-ambient-campfire');
+        
+        if (oceanSlider) oceanSlider.value = 0.6;
+        if (campfireSlider) campfireSlider.value = 0.4;
+        
+        window.ambientSoundManager.start('ocean');
+        window.ambientSoundManager.setVolume('ocean', 0.6);
+        
+        window.ambientSoundManager.start('campfire');
+        window.ambientSoundManager.setVolume('campfire', 0.4);
+    }
+};
+
+window.stopAllAmbient = function() {
+    ['rain', 'ocean', 'campfire', 'whitenoise'].forEach(id => {
+        window.ambientSoundManager.stop(id);
+    });
+};
+
+window.toggleAmbientSound = function(soundId) {
+    if (window.ambientSoundManager.isPlaying[soundId]) {
+        window.ambientSoundManager.stop(soundId);
+    } else {
+        window.ambientSoundManager.start(soundId);
+    }
+};
+
+window.changeAmbientVolume = function(soundId, val) {
+    window.ambientSoundManager.setVolume(soundId, val);
+};
+
